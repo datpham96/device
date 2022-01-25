@@ -1,0 +1,9 @@
+export {default as Text} from './Text';
+export {default as Button} from './Button';
+export {default as Avatar} from './Avatar';
+export {default as Background} from './Background';
+export {default as Switch} from './Switch';
+export {default as Radio} from './Radio';
+export {default as Input} from './Input';
+export {default as Loading} from './Loading';
+export {default as ButtonBack} from './ButtonBack';

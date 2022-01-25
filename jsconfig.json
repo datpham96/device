@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "assets": ["./src/assets"],
+      "components": ["./src/components"],
+      "features": ["./src/features"],
+      "navigation": ["./src/navigation"],
+      "api": ["./src/api"],
+      "stores": ["./src/stores"],
+      "actions": ["./src/stores/actions"],
+      "sagas": ["./src/stores/sagas"],
+      "reducers": ["./src/stores/reducers"],
+      "HOC": ["./src/HOC"],
+      "base": ["./src/base"],
+      "helpers": ["./src/helpers"]
+    }
+  },
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+}

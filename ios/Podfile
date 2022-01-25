@@ -1,0 +1,54 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+# source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '11.0'
+
+target 'DeviceManager' do
+  config = use_native_modules!
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-google-maps', :path => rn_maps_path
+  pod 'Google-Maps-iOS-Utils'
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => false
+  )
+
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  target 'DeviceManagerTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable the next line.
+  # use_flipper!()
+
+  # post_install do |installer|
+    # react_native_post_install(installer)
+    # ## Fix for Flipper-Folly on iOS 14.5
+    # find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+
+    # find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
+  # end
+
+  # def find_and_replace(dir, findstr, replacestr)
+  #   Dir[dir].each do |name|
+  #       text = File.read(name)
+  #       replace = text.gsub(findstr,replacestr)
+  #       if text != replace
+  #           puts "Fix: " + name
+  #           File.open(name, "w") { |file| file.puts replace }
+  #           STDOUT.flush
+  #       end
+  #   end
+  #   Dir[dir + '*/'].each(&method(:find_and_replace))
+  # end
+end

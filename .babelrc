@@ -1,0 +1,43 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["."],
+        "alias": {
+          "src": "./src",
+          "assets": "./src/assets",
+          "components": "./src/components",
+          "config": "./src/config",
+          "features": "./src/features",
+          "libs": "./src/libs",
+          "navigation": "./src/navigation",
+          "api": "./src/api",
+          "stores": "./src/stores",
+          "actions": "./src/stores/actions",
+          "methods": "./src/api/methods",
+          "sagas": "./src/stores/sagas",
+          "reducers": "./src/stores/reducers",
+          "HOC": "./src/HOC",
+          "base": "./src/base",
+          "customs": "./src/helpers/customs",
+          "helpers": "./src/helpers",
+          "images": "./src/config/images",
+          "styles": "./src/config/styles",
+          "metrics": "./src/config/metrics",
+          "navigationTypes": "./src/navigation/types",
+          "storages": "./src/storages",
+          "keyTypes": "./src/api/keyTypes",
+          "RootNavigation": "./src/navigation/RootNavigation",
+          "methods/*": "./src/api/methods/*",
+          "actions/*": "./src/stores/actions/*"
+        }
+      }
+    ]
+  ],
+  "env": {
+    "production": {
+      "plugins": ["transform-remove-console"]
+    }
+  }
+}

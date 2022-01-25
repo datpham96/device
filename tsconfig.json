@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "react-native",
+    "lib": ["es2017"],
+    "moduleResolution": "node",
+    "noEmit": true,
+    "strict": true,
+    "target": "esnext",
+    "baseUrl": ".",
+    "paths": {
+      "assets": ["./src/assets"],
+      "components": ["./src/components"],
+      "features": ["./src/features"],
+      "navigation": ["./src/navigation"],
+      "api": ["./src/api"],
+      // "stores": ["./src/stores"],
+      "actions": ["./src/stores/actions"],
+      "methods": ["./src/api/methods"],
+      "sagas": ["./src/stores/sagas"],
+      "reducers": ["./src/stores/reducers"],
+      "HOC": ["./src/HOC"],
+      "base": ["./src/base"],
+      "customs": ["./src/helpers/customs"],
+      "helpers": ["./src/helpers"],
+      "styles": ["./src/config/styles"],
+      "images": ["./src/config/images"],
+      "metrics": ["./src/config/metrics"],
+      "navigationTypes": ["./src/navigation/types"],
+      "storages": ["./src/storages"],
+      "keyTypes": ["./src/api/keyTypes"],
+      "RootNavigation": ["./src/navigation/RootNavigation"],
+      "methods/*": ["./src/api/methods/*"],
+      "actions/*": ["./src/stores/actions/*"]
+    }
+  },
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+}
