@@ -28,6 +28,9 @@ const ApiConstants = {
   DEVICE_LIST: 'device/list', //Danh sách thiết bị
   DEVICE_INFO: 'device/detail', //Thông tin thiết bị
   REMOVE_DEVICE: 'device/deleteDevice', //Xoá thiết bị
+  DEVICE_UPDATE: 'device/update', //Cập nhật thiết bị
+
+  //Path history
   DEVICE_HISTORY: 'history/listWebHistory', //Lịch sử truy cập web
   DEVICE_REPORT: 'history/webHistoryStatistics', //Thống kê truy cập
 };

@@ -15,11 +15,13 @@ import {
   StatusSuccesScreen,
   DeviceInfoScreen,
   ReportScreen,
+  Error401Screen,
 } from '../../features';
 import navigationTypes from '../types';
 import BottomTabs from '../BottomTabs';
 import {useSelector} from 'react-redux';
 import {Platform} from 'react-native';
+import * as RootNavigation from 'RootNavigation';
 
 const RootNavStack = createStackNavigator();
 
@@ -62,6 +64,11 @@ const RootStack = () => {
           <RootNavStack.Screen
             name={navigationTypes.deviceInfo.screen}
             component={DeviceInfoScreen}
+            options={screenOptions}
+          />
+          <RootNavStack.Screen
+            name={navigationTypes.error401.screen}
+            component={Error401Screen}
             options={screenOptions}
           />
         </>

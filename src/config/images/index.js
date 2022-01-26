@@ -33,6 +33,7 @@ const images = {
     background_in: require('../../assets/images/backgrounds/background-in.png'),
     background_out: require('../../assets/images/backgrounds/background-out.png'),
     error_500: require('../../assets/images/backgrounds/error_500.png'),
+    error_401: require('../../assets/images/backgrounds/error_401.png'),
     disconnect: require('../../assets/images/backgrounds/disconnect.png'),
   },
   logos: {

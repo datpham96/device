@@ -63,6 +63,10 @@ const types = {
     screen: 'error',
     name: 'Lỗi hệ thống',
   },
+  error401: {
+    screen: 'error401',
+    name: 'Phiên đăng nhập hết hạn',
+  },
   disconnect: {
     screen: 'disconnect',
     name: 'Mất kết nối',

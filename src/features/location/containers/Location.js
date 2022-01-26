@@ -5,11 +5,12 @@ import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
-import {InputSelectComponent} from 'components';
+import {InputSelectComponent, Loading, PopupConfirm} from 'components';
 import keyTypes from 'keyTypes';
-import {deviceListApi} from 'methods/device';
-import {useQuery, useQueryClient} from 'react-query';
+import {deviceListApi, deviceUpdateApi} from 'methods/device';
+import {useQuery, useMutation} from 'react-query';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {Toast} from 'customs';
 // import DropDownPicker from 'react-native-dropdown-picker';
 
 const region = {
@@ -20,16 +21,10 @@ const region = {
 };
 
 const Location = ({}) => {
-  const queryClient = useQueryClient();
   const [selectedDevice, setSelectedDevice] = useState('');
   const [markers, serMarkers] = useState({});
-
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    {label: 'Apple', value: 'apple'},
-    {label: 'Banana', value: 'banana'},
-  ]);
+  const [visibleConfirmDeviceBlock, setVisibleConfirmDeviceBlock] =
+    useState(false);
 
   const {data, isSuccess} = useQuery(
     keyTypes.DEVICE_LIST,
@@ -37,6 +32,23 @@ const Location = ({}) => {
     {
       keepPreviousData: true,
     },
+  );
+
+  const mutationDeviceLock = useMutation(
+    ({
+      data_device_id,
+      data_is_block,
+      data_full_name,
+      data_birthday,
+      data_gender,
+    }) =>
+      deviceUpdateApi(
+        data_device_id,
+        data_is_block,
+        data_full_name,
+        data_birthday,
+        data_gender,
+      ),
   );
 
   const deviceList = useMemo(() => {
@@ -59,8 +71,44 @@ const Location = ({}) => {
     });
   };
 
+  const handleDeviceLock = () => {
+    setVisibleConfirmDeviceBlock(false);
+    if (!selectedDevice) {
+      Toast('Vui lòng chọn thiết bị');
+      return;
+    }
+
+    mutationDeviceLock
+      .mutateAsync({
+        data_device_id: selectedDevice,
+        data_is_block: 1,
+        data_full_name: null,
+        data_birthday: null,
+        data_gender: null,
+      })
+      .then(resp => {
+        if (resp?.status) {
+          Toast('Khoá thiết bị thành công');
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationDeviceLock.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationDeviceLock.reset();
+      });
+  };
+
   return (
     <Background bottomTab bout>
+      <Loading isLoading={mutationDeviceLock.isLoading} />
+      <PopupConfirm
+        visible={visibleConfirmDeviceBlock}
+        content="Bạn có chắc chắn muốn khoá thiết bị này không"
+        onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
+        onPressAgree={handleDeviceLock}
+      />
       {/* <DropDownPicker
         open={open}
         value={value}
@@ -99,7 +147,13 @@ const Location = ({}) => {
             underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
             activeOpacity={0.9}
             style={styles.btn}
-            onPress={() => console.log(11111)}>
+            onPress={() => {
+              if (selectedDevice) {
+                setVisibleConfirmDeviceBlock(true);
+              } else {
+                Toast('Vui lòng chọn thiết bị');
+              }
+            }}>
             <Text style={styles.btnLabel}>Khoá thiết bị</Text>
           </TouchableHighlight>
         </View>

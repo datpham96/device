@@ -275,7 +275,7 @@ const Home = ({navigation}) => {
               <View style={styles.wrapAvatarDevice}>
                 <FastImage
                   source={
-                    selectedDevice?.is_block === 1
+                    selectedDevice?.is_block === 0
                       ? selectedDevice.avatar
                         ? {uri: selectedDevice.avatar}
                         : images.avatars.default

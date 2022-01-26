@@ -43,6 +43,7 @@ export {default as ChildrenInfoScreen} from './childrenInfo/containers/ChildrenI
 
 //error
 export {default as ErrorScreen} from './error/containers/Error';
+export {default as Error401Screen} from './error/containers/Error401';
 export {default as DisconnectScreen} from './error/containers/Disconnect';
 
 //newPassword

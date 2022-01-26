@@ -9,9 +9,6 @@ export function webListApi(device_id) {
 }
 
 export function webUpdateApi(web_id, status, time_remaining) {
-  console.log(web_id, 'web_id');
-  console.log(status, 'status');
-  console.log(time_remaining, 'time_remaining');
   //Cập nhật web
   let bodyFormData = new FormData();
   bodyFormData.append('web_id', web_id);

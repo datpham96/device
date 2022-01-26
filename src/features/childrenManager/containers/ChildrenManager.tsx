@@ -6,7 +6,7 @@ import FastImage from 'react-native-fast-image';
 import images from 'images';
 import {ItemChildrenComponent} from '../components';
 import styles from './styles';
-import {LoadingData, ModalScanQRcode, EmptyData} from 'components';
+import {ModalScanQRcode, EmptyData} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
 import {Toast} from 'customs';
@@ -14,6 +14,7 @@ import {useQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
 import {deviceListApi} from 'methods/device';
 import {checkVar} from 'src/helpers/funcs';
+import {ItemChildrenPlaceholder} from '../placeholders';
 
 export type Props = {
   navigation?: any;
@@ -42,6 +43,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
     await queryClient.removeQueries(keyTypes.DEVICE_LIST, {
       exact: true,
     });
+    await refetch();
   };
 
   const handleRedirectQrCode = () => {
@@ -80,7 +82,11 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
           </TouchableOpacity>
         </View>
         {isLoading ? (
-          <LoadingData />
+          <View style={[commonStyles.flex1, styles.flatListStyle]}>
+            <ItemChildrenPlaceholder />
+            <ItemChildrenPlaceholder />
+            <ItemChildrenPlaceholder />
+          </View>
         ) : isSuccess && !checkVar.isEmpty(data?.data) ? (
           <FlatList
             style={[commonStyles.flex1, styles.flatListStyle]}

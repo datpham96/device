@@ -23,6 +23,7 @@ const colors = {
   COLOR_UNDERLAY_BUTTON_BLACK: '#dcdcdc',
   COLOR_ERROR: '#FF655B',
   COLOR_DISABLE: '#AAAAAA',
+  COLOR_LOADING_PLACEHOLDER: '#bdbdbd',
 
   //chart
   COLOR_CHART_BLUE: '#1199D3',

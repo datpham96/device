@@ -74,3 +74,28 @@ export function deviceReportApi(page, perPage, device_id, date, status, s) {
 
   return apiToken(ApiConstants.DEVICE_REPORT, 'post', bodyFormData);
 }
+
+export function deviceUpdateApi(
+  device_id,
+  is_block,
+  full_name,
+  birthday,
+  gender,
+) {
+  console.log(device_id, 'device_id====');
+  //Cập nhật thiết bị
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  bodyFormData.append('is_block', is_block);
+  if (full_name) {
+    bodyFormData.append('full_name', full_name);
+  }
+  if (birthday) {
+    bodyFormData.append('birthday', birthday);
+  }
+  if (gender) {
+    bodyFormData.append('gender', gender);
+  }
+
+  return apiToken(ApiConstants.DEVICE_UPDATE, 'post', bodyFormData);
+}

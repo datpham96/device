@@ -27,7 +27,7 @@ const Login = ({navigation}) => {
       setErrors({});
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, dispatch]);
 
   useEffect(() => {
     if (loginErrors && loginErrors?.msg) {

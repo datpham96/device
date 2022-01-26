@@ -23,16 +23,8 @@ import {buildAvatar} from 'src/helpers/funcs';
 
 const options = {
   mediaType: 'photo',
-  title: 'Chọn ảnh đại diện..',
-  cancelButtonTitle: 'Hủy bỏ',
-  takePhotoButtonTitle: 'Chụp ảnh',
   quality: 0.1,
-  chooseFromLibraryButtonTitle: 'Chọn từ thư viện',
   includeBase64: true,
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
 };
 
 const Account = () => {
@@ -122,7 +114,6 @@ const Account = () => {
   };
 
   const handleOpenCamera = () => {
-    setVisibleImagePicker(false);
     options.mediaType = 'photo';
     launchCamera(options, response => {
       if (Platform.OS === 'android') {
@@ -181,8 +172,18 @@ const Account = () => {
   return (
     <Background isKeyboard bout>
       <ModalBottomSheet
-        onPressOne={handleOpenCamera}
-        onPressTwo={handleOpenLibrary}
+        onPressOne={() => {
+          setVisibleImagePicker(false);
+          setTimeout(() => {
+            handleOpenCamera();
+          }, 200);
+        }}
+        onPressTwo={() => {
+          setVisibleImagePicker(false);
+          setTimeout(() => {
+            handleOpenLibrary();
+          }, 200);
+        }}
         onPressCancel={() => setVisibleImagePicker(false)}
         visible={visibleImagePicker}
         onPressClose={() => setVisibleImagePicker(false)}

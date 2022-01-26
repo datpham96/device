@@ -5,6 +5,7 @@ import {getToken, getExpiredToken, removeAll} from 'storages';
 import * as RootNavigation from '../navigation/RootNavigation';
 import navigationType from 'navigationTypes';
 import NetInfo from '@react-native-community/netinfo';
+import statusCode from 'src/config/errors/statusCodes';
 
 axios.interceptors.request.use(function (config) {
   NetInfo.fetch().then(state => {
@@ -15,6 +16,8 @@ axios.interceptors.request.use(function (config) {
   return config;
 }, null);
 
+const TIME_OUT = 3000;
+
 export function api(path, method, params = {}) {
   let options;
   options = {
@@ -22,7 +25,7 @@ export function api(path, method, params = {}) {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    timeout: 30000,
+    timeout: TIME_OUT,
     method: method,
     data: params,
   };
@@ -31,7 +34,7 @@ export function api(path, method, params = {}) {
       return json.data;
     })
     .catch(async error => {
-      if (error.response.status === 500) {
+      if (error.response.status === statusCode.CODE_500) {
         RootNavigation.navigate(navigationType.error.screen);
         return {
           data: null,
@@ -53,14 +56,13 @@ export async function apiToken(path, method, params = {}, token) {
     await removeAll();
   }
   let myToken = tokenStore || token;
-  // let myToken = '';
   let options = {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + myToken,
     },
-    timeout: 30000,
+    timeout: TIME_OUT,
     method: method,
     data: params,
   };
@@ -69,15 +71,17 @@ export async function apiToken(path, method, params = {}, token) {
       return json.data;
     })
     .catch(async error => {
-      if (error.response.status === 500) {
+      if (error?.response?.status === statusCode.CODE_500) {
         RootNavigation.navigate(navigationType.error.screen);
         return {
           data: null,
         };
       }
-      if (error.response.status === 401) {
-        await removeAll();
-        RootNavigation.navigate(navigationType.login.screen);
+      if (error?.response?.status === statusCode.CODE_401) {
+        RootNavigation.navigate(navigationType.error401.screen);
+        return {
+          data: null,
+        };
       }
       return Promise.reject(error);
     });

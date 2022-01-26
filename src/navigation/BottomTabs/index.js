@@ -150,8 +150,6 @@ const BottomTabs = () => {
   );
 };
 
-console.log(getBottomSpace());
-
 const styles = StyleSheet.create({
   barStyle: {},
   touchTabBar: {

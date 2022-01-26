@@ -5,6 +5,7 @@ import {
   StatusBar,
   View,
   Platform,
+  Image,
 } from 'react-native';
 import {colors, commonStyles, sizes} from '../config/styles';
 import {

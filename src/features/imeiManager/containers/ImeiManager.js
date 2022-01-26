@@ -35,7 +35,6 @@ const ImeiManager = ({route}) => {
         data_avatar,
       ),
   );
-  console.log(dataParams, 'dataParams');
 
   const handleDeviceActivation = () => {
     const validation = new Validator(

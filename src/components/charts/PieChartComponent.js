@@ -54,7 +54,9 @@ const PieChartComponent = ({dataList, onSelected, selectedKey = 0}) => {
             left: widthChart / sizes.SIZE_2 - labelWidth / sizes.SIZE_2,
           },
         ]}>
-        {!checkVar.isEmpty(dataList) && dataList?.[selectedKey]
+        {!checkVar.isEmpty(dataList) &&
+        dataList?.[selectedKey] &&
+        dataList?.[selectedKey]?.value
           ? `${dataList?.[selectedKey]?.value}%`
           : '0%'}
       </Text>

@@ -8,6 +8,10 @@ export function navigate(name, params) {
   navigationRef.current?.navigate(name, params);
 }
 
+export function push(name, params) {
+  navigationRef.current?.push(name, params);
+}
+
 export function replace(name, params) {
   navigationRef.current?.replace(name, params);
 }
@@ -22,6 +26,7 @@ export function reset(name, index = 0) {
 export function popToTop() {
   navigationRef.current?.dispatch(StackActions.popToTop());
 }
+
 // export function navigateAuth(name, params, isLogin) {
 //   if (isLogin) {
 //     navigationRef.current?.navigate(name, params);
