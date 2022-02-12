@@ -17,11 +17,15 @@ const ApiConstants = {
   UPDATE_USER_AVATAR: 'user/changeAvatar', //cập nhật avatar của tài khoản
   CHANGE_USER_PASSWORD: 'user/changePassword', //cập nhật mật khẩu của tài khoản
 
-  //path application
+  //path web
   WEB_ADD: 'application/webAdd', //thêm website
   WEB_UPDATE: 'application/webUpdate', //cập nhật website
   WEB_DELETE: 'application/webDelete', //xoá website
   WEB_LIST: 'application/webList', //danh sách website
+
+  //path application
+  APPLICATION_UPDATE: 'application/appUpdate', //cập nhật application
+  APPLICATION_LIST: 'application/appList', //danh sách application
 
   //path device
   DEVICE_ACTIVATION: 'device/activeDevice', //kích hoạt thiết bị

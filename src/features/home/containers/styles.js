@@ -175,6 +175,13 @@ const styles = StyleSheet.create({
     marginLeft: sizes.SIZE_8,
   },
   //flatlist
+  placeholderContainer: {
+    paddingHorizontal: sizes.SIZE_10,
+    marginTop: sizes.SIZE_15,
+  },
+  wrapItemPlaceholder: {
+    marginBottom: sizes.SIZE_15,
+  },
   flatList: {
     marginTop: sizes.SIZE_10,
     paddingHorizontal: sizes.SIZE_15,

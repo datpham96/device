@@ -1,8 +1,6 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Alert, TouchableOpacity, Linking} from 'react-native';
 import {Avatar, Text} from 'base';
-import FastImage from 'react-native-fast-image';
-import images from 'images';
 import {commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
 
@@ -11,22 +9,49 @@ export type Props = {
 };
 
 const ItemComponent: React.FC<Props> = ({item}) => {
+  const handleShowDetail = (url: any) => {
+    Alert.alert('Thông tin', url, [
+      {
+        text: 'Đóng',
+        style: 'cancel',
+      },
+      {
+        text: 'Truy cập',
+        onPress: () => Linking.openURL(url),
+      },
+    ]);
+  };
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onLongPress={() => handleShowDetail(item.url)}
+      style={styles.container}>
       <Avatar
         imageStyle={styles.image}
         uriImage={item.icon}
         containerStyle={styles.image}
       />
       <View style={styles.info}>
-        <Text style={styles.label}>{item.name}</Text>
-        <Text style={styles.domain}>{item.domain}</Text>
+        <Text
+          props={{
+            numberOfLines: 2,
+          }}
+          style={styles.label}>
+          {item.name}
+        </Text>
+        <Text
+          props={{
+            numberOfLines: 2,
+          }}
+          style={styles.domain}>
+          {item.domain}
+        </Text>
       </View>
       <Text style={styles.total}>{item.total}</Text>
       <Text style={styles.status}>
         {item.status === 0 ? 'Đã chặn' : 'Cho phép'}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

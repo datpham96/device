@@ -115,7 +115,7 @@ const DeviceInfo = ({route}) => {
       {
         'required.name': 'Họ tên trẻ không được bỏ trống',
         'required.birthday': 'Ngày sinh trẻ không được bỏ trống',
-        'required.gender': 'Giới tính trẻ trẻ không được bỏ trống',
+        'required.gender': 'Giới tính trẻ không được bỏ trống',
       },
     );
 

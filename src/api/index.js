@@ -34,7 +34,10 @@ export function api(path, method, params = {}) {
       return json.data;
     })
     .catch(async error => {
-      if (error.response.status === statusCode.CODE_500) {
+      if (
+        error.response.status === statusCode.CODE_500 ||
+        error?.response?.status === statusCode.CODE_429
+      ) {
         RootNavigation.navigate(navigationType.error.screen);
         return {
           data: null,
@@ -71,7 +74,10 @@ export async function apiToken(path, method, params = {}, token) {
       return json.data;
     })
     .catch(async error => {
-      if (error?.response?.status === statusCode.CODE_500) {
+      if (
+        error?.response?.status === statusCode.CODE_500 ||
+        error?.response?.status === statusCode.CODE_429
+      ) {
         RootNavigation.navigate(navigationType.error.screen);
         return {
           data: null,

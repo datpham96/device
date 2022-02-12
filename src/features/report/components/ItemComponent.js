@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Alert, Linking} from 'react-native';
 import {Text, Avatar} from 'base';
 import {commonStyles, sizes} from 'styles';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 momentDurationFormatSetup(moment);
 
 const ItemComponent = ({item}) => {
@@ -21,8 +22,24 @@ const ItemComponent = ({item}) => {
     }
   }
 
+  const handleShowDetail = url => {
+    Alert.alert('Thông tin', url, [
+      {
+        text: 'Đóng',
+        style: 'cancel',
+      },
+      {
+        text: 'Truy cập',
+        onPress: () => Linking.openURL(url),
+      },
+    ]);
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onLongPress={() => handleShowDetail(item.url)}
+      style={styles.container}>
       <View style={styles.wrapItemWebsite}>
         <Avatar
           uriImage={item.icon}
@@ -52,7 +69,7 @@ const ItemComponent = ({item}) => {
           {moment(item.access_time, 'YYYY-MM-DD HH:mm:ss').format('HH:mm')}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

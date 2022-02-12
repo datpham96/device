@@ -26,7 +26,6 @@ export default StyleSheet.create({
   btnCancel: {
     marginVertical: sizes.SIZE_25,
     backgroundColor: colors.COLOR_PINK,
-    alignSelf: 'baseline',
     paddingHorizontal: sizes.SIZE_15,
     ...commonStyles.center,
     borderRadius: sizes.SIZE_20,
@@ -35,7 +34,23 @@ export default StyleSheet.create({
   labelBtnCancel: {
     fontSize: sizes.SIZE_13,
   },
+  btnSetup: {
+    marginVertical: sizes.SIZE_25,
+    backgroundColor: colors.COLOR_BLUE,
+    paddingHorizontal: sizes.SIZE_15,
+    ...commonStyles.center,
+    borderRadius: sizes.SIZE_20,
+    height: sizes.SIZE_32,
+    width: sizes.SIZE_105,
+    marginLeft: sizes.SIZE_10,
+  },
+  labelBtnSetup: {
+    fontSize: sizes.SIZE_13,
+  },
   btnRedirect: {
     marginTop: sizes.SIZE_20,
+  },
+  wrapBtn: {
+    flexDirection: 'row',
   },
 });

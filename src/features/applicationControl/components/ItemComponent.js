@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Alert, Linking} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Text, Avatar, Switch} from 'base';
 import {colors, commonStyles, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
 import {useMutation} from 'react-query';
-import {webUpdateApi} from 'src/api/methods/web';
-import {Loading, PopupConfirm} from 'components';
+import {applicationUpdateApi} from 'src/api/methods/application';
+import {PopupConfirm} from 'components';
 import {Toast} from 'customs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
@@ -26,8 +26,12 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
     }
   }
   const mutation = useMutation(
-    ({data_web_id, data_status, data_time_remaining}) =>
-      webUpdateApi(data_web_id, data_status, data_time_remaining),
+    ({data_application_id, data_status, data_time_remaining}) =>
+      applicationUpdateApi(
+        data_application_id,
+        data_status,
+        data_time_remaining,
+      ),
   );
 
   const [enableSwitch, setEnablSwitch] = useState(item.status ? true : false);
@@ -40,18 +44,16 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
   };
 
   const handleAgreeUpdate = () => {
-    setVisibleModal(false);
     mutation
       .mutateAsync({
-        data_web_id: item.id,
+        data_application_id: item.id,
         data_status: enableSwitch ? 1 : 0,
         data_time_remaining: 10,
       })
       .then(resp => {
         if (resp.status) {
           Toast(resp.msg);
-        } else {
-          Toast(resp.msg);
+          setVisibleModal(false);
         }
         mutation.reset();
       })
@@ -77,7 +79,6 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
 
   return (
     <View style={styles.container}>
-      <Loading isLoading={mutation.isLoading} />
       <PopupConfirm
         visible={visibleModal}
         onPressAgree={() => handleAgreeUpdate()}
@@ -85,12 +86,12 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
           setVisibleModal(false);
           setEnablSwitch(!enableSwitch);
         }}
-        content="Bạn có chắc chắn muốn thay đổi trạng thái website này không?"
+        content="Bạn có chắc chắn muốn thay đổi trạng thái ứng dụng này không?"
       />
       <TouchableOpacity
         activeOpacity={0.9}
-        onLongPress={() => handleShowDetail(item.url)}
-        style={styles.wrapItemWebsite}>
+        onLongPress={() => handleShowDetail(item.name)}
+        style={styles.wrapItemApplication}>
         <Avatar
           uriImage={item.icon}
           containerStyle={styles.imageContainer}
@@ -103,13 +104,6 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
             }}
             style={styles.name}>
             {item.name}
-          </Text>
-          <Text
-            props={{
-              numberOfLines: 1,
-            }}
-            style={styles.domain}>
-            {item.url}
           </Text>
         </View>
       </TouchableOpacity>
@@ -153,7 +147,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: sizes.SIZE_15,
   },
-  wrapItemWebsite: {
+  wrapItemApplication: {
     flexDirection: 'row',
     alignItems: 'center',
     ...commonStyles.flex1,
@@ -173,10 +167,6 @@ const styles = StyleSheet.create({
   },
   name: {
     // fontSize: sizes.SIZE_10,
-  },
-  domain: {
-    fontSize: sizes.SIZE_13,
-    marginTop: sizes.SIZE_3,
   },
   wrapUse: {
     ...commonStyles.flexRowCenter,

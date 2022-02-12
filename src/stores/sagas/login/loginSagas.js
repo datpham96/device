@@ -38,7 +38,7 @@ export function* loginRequest(action) {
   } catch (error) {
     yield put(
       loginFailure(
-        error?.response && error?.response?.data && error?.response?.data?.error
+        error?.response && error?.response?.data
           ? 'Sai tài khoản hoặc mật khẩu'
           : null,
       ),

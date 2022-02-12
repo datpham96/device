@@ -23,11 +23,17 @@ import types from '../types';
 import {useInfiniteQuery, useQueryClient, useQuery} from 'react-query';
 import keyTypes from 'keyTypes';
 import {deviceReportApi, deviceListApi} from 'src/api/methods/device';
-import {checkVar} from 'src/helpers/funcs';
+import {checkVar, truncateWords} from 'src/helpers/funcs';
 import lodash from 'lodash';
 import navigationTypes from 'navigationTypes';
+import {ItemListPlaceholder} from '../placeholders';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const DATA_FILTER = [
+  {
+    label: 'Tất cả',
+    value: '',
+  },
   {
     label: 'Đã chặn',
     value: 0,
@@ -49,7 +55,7 @@ const Home = ({navigation}) => {
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
   const [day, onDay] = useState('');
   const [month, onMonth] = useState('');
-  const [selected, onSelected] = useState(0);
+  const [selected, onSelected] = useState('');
   const [selectedDevice, onSelectedDevice] = useState(null);
   const [cateActive, setCateActive] = useState(types.type.website.code);
   const [pieChartActive, setPieChartActive] = useState(0);
@@ -161,7 +167,7 @@ const Home = ({navigation}) => {
         parseInt(data?.total_block) + parseInt(data?.total_allow);
       tmpDataList.push({
         // device: types.type.website.code,
-        value: Math.ceil((data?.total_block / percentOfTotal) * 100),
+        value: Math.round((data?.total_block / percentOfTotal) * 100),
         color: colors.COLOR_CHART_YELLOW,
         label: types.status.block.name,
         code: types.status.block.code,
@@ -169,7 +175,7 @@ const Home = ({navigation}) => {
       });
       tmpDataList.push({
         // device: types.type.website.code,
-        value: Math.ceil((data?.total_allow / percentOfTotal) * 100),
+        value: Math.round((data?.total_allow / percentOfTotal) * 100),
         color: colors.COLOR_CHART_BLUE,
         label: types.status.allow.name,
         code: types.status.allow.code,
@@ -289,7 +295,7 @@ const Home = ({navigation}) => {
                 )}
               </View>
               <Text style={styles.titleShield}>
-                {selectedDevice?.full_name}
+                {truncateWords(selectedDevice?.full_name, 2, '...')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -430,14 +436,32 @@ const Home = ({navigation}) => {
               <Image style={styles.iconFilter} source={images.icons.filter} />
             </TouchableOpacity>
           </View>
-          {/* <FlatList
-          style={styles.flatList}
-          data={DATA}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => <Item item={item} />}
-        /> */}
           {status === 'loading' ? (
-            <LoadingData />
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={onRefresh}
+                  tintColor={colors.COLOR_WHITE}
+                />
+              }
+              style={styles.placeholderContainer}>
+              <View style={styles.wrapItemPlaceholder}>
+                <ItemListPlaceholder />
+              </View>
+              <View style={styles.wrapItemPlaceholder}>
+                <ItemListPlaceholder />
+              </View>
+              <View style={styles.wrapItemPlaceholder}>
+                <ItemListPlaceholder />
+              </View>
+              <View style={styles.wrapItemPlaceholder}>
+                <ItemListPlaceholder />
+              </View>
+              <View style={styles.wrapItemPlaceholder}>
+                <ItemListPlaceholder />
+              </View>
+            </ScrollView>
           ) : status === 'success' && !checkVar.isEmpty(data?.pages) ? (
             <FlatList
               ListFooterComponent={

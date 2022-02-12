@@ -15,6 +15,7 @@ import {useQueryClient, useQuery, useMutation} from 'react-query';
 import keyTypes from 'keyTypes';
 import {deviceInfoApi, removeDeviceApi} from 'methods/device';
 import {Toast} from 'customs';
+import {ModalSetupAccess} from '../components';
 
 export type Props = {
   route?: any;
@@ -27,8 +28,10 @@ const ChildrenInfo: React.FC<Props> = ({route}) => {
   const queryClient = useQueryClient();
 
   const [visibleRemoveDevice, setVisibleRemoveDevice] = useState(false);
+  const [visibleSetup, setVisibleSetup] = useState(false);
+  const [active, setActive] = useState(false);
 
-  const {data} = useQuery(
+  const {data, refetch} = useQuery(
     keyTypes.DEVICE_INFO + '_' + device_id,
     () => deviceInfoApi(device_id),
     {
@@ -47,6 +50,12 @@ const ChildrenInfo: React.FC<Props> = ({route}) => {
     });
   };
 
+  const handleRedirectApplicationControl = () => {
+    RootNavigation.navigate(navigationTypes.applicationControl.screen, {
+      device_id: device_id,
+    });
+  };
+
   const handleRedirectReport = () => {
     RootNavigation.navigate(navigationTypes.report.screen, {
       device_id: device_id,
@@ -57,6 +66,7 @@ const ChildrenInfo: React.FC<Props> = ({route}) => {
     await queryClient.removeQueries(keyTypes.DEVICE_INFO + '_' + device_id, {
       exact: true,
     });
+    await refetch();
   };
 
   const handleRemoveDevice = () => {
@@ -80,9 +90,18 @@ const ChildrenInfo: React.FC<Props> = ({route}) => {
       });
   };
 
+  const handleSetupAccess = () => {};
+
   return (
     <Background bout>
       <Loading isLoading={mutationRemoveDevice.isLoading} />
+      <ModalSetupAccess
+        visible={visibleSetup}
+        onPressClose={() => setVisibleSetup(false)}
+        onPressSubmit={handleSetupAccess}
+        isActive={!active}
+        onPressActive={() => setActive(!active)}
+      />
       <PopupConfirm
         content="Bạn có chắc chắn muốn ngắt kết nối không?"
         visible={visibleRemoveDevice}
@@ -118,21 +137,33 @@ const ChildrenInfo: React.FC<Props> = ({route}) => {
             </Text>
           </View>
         </View>
-        <TouchableHighlight
-          onPress={() => setVisibleRemoveDevice(true)}
-          underlayColor={colors.COLOR_UNDERLAY_BUTTON_PINK}
-          style={styles.btnCancel}>
-          <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
-        </TouchableHighlight>
+        <View style={styles.wrapBtn}>
+          <TouchableHighlight
+            onPress={() => setVisibleRemoveDevice(true)}
+            underlayColor={colors.COLOR_UNDERLAY_BUTTON_PINK}
+            style={styles.btnCancel}>
+            <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
+          </TouchableHighlight>
+          {/* <TouchableHighlight
+            onPress={() => {
+              setVisibleSetup(true);
+              setActive(false);
+            }}
+            underlayColor={colors.COLOR_UNDERLAY_BLUE}
+            style={styles.btnSetup}>
+            <Text style={styles.labelBtnSetup}>Thiết lập</Text>
+          </TouchableHighlight> */}
+        </View>
+
         <ButtonRedirect
           onPress={handleRedirectWebsiteControl}
-          label="Kiếm soát website"
+          label="Kiểm soát website"
         />
-        {/* <ButtonRedirect
+        <ButtonRedirect
           containerStyle={styles.btnRedirect}
-          onPress={() => console.log(111)}
+          onPress={handleRedirectApplicationControl}
           label="Kiếm soát ứng dụng"
-        /> */}
+        />
         <ButtonRedirect
           containerStyle={styles.btnRedirect}
           onPress={handleRedirectReport}

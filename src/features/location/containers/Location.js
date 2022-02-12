@@ -1,8 +1,8 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useEffect} from 'react';
 import {Text, Background} from 'base';
 import {View, TouchableOpacity, TouchableHighlight} from 'react-native';
 import styles from './styles';
-import {commonStyles, colors, sizes} from 'styles';
+import {commonStyles, colors} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
 import {InputSelectComponent, Loading, PopupConfirm} from 'components';
@@ -11,18 +11,19 @@ import {deviceListApi, deviceUpdateApi} from 'methods/device';
 import {useQuery, useMutation} from 'react-query';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import {Toast} from 'customs';
+import lodash from 'lodash';
+import {checkVar} from 'src/helpers/funcs';
 // import DropDownPicker from 'react-native-dropdown-picker';
-
-const region = {
-  latitude: 21.030653,
-  longitude: 105.84713,
-  latitudeDelta: 0.015,
-  longitudeDelta: 0.0121,
-};
 
 const Location = ({}) => {
   const [selectedDevice, setSelectedDevice] = useState('');
-  const [markers, serMarkers] = useState({});
+  const [refresh, setRefresh] = useState(false);
+  const [markers, serMarkers] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.0121,
+  });
   const [visibleConfirmDeviceBlock, setVisibleConfirmDeviceBlock] =
     useState(false);
 
@@ -33,6 +34,24 @@ const Location = ({}) => {
       keepPreviousData: true,
     },
   );
+
+  useEffect(() => {
+    if (selectedDevice && data?.data) {
+      let deviceInfo = lodash.find(data.data, {id: selectedDevice});
+      if (
+        deviceInfo &&
+        !checkVar.isEmpty(deviceInfo?.latitude) &&
+        !checkVar.isEmpty(deviceInfo?.longitude)
+      ) {
+        serMarkers({
+          latitude: parseFloat(deviceInfo.latitude),
+          longitude: parseFloat(deviceInfo.longitude),
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121,
+        });
+      }
+    }
+  }, [selectedDevice, data, refresh]);
 
   const mutationDeviceLock = useMutation(
     ({
@@ -72,11 +91,11 @@ const Location = ({}) => {
   };
 
   const handleDeviceLock = () => {
-    setVisibleConfirmDeviceBlock(false);
     if (!selectedDevice) {
       Toast('Vui lòng chọn thiết bị');
       return;
     }
+    setVisibleConfirmDeviceBlock(false);
 
     mutationDeviceLock
       .mutateAsync({
@@ -103,9 +122,15 @@ const Location = ({}) => {
   return (
     <Background bottomTab bout>
       <Loading isLoading={mutationDeviceLock.isLoading} />
+      {/* <PopupAlertDeviceLock
+        visible={true}
+        content="Bạn có chắc chắn muốn khoá thiết bị này không"
+        onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
+        onPressAgree={handleDeviceLock}
+      /> */}
       <PopupConfirm
         visible={visibleConfirmDeviceBlock}
-        content="Bạn có chắc chắn muốn khoá thiết bị này không"
+        content="Bạn có chắc chắn muốn khoá thiết bị này không?"
         onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
         onPressAgree={handleDeviceLock}
       />
@@ -128,7 +153,7 @@ const Location = ({}) => {
           </Text>
           <TouchableOpacity
             activeOpacity={0.9}
-            onPress={() => console.log(1111)}>
+            onPress={() => setRefresh(!refresh)}>
             <FastImage
               source={images.icons.refresh}
               style={styles.iconRefresh}
@@ -161,15 +186,12 @@ const Location = ({}) => {
           <MapView
             provider={PROVIDER_GOOGLE}
             style={styles.map}
-            region={region}
+            region={markers}
             onPress={handleMaker}>
             <Marker
-              // image={{
-              //   uri: 'https://raw.githubusercontent.com/react-native-maps/react-native-maps/master/example/examples/assets/flag-pink.png',
-              // }}
               image={images.icons.bt_location}
               pinColor={colors.COLOR_RED_ORANGE}
-              coordinate={region}
+              coordinate={markers}
               tappable={false}
             />
           </MapView>

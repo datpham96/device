@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 # source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '11.0'
 
-target 'DeviceManager' do
+target 'SafeZone' do
   config = use_native_modules!
   rn_maps_path = '../node_modules/react-native-maps'
   pod 'react-native-google-maps', :path => rn_maps_path
@@ -20,7 +20,7 @@ target 'DeviceManager' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  target 'DeviceManagerTests' do
+  target 'SafeZoneTests' do
     inherit! :complete
     # Pods for testing
   end

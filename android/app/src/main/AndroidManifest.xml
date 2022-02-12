@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="vn.masscom.devicemanager">
+  package="vn.masscom.safezone">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE"/>
@@ -20,6 +20,7 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustPan"
+        android:screenOrientation="portrait"
         >
         <!-- android:windowSoftInputMode="adjustResize" -->
         <intent-filter>
@@ -29,7 +30,7 @@
       </activity>
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyA3XYtRDMW3npPj47G-kDWDJFVNpM9wVyg"/>
+        android:value="AIzaSyB5yQcadhAvM58X9C-3YrzyKtJGo5YyOeo"/>
 
       <!-- You will also only need to add this uses-library tag -->
       <!-- <uses-library android:name="org.apache.http.legacy" android:required="false"/> -->

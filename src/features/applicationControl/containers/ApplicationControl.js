@@ -9,7 +9,6 @@ import FastImage from 'react-native-fast-image';
 import {
   EmptyData,
   LoadingData,
-  ModalBlockAccess,
   Loading,
   ModalTimeBlockAccess,
   PopupConfirm,
@@ -17,12 +16,13 @@ import {
 import * as RootNavigation from 'RootNavigation';
 import {useQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
-import {webListApi, webUpdateApi} from 'src/api/methods/web';
+import {
+  applicationListApi,
+  applicationUpdateApi,
+} from 'src/api/methods/application';
 import {checkVar} from 'src/helpers/funcs';
-import {webCreateApi} from 'src/api/methods/web';
 import {useMutation} from 'react-query';
 import {Toast} from 'customs';
-import Validator from 'validatorjs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 
@@ -37,15 +37,13 @@ const MINUTE_60 = 60;
 const ZERO = 0;
 const ONE = 1;
 
-const WebsiteControl = ({route}) => {
+const ApplicationControl = ({route}) => {
   const params = route?.params;
   const typingTimoutRef = useRef(null);
   const queryClient = useQueryClient();
-  const [visibleModal, setVisibleModal] = useState(false);
   const [visibleTimeBlockAccessModal, setVisibleTimeBlockAccessModal] =
     useState(false);
   const [activeRadio, setActiveRadio] = useState(false);
-  const [url, setUrl] = useState('');
   const [textSearch, setTextSearch] = useState('');
   const [debounceTextSearch, setDebounceTextSearch] = useState(false);
   const [hours, setHours] = useState(HOURS_DEFAULT);
@@ -55,12 +53,10 @@ const WebsiteControl = ({route}) => {
   const [visiblePopupConfirmRemoveTime, setVisiblePopupConfirmRemoveTime] =
     useState(false);
 
-  const [errors, setErrors] = useState({});
-
-  //website list
+  //application list
   const {data, isLoading, isSuccess, refetch} = useQuery(
-    keyTypes.WEB_LIST + '_' + params?.device_id,
-    () => webListApi(params?.device_id),
+    keyTypes.APPLICATION_LIST + '_' + params?.device_id,
+    () => applicationListApi(params?.device_id),
     {
       keepPreviousData: true,
     },
@@ -86,21 +82,19 @@ const WebsiteControl = ({route}) => {
     }
   }, [minutes, hours]);
 
-  //website create
-  const mutationCreate = useMutation(
-    ({data_url, data_status, data_time_remaining, data_device_id}) =>
-      webCreateApi(data_url, data_status, data_time_remaining, data_device_id),
-  );
-
-  //website update
+  //application update
   const mutationUpdate = useMutation(
-    ({data_web_id, data_status, data_time_remaining}) =>
-      webUpdateApi(data_web_id, data_status, data_time_remaining),
+    ({data_application_id, data_status, data_time_remaining}) =>
+      applicationUpdateApi(
+        data_application_id,
+        data_status,
+        data_time_remaining,
+      ),
   );
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
-      keyTypes.WEB_LIST + '_' + params?.device_id,
+      keyTypes.APPLICATION_LIST + '_' + params?.device_id,
       {
         exact: true,
       },
@@ -108,65 +102,16 @@ const WebsiteControl = ({route}) => {
     await refetch();
   };
 
-  const handleWebCreate = () => {
-    // eslint-disable-next-line radix
-    let tmpMinutes = parseInt(hours) * MINUTE_60 + parseInt(minutes);
-    let validation = new Validator(
-      {
-        url: url,
-      },
-      {
-        url: 'required|domain',
-      },
-      {
-        'required.url': 'url không được bỏ trống',
-      },
-    );
-    if (validation.fails()) {
-      setErrors({...errors, url: validation.errors.first('url')});
-      return;
-    }
-
-    if (validation.passes()) {
-      setErrors({...errors, url: validation.errors.first('url')});
-      setVisibleModal(false);
-    }
-
-    mutationCreate
-      .mutateAsync({
-        data_url: url,
-        data_status: activeRadio ? ONE : ZERO,
-        data_time_remaining: activeRadio ? tmpMinutes : ZERO,
-        data_device_id: params?.device_id,
-      })
-      .then(resp => {
-        if (resp?.status) {
-          refetch();
-          resetState();
-          Toast(resp?.msg);
-        } else {
-          Toast(resp?.msg);
-        }
-        mutationCreate.reset();
-      })
-      .catch(err => {
-        Toast(err?.msg);
-        mutationCreate.reset();
-      });
-  };
-
-  const websiteList = useMemo(() => {
+  const applicationList = useMemo(() => {
     let tmpList = [];
     if (textSearch === '') {
       tmpList = [];
     }
     if (isSuccess) {
-      let listWebsite = data?.data;
+      let listApplication = data?.data;
       const regex = new RegExp(`${textSearch.trim()}`, 'i');
-      tmpList = listWebsite
-        .filter(
-          obj => obj.name.search(regex) >= 0 || obj.url.search(regex) >= 0,
-        )
+      tmpList = listApplication
+        .filter(obj => obj.name.search(regex) >= 0)
         .slice(0, 20);
     }
     return tmpList;
@@ -186,8 +131,6 @@ const WebsiteControl = ({route}) => {
 
   const resetState = () => {
     setActiveRadio(false);
-    setErrors({});
-    setUrl('');
     setHours(HOURS_DEFAULT);
     setMinutes(MINUTE_DEFAULT);
     setItemBlockAccess({});
@@ -221,12 +164,12 @@ const WebsiteControl = ({route}) => {
   };
 
   const handleTimeBlockAccess = () => {
-    setVisibleTimeBlockAccessModal(false);
     // eslint-disable-next-line radix
+    setVisibleTimeBlockAccessModal(false);
     let tmpMinutes = parseInt(hours) * MINUTE_60 + parseInt(minutes);
     mutationUpdate
       .mutateAsync({
-        data_web_id: itemBlockAccess?.id,
+        data_application_id: itemBlockAccess?.id,
         data_status: activeRadio ? ONE : ZERO,
         data_time_remaining: activeRadio ? tmpMinutes : ZERO,
       })
@@ -250,7 +193,7 @@ const WebsiteControl = ({route}) => {
     setVisiblePopupConfirmRemoveTime(false);
     mutationUpdate
       .mutateAsync({
-        data_web_id: itemRemoveTime?.id,
+        data_application_id: itemRemoveTime?.id,
         data_status: ONE,
         data_time_remaining: ZERO,
       })
@@ -271,9 +214,7 @@ const WebsiteControl = ({route}) => {
 
   return (
     <Background bout>
-      <Loading
-        isLoading={mutationCreate.isLoading || mutationUpdate.isLoading}
-      />
+      <Loading isLoading={mutationUpdate.isLoading} />
       <PopupConfirm
         content="Bạn có muốn gỡ thời gian chặn này không?"
         visible={visiblePopupConfirmRemoveTime}
@@ -296,6 +237,8 @@ const WebsiteControl = ({route}) => {
             setMinutes('');
           }
         }}
+        isWebsite={false}
+        title="Chặn truy cập ứng dụng"
         onPressClose={() => {
           setVisibleTimeBlockAccessModal(false);
           resetState();
@@ -312,39 +255,6 @@ const WebsiteControl = ({route}) => {
         onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
         onChangeTextMinutes={val => setMinutes(val.replace(/[^0-9]/g, ZERO))}
         onPressSubmit={() => handleTimeBlockAccess()}
-      />
-      <ModalBlockAccess
-        onFocusHour={() => {
-          // eslint-disable-next-line radix
-          if (hours.length === 2 && parseInt(hours) === 0) {
-            setHours('');
-          }
-        }}
-        onFocusMinute={() => {
-          // eslint-disable-next-line radix
-          if (minutes.length === 2 && parseInt(minutes) === 0) {
-            setMinutes('');
-          }
-        }}
-        onPressClose={() => {
-          setVisibleModal(false);
-          resetState();
-        }}
-        visible={visibleModal}
-        isActive={activeRadio}
-        onPressActive={() => {
-          setActiveRadio(!activeRadio);
-          setHours(HOURS_DEFAULT);
-          setMinutes(MINUTE_DEFAULT);
-        }}
-        value={url}
-        onChangeValue={text => setUrl(text)}
-        onPressSubmit={() => handleWebCreate()}
-        valueHours={hours}
-        valueMinutes={minutes}
-        onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
-        onChangeTextMinutes={val => setMinutes(val.replace(/[^0-9]/g, ZERO))}
-        errors={errors}
       />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -363,7 +273,7 @@ const WebsiteControl = ({route}) => {
               icon={images.icons.input_search}
             />
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => setVisibleModal(!visibleModal)}>
             <FastImage
@@ -371,23 +281,23 @@ const WebsiteControl = ({route}) => {
               source={images.icons.header_plus}
               resizeMode={FastImage.resizeMode.contain}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
-          Kiểm soát Website
+          Kiểm soát Ứng dụng
         </Text>
         <View style={styles.wrapTableHeader}>
-          <Text style={styles.headerTableTitleOne}>Trang website</Text>
+          <Text style={styles.headerTableTitleOne}>Ứng dụng</Text>
           <Text style={styles.headerTableTitleTwo}>Sử dụng</Text>
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (
           <LoadingData />
-        ) : isSuccess && !checkVar.isEmpty(websiteList) ? (
+        ) : isSuccess && !checkVar.isEmpty(applicationList) ? (
           <FlatList
             style={styles.flatList}
             contentContainerStyle={styles.contentContainerFlatlist}
-            data={websiteList}
+            data={applicationList}
             keyExtractor={item => item.id.toString() + item.status}
             refreshControl={
               <RefreshControl
@@ -412,4 +322,4 @@ const WebsiteControl = ({route}) => {
   );
 };
 
-export default WebsiteControl;
+export default ApplicationControl;

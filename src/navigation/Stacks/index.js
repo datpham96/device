@@ -16,6 +16,7 @@ import {
   DeviceInfoScreen,
   ReportScreen,
   Error401Screen,
+  ApplicationControlScreen,
 } from '../../features';
 import navigationTypes from '../types';
 import BottomTabs from '../BottomTabs';
@@ -44,6 +45,11 @@ const RootStack = () => {
           <RootNavStack.Screen
             name={navigationTypes.websiteControl.screen}
             component={WebsiteControlScreen}
+            options={screenOptions}
+          />
+          <RootNavStack.Screen
+            name={navigationTypes.applicationControl.screen}
+            component={ApplicationControlScreen}
             options={screenOptions}
           />
           <RootNavStack.Screen

@@ -37,14 +37,14 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
-  [GMSServices provideAPIKey:@"AIzaSyD2n5uNQWXJTUMzao3b8EQe197fOtzKoYw"]; // add this line using the api key obtained from Google Console
+  [GMSServices provideAPIKey:@"AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU"]; // add this line using the api key obtained from Google Console
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   //fix warning (RCTBridge required dispatch_sync to load)
 //  #if RCT_DEV
 //    [bridge moduleForClass:[RCTDevLoadingView class]];
 //  #endif
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"DeviceManager"
+                                                   moduleName:@"SafeZone"
                                             initialProperties:nil];
 
   if (@available(iOS 13.0, *)) {

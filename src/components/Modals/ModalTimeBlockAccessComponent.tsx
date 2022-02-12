@@ -23,6 +23,10 @@ export type Props = {
   valueHours?: any;
   onChangeTextMinutes?: any;
   valueMinutes?: any;
+  title?: any;
+  isWebsite?: any;
+  onFocusHour?: any;
+  onFocusMinute?: any;
 };
 
 const ModalBlockAccess: React.FC<Props> = ({
@@ -35,6 +39,10 @@ const ModalBlockAccess: React.FC<Props> = ({
   valueHours,
   onChangeTextMinutes,
   valueMinutes,
+  title = 'Chặn truy cập website',
+  isWebsite = true,
+  onFocusHour,
+  onFocusMinute,
 }) => {
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
@@ -45,7 +53,7 @@ const ModalBlockAccess: React.FC<Props> = ({
             <FastImage style={styles.iconClose} source={images.icons.close} />
           </TouchableOpacity>
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            Chặn truy cập website
+            {title}
           </Text>
 
           <View style={styles.wrapInputTimes}>
@@ -64,6 +72,7 @@ const ModalBlockAccess: React.FC<Props> = ({
               ]}
               maxLength={2}
               keyboardType="number-pad"
+              onFocus={onFocusHour}
             />
             <Text
               style={[
@@ -87,6 +96,7 @@ const ModalBlockAccess: React.FC<Props> = ({
               ]}
               maxLength={2}
               keyboardType="number-pad"
+              onFocus={onFocusMinute}
             />
           </View>
           <View style={styles.wrapRadio}>
@@ -100,7 +110,7 @@ const ModalBlockAccess: React.FC<Props> = ({
             <TouchableOpacity activeOpacity={0.9} onPress={onPressActive}>
               <Radio
                 active={!isActive ? true : false}
-                label="Chặn website"
+                label={'Chặn ' + (isWebsite ? 'website' : 'ứng dụng')}
                 containerStyle={styles.radioTwo}
               />
             </TouchableOpacity>

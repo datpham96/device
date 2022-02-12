@@ -3,7 +3,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Text, Background, ButtonBack, Loading as BaseLoading} from 'base';
 import {View, FlatList, RefreshControl} from 'react-native';
 import styles from './styles';
-import {colors, commonStyles, sizes} from 'styles';
+import {colors, commonStyles, fonts, sizes} from 'styles';
 import images from 'images';
 import {ItemComponent} from '../components';
 import FastImage from 'react-native-fast-image';
@@ -25,6 +25,7 @@ const Report = ({route}) => {
   const dateTimeRef = useRef(null);
   const queryClient = useQueryClient();
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
+  const [activeTab, setActiveTab] = useState(0);
 
   const {
     data,
@@ -113,7 +114,38 @@ const Report = ({route}) => {
           </TouchableHighlight>
         </View>
         <View style={styles.wrapTableHeader}>
-          <Text style={styles.headerTableTitleOne}>Trang website</Text>
+          <View style={styles.wrapTabsHeader}>
+            <View style={styles.leftDash} />
+            <View style={styles.containerTab}>
+              <Text
+                onPress={() => setActiveTab(0)}
+                style={[
+                  styles.headerTableTitleOne,
+                  {
+                    fontFamily:
+                      activeTab === 0
+                        ? fonts.lexendDeca.FONT_BOLD
+                        : fonts.lexendDeca.FONT_REGULAR,
+                  },
+                ]}>
+                Website
+              </Text>
+              {/* <View style={styles.spaceTab} />
+              <Text
+                onPress={() => setActiveTab(1)}
+                style={[
+                  styles.headerTableTitleOne,
+                  {
+                    fontFamily:
+                      activeTab === 1
+                        ? fonts.lexendDeca.FONT_BOLD
+                        : fonts.lexendDeca.FONT_REGULAR,
+                  },
+                ]}>
+                Ứng dụng
+              </Text> */}
+            </View>
+          </View>
           <Text style={styles.headerTableTitleThree}>Thời gian truy cập</Text>
         </View>
         {status === 'loading' ? (

@@ -51,6 +51,10 @@ const types = {
     screen: 'websiteControl',
     name: 'Kiểm soát',
   },
+  applicationControl: {
+    screen: 'applicationControl',
+    name: 'Kiểm soát ứng dụng',
+  },
   location: {
     screen: 'location',
     name: 'Định vị',

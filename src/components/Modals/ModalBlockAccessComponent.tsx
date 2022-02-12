@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {Input, Radio, Text} from 'base';
 import {
   View,
@@ -28,9 +28,15 @@ export type Props = {
   onChangeTextMinutes?: any;
   valueMinutes?: any;
   errors?: any;
+  title?: any;
+  isWebsite?: any;
+  onFocusHour?: any;
+  onFocusMinute?: any;
 };
 
 const ModalBlockAccess: React.FC<Props> = ({
+  title = 'Chặn truy cập website',
+  isWebsite = true,
   visible = false,
   onPressClose,
   isActive,
@@ -43,6 +49,8 @@ const ModalBlockAccess: React.FC<Props> = ({
   onChangeTextMinutes,
   valueMinutes,
   errors,
+  onFocusHour,
+  onFocusMinute,
 }) => {
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
@@ -57,7 +65,7 @@ const ModalBlockAccess: React.FC<Props> = ({
               <FastImage style={styles.iconClose} source={images.icons.close} />
             </TouchableOpacity>
             <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-              Chặn truy cập website
+              {title}
             </Text>
             <View style={styles.wrapInput}>
               <Input
@@ -83,13 +91,14 @@ const ModalBlockAccess: React.FC<Props> = ({
               <TouchableOpacity activeOpacity={0.9} onPress={onPressActive}>
                 <Radio
                   active={!isActive ? true : false}
-                  label="Chặn website"
+                  label={'Chặn ' + (isWebsite ? 'website' : 'ứng dụng')}
                   containerStyle={styles.radioTwo}
                 />
               </TouchableOpacity>
             </View>
             <View style={styles.wrapInputTimes}>
               <TextInput
+                onFocus={onFocusHour}
                 editable={isActive}
                 onChangeText={onChangeTextHours}
                 value={valueHours}
@@ -117,6 +126,7 @@ const ModalBlockAccess: React.FC<Props> = ({
                 :
               </Text>
               <TextInput
+                onFocus={onFocusMinute}
                 editable={isActive}
                 onChangeText={onChangeTextMinutes}
                 value={valueMinutes}
@@ -138,7 +148,7 @@ const ModalBlockAccess: React.FC<Props> = ({
               activeOpacity={0.9}
               style={styles.btn}
               onPress={onPressSubmit}>
-              <Text style={styles.btnLabel}>Chặn trang</Text>
+              <Text style={styles.btnLabel}>Lưu</Text>
             </TouchableHighlight>
           </View>
         </View>

@@ -58,10 +58,12 @@ const InputSelectComponent: React.FC<Props> = ({
         inputAndroid: {
           color: colors.COLOR_BLACK,
           paddingHorizontal: sizes.SIZE_27,
+          // backgroundColor: 'red',
         },
         inputAndroidContainer: {
-          borderRadius: sizes.SIZE_30,
-          backgroundColor: colors.COLOR_WHITE,
+          // width: 200,
+          // borderRadius: sizes.SIZE_30,
+          // backgroundColor: colors.COLOR_WHITE,
         },
         placeholder: {
           color: colors.COLOR_PLACEHOLDER,
@@ -72,13 +74,13 @@ const InputSelectComponent: React.FC<Props> = ({
           alignItems: 'center',
           justifyContent: 'center',
           height: metrics.heightInput,
-          marginRight: sizes.SIZE_10,
+          marginRight: sizes.SIZE_15,
         },
         viewContainer: {
           ...Platform.select({
             android: {
               backgroundColor: colors.COLOR_WHITE,
-              paddingHorizontal: sizes.SIZE_10,
+              // paddingHorizontal: sizes.SIZE_10,
               borderRadius: sizes.SIZE_30,
               height: metrics.heightInput,
               justifyContent: 'center',

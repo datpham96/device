@@ -1,4 +1,4 @@
-package vn.masscom.devicemanager;
+package vn.masscom.safezone;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "DeviceManager";
+    return "SafeZone";
   }
   
   @Override

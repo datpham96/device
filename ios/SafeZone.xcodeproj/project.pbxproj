@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* DeviceManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* DeviceManagerTests.m */; };
+		00E356F31AD99517003FC87E /* SafeZoneTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* SafeZoneTests.m */; };
 		0E94FCA87EA0426D9CB9D8E9 /* Montserrat-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 187B9F43C88B4511B5A5F835 /* Montserrat-SemiBoldItalic.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -26,14 +26,12 @@
 		6D4A7CBAD9D34963B42AB25A /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 25484A6FC2B5468680DA899A /* Montserrat-Italic.ttf */; };
 		75D8F93BA1ED49F8A45C98A6 /* LexendDeca-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0EC74A15019B4FDE9294BABC /* LexendDeca-Thin.ttf */; };
 		768ED90319FC49A39E1CC236 /* LexendDeca-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FAC19DD55D448CC964B6C21 /* LexendDeca-ExtraLight.ttf */; };
-		780B266FE6D214D4184A4B77 /* libPods-DeviceManager-DeviceManagerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB0F8748B02C282400BD4BE /* libPods-DeviceManager-DeviceManagerTests.a */; };
 		7E405CB336424069B3A1B39E /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1DAADABB6574298B2BAD11C /* Montserrat-Light.ttf */; };
 		7F4F44F6089141DCA8F560BF /* Montserrat-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81CD8D966494445097439E7B /* Montserrat-ExtraBoldItalic.ttf */; };
 		8070C4DBD2354AAD8B31D0AF /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 28384720741C4B59814A3113 /* Montserrat-Thin.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8B534C82D89F4743B48D77D4 /* LexendDeca-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1BB830A0E9A745748FB7E5EA /* LexendDeca-ExtraBold.ttf */; };
 		A28187C40D2F4466AFE9BCB0 /* Montserrat-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5E63BFE6F7D54B318742C19A /* Montserrat-LightItalic.ttf */; };
-		A63056F295222462578C5EBC /* libPods-DeviceManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9B792DB3FD259AE6F5B972 /* libPods-DeviceManager.a */; };
 		B7155B76793A43D08477765A /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E096F1AD7F94BD89715F697 /* Montserrat-SemiBold.ttf */; };
 		B8351266D75641538793B5FE /* LexendDeca-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F3FBFDC15390479882D84EA9 /* LexendDeca-Bold.ttf */; };
 		BF0A04F2DE014543967BA1C4 /* Montserrat-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B316AF6D6CE84242B00625AC /* Montserrat-ThinItalic.ttf */; };
@@ -42,6 +40,8 @@
 		D82FDDF0267143FABB71F545 /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5D0EA3A10F34EB687D31075 /* Montserrat-ExtraBold.ttf */; };
 		DF0AD05EAF1F42D09E3EA965 /* LexendDeca-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6B4EA0C576584DE2929AC2A9 /* LexendDeca-Light.ttf */; };
 		E42AF630E96A4E27B22FEF9B /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3EE5A712ED9C40A2977046BF /* Montserrat-ExtraLightItalic.ttf */; };
+		EECDA0274B04F96BB206B697 /* libPods-SafeZone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E64215DF968BB239C332F24 /* libPods-SafeZone.a */; };
+		F267524496DA2F0160ADE52D /* libPods-SafeZone-SafeZoneTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C770F1EBE057419B6DA71A3 /* libPods-SafeZone-SafeZoneTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,29 +50,29 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = DeviceManager;
+			remoteInfo = SafeZone;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* DeviceManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* SafeZoneTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SafeZoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* DeviceManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceManagerTests.m; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* SafeZoneTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SafeZoneTests.m; sourceTree = "<group>"; };
 		06D8E59694FE4A01B122CFA6 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
+		0AD434D2C848DCBB5813240A /* Pods-SafeZone-SafeZoneTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SafeZone-SafeZoneTests.debug.xcconfig"; path = "Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests.debug.xcconfig"; sourceTree = "<group>"; };
 		0D7982D023D54855A84F1C14 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		0EC74A15019B4FDE9294BABC /* LexendDeca-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Thin.ttf"; path = "../src/assets/fonts/LexendDeca-Thin.ttf"; sourceTree = "<group>"; };
 		10DDBEFDAB784B4FA549B108 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* DeviceManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeviceManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = DeviceManager/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = DeviceManager/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DeviceManager/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DeviceManager/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = DeviceManager/main.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* SafeZone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeZone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = SafeZone/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = SafeZone/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SafeZone/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SafeZone/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SafeZone/main.m; sourceTree = "<group>"; };
 		187B9F43C88B4511B5A5F835 /* Montserrat-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-SemiBoldItalic.ttf"; path = "../src/assets/fonts/Montserrat-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		1B8E216BE2764015BD467322 /* LexendDeca-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-SemiBold.ttf"; path = "../src/assets/fonts/LexendDeca-SemiBold.ttf"; sourceTree = "<group>"; };
 		1BB830A0E9A745748FB7E5EA /* LexendDeca-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-ExtraBold.ttf"; path = "../src/assets/fonts/LexendDeca-ExtraBold.ttf"; sourceTree = "<group>"; };
 		25484A6FC2B5468680DA899A /* Montserrat-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Italic.ttf"; path = "../src/assets/fonts/Montserrat-Italic.ttf"; sourceTree = "<group>"; };
-		26DB8FC969F63D1DE489C4F6 /* Pods-DeviceManager-DeviceManagerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeviceManager-DeviceManagerTests.debug.xcconfig"; path = "Target Support Files/Pods-DeviceManager-DeviceManagerTests/Pods-DeviceManager-DeviceManagerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		28384720741C4B59814A3113 /* Montserrat-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Thin.ttf"; path = "../src/assets/fonts/Montserrat-Thin.ttf"; sourceTree = "<group>"; };
 		2A187D1EBD0742EFAA7A72B6 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		2B27211A99DD4B82B90AA692 /* Montserrat-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraLight.ttf"; path = "../src/assets/fonts/Montserrat-ExtraLight.ttf"; sourceTree = "<group>"; };
@@ -81,17 +81,19 @@
 		3A96EB91CC1B472D9E1D747A /* icomoon.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = icomoon.ttf; path = ../src/assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
 		3EE5A712ED9C40A2977046BF /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraLightItalic.ttf"; path = "../src/assets/fonts/Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		406DFE96E90D4682AFB9501F /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		4956E7A907AE1E915B1C2019 /* Pods-SafeZone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SafeZone.debug.xcconfig"; path = "Target Support Files/Pods-SafeZone/Pods-SafeZone.debug.xcconfig"; sourceTree = "<group>"; };
 		4B4A2AC2272F4BF9A51953E2 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		4C770F1EBE057419B6DA71A3 /* libPods-SafeZone-SafeZoneTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SafeZone-SafeZoneTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		57119B872F4174BE1E8AFCBA /* Pods-SafeZone-SafeZoneTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SafeZone-SafeZoneTests.release.xcconfig"; path = "Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests.release.xcconfig"; sourceTree = "<group>"; };
 		5B4848FEAB3442308242E80B /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		5D80BBE3D3E4659E127DAA56 /* Pods-SafeZone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SafeZone.release.xcconfig"; path = "Target Support Files/Pods-SafeZone/Pods-SafeZone.release.xcconfig"; sourceTree = "<group>"; };
 		5E63BFE6F7D54B318742C19A /* Montserrat-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-LightItalic.ttf"; path = "../src/assets/fonts/Montserrat-LightItalic.ttf"; sourceTree = "<group>"; };
 		6510DEAD90F44D9CA2CE49B2 /* Montserrat-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-BlackItalic.ttf"; path = "../src/assets/fonts/Montserrat-BlackItalic.ttf"; sourceTree = "<group>"; };
 		6B4EA0C576584DE2929AC2A9 /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Light.ttf"; path = "../src/assets/fonts/LexendDeca-Light.ttf"; sourceTree = "<group>"; };
-		6EB0F8748B02C282400BD4BE /* libPods-DeviceManager-DeviceManagerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DeviceManager-DeviceManagerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7A08F28EE672A0F116730B76 /* Pods-DeviceManager.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeviceManager.release.xcconfig"; path = "Target Support Files/Pods-DeviceManager/Pods-DeviceManager.release.xcconfig"; sourceTree = "<group>"; };
-		7D9B792DB3FD259AE6F5B972 /* libPods-DeviceManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DeviceManager.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E64215DF968BB239C332F24 /* libPods-SafeZone.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SafeZone.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FAC19DD55D448CC964B6C21 /* LexendDeca-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-ExtraLight.ttf"; path = "../src/assets/fonts/LexendDeca-ExtraLight.ttf"; sourceTree = "<group>"; };
 		812ABD8AD014425692BD9154 /* LexendDeca-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Regular.ttf"; path = "../src/assets/fonts/LexendDeca-Regular.ttf"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = DeviceManager/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SafeZone/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		81CD8D966494445097439E7B /* Montserrat-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/Montserrat-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		832AB503B5514E7FB658CEE9 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		8E096F1AD7F94BD89715F697 /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-SemiBold.ttf"; path = "../src/assets/fonts/Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -109,13 +111,11 @@
 		C633162857804B00A18CAB7A /* LexendDeca-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Black.ttf"; path = "../src/assets/fonts/LexendDeca-Black.ttf"; sourceTree = "<group>"; };
 		D3EE49A002EE471DB77BF9E1 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EE0178A0E1E65FF0DEAF0900 /* Pods-DeviceManager-DeviceManagerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeviceManager-DeviceManagerTests.release.xcconfig"; path = "Target Support Files/Pods-DeviceManager-DeviceManagerTests/Pods-DeviceManager-DeviceManagerTests.release.xcconfig"; sourceTree = "<group>"; };
 		F03A58B3547B4BC195DF9BE3 /* LexendDeca-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Medium.ttf"; path = "../src/assets/fonts/LexendDeca-Medium.ttf"; sourceTree = "<group>"; };
 		F14C42EF814C4780BC1D3B72 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Medium.ttf"; path = "../src/assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
 		F1DAADABB6574298B2BAD11C /* Montserrat-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Light.ttf"; path = "../src/assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		F3FBFDC15390479882D84EA9 /* LexendDeca-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Bold.ttf"; path = "../src/assets/fonts/LexendDeca-Bold.ttf"; sourceTree = "<group>"; };
 		F5FD321EFCB04A10BAF15C08 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
-		FD3D19434C420DCE2C939F2C /* Pods-DeviceManager.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeviceManager.debug.xcconfig"; path = "Target Support Files/Pods-DeviceManager/Pods-DeviceManager.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,7 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				780B266FE6D214D4184A4B77 /* libPods-DeviceManager-DeviceManagerTests.a in Frameworks */,
+				F267524496DA2F0160ADE52D /* libPods-SafeZone-SafeZoneTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,20 +131,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A63056F295222462578C5EBC /* libPods-DeviceManager.a in Frameworks */,
+				EECDA0274B04F96BB206B697 /* libPods-SafeZone.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* DeviceManagerTests */ = {
+		00E356EF1AD99517003FC87E /* SafeZoneTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* DeviceManagerTests.m */,
+				00E356F21AD99517003FC87E /* SafeZoneTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = DeviceManagerTests;
+			path = SafeZoneTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -155,7 +155,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* DeviceManager */ = {
+		13B07FAE1A68108700A75B9A /* SafeZone */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -165,15 +165,15 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = DeviceManager;
+			name = SafeZone;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				7D9B792DB3FD259AE6F5B972 /* libPods-DeviceManager.a */,
-				6EB0F8748B02C282400BD4BE /* libPods-DeviceManager-DeviceManagerTests.a */,
+				6E64215DF968BB239C332F24 /* libPods-SafeZone.a */,
+				4C770F1EBE057419B6DA71A3 /* libPods-SafeZone-SafeZoneTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -232,10 +232,10 @@
 		68C6F2DE07E2B98C6F978558 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				FD3D19434C420DCE2C939F2C /* Pods-DeviceManager.debug.xcconfig */,
-				7A08F28EE672A0F116730B76 /* Pods-DeviceManager.release.xcconfig */,
-				26DB8FC969F63D1DE489C4F6 /* Pods-DeviceManager-DeviceManagerTests.debug.xcconfig */,
-				EE0178A0E1E65FF0DEAF0900 /* Pods-DeviceManager-DeviceManagerTests.release.xcconfig */,
+				4956E7A907AE1E915B1C2019 /* Pods-SafeZone.debug.xcconfig */,
+				5D80BBE3D3E4659E127DAA56 /* Pods-SafeZone.release.xcconfig */,
+				0AD434D2C848DCBB5813240A /* Pods-SafeZone-SafeZoneTests.debug.xcconfig */,
+				57119B872F4174BE1E8AFCBA /* Pods-SafeZone-SafeZoneTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -250,9 +250,9 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* DeviceManager */,
+				13B07FAE1A68108700A75B9A /* SafeZone */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* DeviceManagerTests */,
+				00E356EF1AD99517003FC87E /* SafeZoneTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				68C6F2DE07E2B98C6F978558 /* Pods */,
@@ -266,8 +266,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* DeviceManager.app */,
-				00E356EE1AD99517003FC87E /* DeviceManagerTests.xctest */,
+				13B07F961A680F5B00A75B9A /* SafeZone.app */,
+				00E356EE1AD99517003FC87E /* SafeZoneTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -275,45 +275,45 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* DeviceManagerTests */ = {
+		00E356ED1AD99517003FC87E /* SafeZoneTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "DeviceManagerTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SafeZoneTests" */;
 			buildPhases = (
-				CED04B906FF1A72CBED81CD5 /* [CP] Check Pods Manifest.lock */,
+				4DDD238B918BF53C93BE8B80 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				05C39B6E8E314AC0EF0E8CDF /* [CP] Copy Pods Resources */,
+				1FB2F1E320C2DBD74F6419C9 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = DeviceManagerTests;
-			productName = DeviceManagerTests;
-			productReference = 00E356EE1AD99517003FC87E /* DeviceManagerTests.xctest */;
+			name = SafeZoneTests;
+			productName = SafeZoneTests;
+			productReference = 00E356EE1AD99517003FC87E /* SafeZoneTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* DeviceManager */ = {
+		13B07F861A680F5B00A75B9A /* SafeZone */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DeviceManager" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SafeZone" */;
 			buildPhases = (
-				E52B34E2E5157A36DA01DFEE /* [CP] Check Pods Manifest.lock */,
+				0A0EDC78D1B1C3AE42A25B2A /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				6AF487428F20C93217DA53EE /* [CP] Copy Pods Resources */,
+				90BCEAE2C5DA11A2A152B059 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = DeviceManager;
-			productName = DeviceManager;
-			productReference = 13B07F961A680F5B00A75B9A /* DeviceManager.app */;
+			name = SafeZone;
+			productName = SafeZone;
+			productReference = 13B07F961A680F5B00A75B9A /* SafeZone.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -333,7 +333,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "DeviceManager" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SafeZone" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -346,8 +346,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* DeviceManager */,
-				00E356ED1AD99517003FC87E /* DeviceManagerTests */,
+				13B07F861A680F5B00A75B9A /* SafeZone */,
+				00E356ED1AD99517003FC87E /* SafeZoneTests */,
 			);
 		};
 /* End PBXProject section */
@@ -414,41 +414,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		05C39B6E8E314AC0EF0E8CDF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeviceManager-DeviceManagerTests/Pods-DeviceManager-DeviceManagerTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeviceManager-DeviceManagerTests/Pods-DeviceManager-DeviceManagerTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DeviceManager-DeviceManagerTests/Pods-DeviceManager-DeviceManagerTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6AF487428F20C93217DA53EE /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeviceManager/Pods-DeviceManager-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DeviceManager/Pods-DeviceManager-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DeviceManager/Pods-DeviceManager-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		CED04B906FF1A72CBED81CD5 /* [CP] Check Pods Manifest.lock */ = {
+		0A0EDC78D1B1C3AE42A25B2A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -463,14 +429,31 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-DeviceManager-DeviceManagerTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SafeZone-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E52B34E2E5157A36DA01DFEE /* [CP] Check Pods Manifest.lock */ = {
+		1FB2F1E320C2DBD74F6419C9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4DDD238B918BF53C93BE8B80 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -485,11 +468,28 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-DeviceManager-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-SafeZone-SafeZoneTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		90BCEAE2C5DA11A2A152B059 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -518,7 +518,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* DeviceManagerTests.m in Sources */,
+				00E356F31AD99517003FC87E /* SafeZoneTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,7 +536,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* DeviceManager */;
+			target = 13B07F861A680F5B00A75B9A /* SafeZone */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -544,7 +544,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 26DB8FC969F63D1DE489C4F6 /* Pods-DeviceManager-DeviceManagerTests.debug.xcconfig */;
+			baseConfigurationReference = 0AD434D2C848DCBB5813240A /* Pods-SafeZone-SafeZoneTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 8K65KKA338;
@@ -552,7 +552,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = DeviceManagerTests/Info.plist;
+				INFOPLIST_FILE = SafeZoneTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -566,18 +566,18 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeviceManager.app/DeviceManager";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SafeZone.app/SafeZone";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE0178A0E1E65FF0DEAF0900 /* Pods-DeviceManager-DeviceManagerTests.release.xcconfig */;
+			baseConfigurationReference = 57119B872F4174BE1E8AFCBA /* Pods-SafeZone-SafeZoneTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 8K65KKA338;
-				INFOPLIST_FILE = DeviceManagerTests/Info.plist;
+				INFOPLIST_FILE = SafeZoneTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -591,31 +591,35 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeviceManager.app/DeviceManager";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SafeZone.app/SafeZone";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FD3D19434C420DCE2C939F2C /* Pods-DeviceManager.debug.xcconfig */;
+			baseConfigurationReference = 4956E7A907AE1E915B1C2019 /* Pods-SafeZone.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 8K65KKA338;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = DeviceManager/Info.plist;
+				INFOPLIST_FILE = SafeZone/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.masscom.deviceManager;
-				PRODUCT_NAME = DeviceManager;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.masscom.safezone;
+				PRODUCT_NAME = SafeZone;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -624,24 +628,28 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A08F28EE672A0F116730B76 /* Pods-DeviceManager.release.xcconfig */;
+			baseConfigurationReference = 5D80BBE3D3E4659E127DAA56 /* Pods-SafeZone.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 8K65KKA338;
-				INFOPLIST_FILE = DeviceManager/Info.plist;
+				INFOPLIST_FILE = SafeZone/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.masscom.deviceManager;
-				PRODUCT_NAME = DeviceManager;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.masscom.safezone;
+				PRODUCT_NAME = SafeZone;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -773,7 +781,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "DeviceManagerTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SafeZoneTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -782,7 +790,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DeviceManager" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SafeZone" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -791,7 +799,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "DeviceManager" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "SafeZone" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

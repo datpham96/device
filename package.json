@@ -1,5 +1,5 @@
 {
-  "name": "DeviceManager",
+  "name": "SafeZone",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,9 +8,10 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "open-xcode": "open ./ios/DeviceManager.xcworkspace",
+    "open-xcode": "open ./ios/SafeZone.xcworkspace",
     "clean": "cd android && ./gradlew clean",
-    "release": "cd android && ./gradlew assembleRelease",
+    "release-apk": "cd android && ./gradlew assembleRelease",
+    "release-abb": "cd android && ./gradlew bundleRelease",
     "pod-update": "cd ios && pod deintegrate && pod update"
   },
   "dependencies": {
@@ -62,6 +63,7 @@
     "react-native-switch": "^2.0.0",
     "react-native-toast-message": "^2.1.1",
     "react-native-vector-icons": "^9.0.0",
+    "react-native-version-check": "^3.4.2",
     "react-query": "^3.34.8",
     "react-redux": "^7.2.6",
     "redux": "^4.1.2",

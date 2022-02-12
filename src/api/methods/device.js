@@ -67,7 +67,10 @@ export function deviceReportApi(page, perPage, device_id, date, status, s) {
   bodyFormData.append('date', date);
   bodyFormData.append('page', page);
   bodyFormData.append('per_page', perPage);
-  bodyFormData.append('status', status);
+  if (Number.isInteger(status)) {
+    bodyFormData.append('status', status);
+  }
+
   if (s) {
     bodyFormData.append('s', s);
   }
@@ -82,7 +85,6 @@ export function deviceUpdateApi(
   birthday,
   gender,
 ) {
-  console.log(device_id, 'device_id====');
   //Cập nhật thiết bị
   let bodyFormData = new FormData();
   bodyFormData.append('device_id', device_id);

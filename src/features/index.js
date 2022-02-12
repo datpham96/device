@@ -51,3 +51,6 @@ export {default as NewPasswordScreen} from './newPassword/containers/NewPassword
 
 //report report
 export {default as ReportScreen} from './report/containers/Report';
+
+//application
+export {default as ApplicationControlScreen} from './applicationControl/containers/ApplicationControl';

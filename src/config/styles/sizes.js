@@ -52,6 +52,7 @@ const sizes = {
   SIZE_50: 50,
   SIZE_80: 80,
   SIZE_100: 100,
+  SIZE_105: 105,
   SIZE_120: 120,
 };
 
