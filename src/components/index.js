@@ -35,3 +35,6 @@ export {default as CountDown} from './CountDownComponent';
 
 //chart
 export {default as PieChart} from './charts/PieChartComponent';
+
+//line
+export {default as Line} from './LineComponent';

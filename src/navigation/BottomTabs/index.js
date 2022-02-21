@@ -6,10 +6,10 @@ const Tab = createBottomTabNavigator();
 import LinearGradient from 'react-native-linear-gradient';
 
 import {
-  AccountScreen,
   ChildrenManagerScreen,
   HomeScreen,
   LocationScreen,
+  SettingScreen,
 } from 'features';
 import navigationTypes from 'navigationTypes';
 import {colors, commonStyles, fonts, sizes} from 'styles';
@@ -40,9 +40,9 @@ const MyTabBar = ({state, descriptors, navigation}) => {
             label = navigationTypes.location.name;
             icon = images.icons.bt_location;
             break;
-          case navigationTypes.account.screen:
-            label = navigationTypes.account.name;
-            icon = images.icons.bt_account;
+          case navigationTypes.setting.screen:
+            label = navigationTypes.setting.name;
+            icon = images.icons.bt_setting;
             break;
           default:
             label = navigationTypes.home.name;
@@ -143,8 +143,8 @@ const BottomTabs = () => {
         options={{
           headerShown: false,
         }}
-        name={navigationTypes.account.screen}
-        component={AccountScreen}
+        name={navigationTypes.setting.screen}
+        component={SettingScreen}
       />
     </Tab.Navigator>
   );

@@ -212,7 +212,7 @@ const ApplicationControl = ({route}) => {
   };
 
   return (
-    <Background bout>
+    <Background bin>
       <Loading isLoading={mutationUpdate.isLoading} />
       <PopupConfirm
         content="Bạn có muốn gỡ thời gian chặn này không?"

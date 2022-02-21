@@ -13,12 +13,7 @@ import styles from './styles';
 import {commonStyles, colors} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
-import {
-  InputSelectComponent,
-  Loading,
-  PopupAlert,
-  PopupConfirm,
-} from 'components';
+import {InputSelectComponent, Loading, PopupConfirm} from 'components';
 import keyTypes from 'keyTypes';
 import {deviceListApi, deviceUpdateApi} from 'methods/device';
 import {useQuery, useMutation} from 'react-query';
@@ -43,7 +38,7 @@ Geocoder.fallbackToGoogle(
   'AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU',
 );
 
-const Location = ({navigation, route}) => {
+const Location = ({navigation}) => {
   const [selectedDevice, setSelectedDevice] = useState('');
   const [refresh, setRefresh] = useState(false);
   const [markers, serMarkers] = useState({
@@ -70,12 +65,17 @@ const Location = ({navigation, route}) => {
       requestMultiple([
         PERMISSIONS.IOS.LOCATION_ALWAYS,
         PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        // PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+        // PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION,
       ]).then(result => {
         if (
           (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.BLOCKED &&
             result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.BLOCKED) ||
           (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.DENIED &&
-            result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.DENIED)
+            result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.DENIED) ||
+          result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.DENIED ||
+          result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.BLOCKED
         ) {
           serMarkers({
             latitude: 0,
@@ -87,7 +87,8 @@ const Location = ({navigation, route}) => {
         }
         if (
           result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.GRANTED ||
-          result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED
+          result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED ||
+          result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.GRANTED
         ) {
           setRefresh(!refresh);
         }
@@ -99,17 +100,22 @@ const Location = ({navigation, route}) => {
 
   useEffect(() => {
     const listener = AppState.addEventListener('change', status => {
-      if (Platform.OS === 'ios' && status === 'active') {
+      if (status === 'active') {
         requestMultiple([
           PERMISSIONS.IOS.LOCATION_ALWAYS,
           PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
         ]).then(result => {
           if (
             (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.BLOCKED &&
               result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] ===
                 RESULTS.BLOCKED) ||
             (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.DENIED &&
-              result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.DENIED)
+              result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] ===
+                RESULTS.DENIED) ||
+            result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] ===
+              RESULTS.DENIED ||
+            result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.BLOCKED
           ) {
             serMarkers({
               latitude: 0,
@@ -121,7 +127,8 @@ const Location = ({navigation, route}) => {
           }
           if (
             result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.GRANTED ||
-            result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED
+            result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED ||
+            result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.GRANTED
           ) {
             setRefresh(!refresh);
           }
@@ -208,7 +215,7 @@ const Location = ({navigation, route}) => {
     return tmpSelectList;
   }, [data, isSuccess]);
 
-  const handleMaker = e => {
+  const handleMaker = () => {
     // serMarkers({
     //   coordinate: e.nativeEvent.coordinate,
     //   key: 1,

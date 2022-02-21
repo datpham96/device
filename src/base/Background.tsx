@@ -51,7 +51,7 @@ const Background: React.FC<Props> = ({
           {isKeyboard ? (
             <KeyboardAwareScrollView>{children}</KeyboardAwareScrollView>
           ) : (
-            {children}
+            children
           )}
         </ImageBackground>
       )}

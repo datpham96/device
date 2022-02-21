@@ -14,6 +14,7 @@ const images = {
     bt_control: require('../../assets/images/icons/control.png'),
     bt_location: require('../../assets/images/icons/location.png'),
     bt_account: require('../../assets/images/icons/account.png'),
+    bt_setting: require('../../assets/images/icons/setting.png'),
     header_plus: require('../../assets/images/icons/plus.png'),
     input_search: require('../../assets/images/icons/search.png'),
     nav_back: require('../../assets/images/icons/nav_back.png'),
@@ -23,6 +24,9 @@ const images = {
     refresh: require('../../assets/images/icons/refresh.png'),
     wrapCalendar: require('../../assets/images/icons/wrap-calendar.png'),
     filter: require('../../assets/images/icons/filter.png'),
+    info_manager: require('../../assets/images/icons/icon_account_info.png'),
+    safe_web: require('../../assets/images/icons/icon_web_safe.png'),
+    safe_search: require('../../assets/images/icons/icon_safe_search.png'),
   },
   avatars: {
     default: require('../../assets/images/avatars/default.jpeg'),

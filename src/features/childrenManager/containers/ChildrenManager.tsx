@@ -88,6 +88,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
           </View>
         ) : (
           <FlatList
+            showsVerticalScrollIndicator={false}
             ListEmptyComponent={<EmptyData />}
             contentContainerStyle={styles.contentContainerFlatlist}
             style={[commonStyles.flex1, styles.flatListStyle]}

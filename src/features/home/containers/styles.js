@@ -11,10 +11,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: sizes.SIZE_10,
     marginTop: sizes.SIZE_15,
+    zIndex: sizes.SIZE_1,
   },
   logoLock: {
     width: metrics.screenWidth / sizes.SIZE_3,
     height: sizes.SIZE_50,
+  },
+  selectedContainer: {
+    width: metrics.screenWidth / sizes.SIZE_3,
   },
   wrapSelected: {
     ...commonStyles.flexRowCenter,
@@ -44,7 +48,38 @@ const styles = StyleSheet.create({
   },
   titleShield: {
     marginLeft: sizes.SIZE_8,
+    ...commonStyles.flex1,
+
     // width: sizes.SIZE_80,
+  },
+  scrollItemDeviceSelect: {
+    backgroundColor: colors.COLOR_WHITE,
+    borderRadius: sizes.SIZE_10,
+    padding: sizes.SIZE_10,
+    width: '95%',
+    alignSelf: 'flex-end',
+    position: 'absolute',
+    top: metrics.screenWidth / sizes.SIZE_10 + sizes.SIZE_5,
+    maxHeight: sizes.SIZE_80,
+  },
+  contentItemDeviceSelect: {
+    paddingBottom: sizes.SIZE_15,
+  },
+  wrapItemDeviceSelect: {
+    ...commonStyles.flexRowCenter,
+  },
+  itemDeviceSelect: {
+    color: colors.COLOR_BLACK,
+    marginLeft: sizes.SIZE_5,
+    fontFamily: fonts.montserrat.FONT_REGULAR,
+    lineHeight: sizes.SIZE_25,
+  },
+  circleItemSelected: {
+    width: sizes.SIZE_10,
+    height: sizes.SIZE_10,
+    borderRadius: sizes.SIZE_5,
+    borderWidth: sizes.SIZE_1,
+    borderColor: colors.COLOR_BLACK,
   },
   wrapContainerTitle: {
     ...commonStyles.flexRowCenter,
@@ -76,6 +111,7 @@ const styles = StyleSheet.create({
   },
   wrapCalendar: {
     position: 'relative',
+    zIndex: sizes.ZERO,
   },
   iconWrapCalendar: {
     width: sizes.SIZE_25,
@@ -147,6 +183,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: sizes.SIZE_15,
     marginTop: sizes.SIZE_20,
+    zIndex: 1,
   },
   wrapHeaderSelect: {
     ...commonStyles.flexRowCenter,
@@ -172,6 +209,9 @@ const styles = StyleSheet.create({
   labelSelectRight: {
     fontSize: sizes.SIZE_16,
   },
+  filterContainer: {
+    // zIndex: 1,
+  },
   wrapFilter: {
     ...commonStyles.flexRowCenter,
   },
@@ -183,6 +223,19 @@ const styles = StyleSheet.create({
     height: sizes.SIZE_15,
     tintColor: colors.COLOR_BLUE,
     marginLeft: sizes.SIZE_8,
+  },
+  contentItemFilterSelect: {
+    paddingBottom: sizes.SIZE_15,
+  },
+  scrollItemFilterSelect: {
+    backgroundColor: colors.COLOR_WHITE,
+    borderRadius: sizes.SIZE_10,
+    padding: sizes.SIZE_10,
+    width: sizes.SIZE_110,
+    alignSelf: 'flex-end',
+    position: 'absolute',
+    top: sizes.SIZE_25,
+    maxHeight: sizes.SIZE_90,
   },
   //flatlist
   placeholderContainer: {

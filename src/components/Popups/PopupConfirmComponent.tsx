@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   content: {
     textAlign: 'center',
     marginTop: sizes.SIZE_20,
+    lineHeight: sizes.SIZE_22,
   },
   wrapBtn: {
     ...commonStyles.flexRowCenter,

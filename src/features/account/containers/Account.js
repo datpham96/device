@@ -1,6 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {Text, Background, Button, Input} from 'base';
-import {ScrollView, View, TouchableOpacity, Platform} from 'react-native';
+import {Text, Background, Button, Input, ButtonBack} from 'base';
+import {
+  ScrollView,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import styles from './styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {logoutRequest} from 'actions/loginActions';
@@ -55,6 +60,7 @@ const Account = () => {
       : images.avatars.default,
   );
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
+  const [loadingAvatar, setLoadingAvatar] = useState(false);
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
@@ -117,25 +123,11 @@ const Account = () => {
   const handleOpenCamera = () => {
     options.mediaType = 'photo';
     launchCamera(options, response => {
-      if (Platform.OS === 'android') {
-        // if (response.data && !response.didCancel) {
-        //   let formatData = 'data:' + response.type + ';base64,' + response.data;
-        //   setDataRequestAvatar(formatData);
-        //   setAvatarUri({uri: response.uri});
-        // }
-        if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
-          setAvatarUri({uri: item.uri});
-        }
-      } else {
-        if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
-          setAvatarUri({uri: item.uri});
-        }
+      if (response && response?.assets) {
+        let item = response.assets?.[0];
+        let formatData = 'data:' + item.type + ';base64,' + item.base64;
+        setDataRequestAvatar(formatData);
+        setAvatarUri({uri: item.uri});
       }
     });
   };
@@ -144,25 +136,11 @@ const Account = () => {
     setVisibleImagePicker(false);
     options.mediaType = 'photo';
     launchImageLibrary(options, response => {
-      if (Platform.OS === 'android') {
-        // if (response.data && !response.didCancel) {
-        //   let formatData = 'data:' + response.type + ';base64,' + response.data;
-        //   setDataRequestAvatar(formatData);
-        //   setAvatarUri({uri: response.uri});
-        // }
-        if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
-          setAvatarUri({uri: item.uri});
-        }
-      } else {
-        if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
-          setAvatarUri({uri: item.uri});
-        }
+      if (response && response?.assets) {
+        let item = response.assets?.[0];
+        let formatData = 'data:' + item.type + ';base64,' + item.base64;
+        setDataRequestAvatar(formatData);
+        setAvatarUri({uri: item.uri});
       }
     });
   };
@@ -203,6 +181,9 @@ const Account = () => {
         onPressCancel={() => setVisibleConfirm(!visibleConfirm)}
         onPressAgree={handleLogout}
       />
+      <View>
+        <ButtonBack />
+      </View>
       <ScrollView style={styles.container}>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
           Quản lý thông tin
@@ -211,11 +192,24 @@ const Account = () => {
           onPress={handleOpenBottomSheetImagePicker}
           activeOpacity={0.9}
           style={styles.wrapAvatar}>
-          <FastImage style={styles.avatar} source={avatarUri} />
-          <FastImage
-            style={styles.iconCapturePlus}
-            source={images.icons.capture_white_plus}
-          />
+          {loadingAvatar && (
+            <View style={styles.wrapActivityIndicator}>
+              <ActivityIndicator color={colors.COLOR_WHITE} />
+            </View>
+          )}
+          <>
+            <FastImage
+              onLoadEnd={() => setLoadingAvatar(false)}
+              onLoadStart={() => setLoadingAvatar(true)}
+              onError={() => setLoadingAvatar(false)}
+              style={styles.avatar}
+              source={avatarUri}
+            />
+            <FastImage
+              style={styles.iconCapturePlus}
+              source={images.icons.capture_white_plus}
+            />
+          </>
         </TouchableOpacity>
         <View style={styles.wrapInput}>
           <Input

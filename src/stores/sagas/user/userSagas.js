@@ -43,6 +43,11 @@ export function* updateAvatarRequest(action) {
     let respUpdateAvatar = yield call(updateUserAvatarApi, image);
     if (respUpdateAvatar?.status) {
       yield put(updateUserAvatarSuccess(respUpdateAvatar?.data?.image));
+      let token = yield call(getToken);
+      if (token) {
+        let respUserInfo = yield call(userInfoApi, token);
+        yield put(userInfoSuccess(respUserInfo?.data));
+      }
     } else {
       yield put(updateUserAvatarFailure(respUpdateAvatar?.msg));
     }

@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {commonStyles, sizes} from 'styles';
+import {colors, commonStyles, sizes} from 'styles';
 import metrics from 'metrics';
 
 const SIZE_AVATAR = metrics.screenWidth / sizes.SIZE_4;
@@ -54,5 +54,14 @@ export default StyleSheet.create({
     textAlign: 'center',
     // position: 'absolute',
     bottom: sizes.SIZE_20,
+  },
+  wrapActivityIndicator: {
+    width: '100%',
+    height: '100%',
+    ...commonStyles.center,
+    position: 'absolute',
+    borderWidth: sizes.SIZE_1,
+    borderColor: colors.COLOR_WHITE,
+    borderRadius: sizes.SIZE_100,
   },
 });

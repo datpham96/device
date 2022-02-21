@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {PieChart, EmptyData, LoadingData} from 'components';
 import {Text, Background, Loading as BaseLoading, Button} from 'base';
@@ -55,7 +56,6 @@ const Home = ({navigation}) => {
   const queryClient = useQueryClient();
   const dateTimeRef = useRef(null);
   const selectFilterRef = useRef(null);
-  const selectDeviceRef = useRef(null);
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
   const [day, onDay] = useState('');
   const [month, onMonth] = useState('');
@@ -63,6 +63,8 @@ const Home = ({navigation}) => {
   const [selectedDevice, onSelectedDevice] = useState(null);
   const [cateActive, setCateActive] = useState(types.type.website.code);
   const [pieChartActive, setPieChartActive] = useState(0);
+  const [toggleDeviceSelected, setToggleDeviceSelected] = useState(false);
+  const [toggleFilterSelected, setToggleFilterSelected] = useState(false);
 
   const {
     data,
@@ -224,6 +226,7 @@ const Home = ({navigation}) => {
 
   const handleSelectedFilter = val => {
     onSelected(val);
+    setToggleFilterSelected(false);
   };
 
   const handleSelectedDevice = val => {
@@ -231,19 +234,16 @@ const Home = ({navigation}) => {
   };
 
   const handleShowFilterSelect = () => {
-    if (Platform.OS === 'ios') {
-      selectFilterRef.current.togglePicker();
-    } else {
-      selectFilterRef.current.focus();
-    }
+    setToggleFilterSelected(!toggleFilterSelected);
   };
 
   const handleShowDeviceSelect = () => {
-    if (Platform.OS === 'ios') {
-      selectDeviceRef.current.togglePicker();
-    } else {
-      selectDeviceRef.current.focus();
-    }
+    // if (Platform.OS === 'ios') {
+    //   selectDeviceRef.current.togglePicker();
+    // } else {
+    //   selectDeviceRef.current.focus();
+    // }
+    setToggleDeviceSelected(!toggleDeviceSelected);
   };
 
   const handleActivePieChart = useCallback(key => {
@@ -258,6 +258,14 @@ const Home = ({navigation}) => {
     navigation.jumpTo(navigationTypes.childrenManager.screen);
   };
 
+  const handleActiveItemDevice = item => {
+    if (dataDeviceList && dataDeviceList?.data) {
+      let info = lodash.find(dataDeviceList?.data, {id: item.value});
+      handleSelectedDevice(info);
+      setToggleDeviceSelected(false);
+    }
+  };
+
   let checkDeviceData =
     isSuccessDeviceList &&
     dataDeviceList?.data &&
@@ -269,113 +277,164 @@ const Home = ({navigation}) => {
         <LoadingData />
       ) : checkDeviceData ? (
         <View style={styles.container}>
-          <View style={styles.wrapHeader}>
-            <FastImage
-              resizeMode={FastImage.resizeMode.contain}
-              style={styles.logoLock}
-              source={images.logos.lock}
-            />
-            {isLoadingDeviceList ? (
-              <DevicePlaceholder />
-            ) : (
-              <TouchableOpacity
-                style={styles.wrapSelected}
-                activeOpacity={0.9}
-                onPress={handleShowDeviceSelect}>
-                <MaterialCommunityIcons
-                  name="chevron-left"
-                  size={sizes.SIZE_20}
-                  color={colors.COLOR_WHITE}
-                  style={styles.iconChevronLeft}
-                />
-                <View style={styles.wrapAvatarDevice}>
-                  <FastImage
-                    source={
-                      selectedDevice?.is_block === 0
-                        ? selectedDevice.avatar
-                          ? {uri: selectedDevice.avatar}
-                          : images.avatars.default
-                        : images.avatars.shield
-                    }
-                    style={styles.avatarShield}
-                    resizeMode={FastImage.resizeMode.contain}
-                  />
-                  {selectedDevice && selectedDevice?.is_online === 1 && (
-                    <View style={styles.dotOnline} />
-                  )}
-                  {selectedDevice && selectedDevice?.is_online !== 1 && (
-                    <View style={styles.dotOffline} />
-                  )}
-                </View>
-                <Text style={styles.titleShield}>
-                  {truncateWords(selectedDevice?.full_name, 2, '...')}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.wrapContainerTitle}>
-            <View style={styles.wrapTitle}>
-              <View style={styles.bar} />
-              <Text style={styles.title}>Thống kê truy cập</Text>
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={handleShowDatePicker}
-              style={styles.wrapSelectCalendar}>
-              <View style={styles.wrapCalendar}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setToggleDeviceSelected(false);
+              setToggleFilterSelected(false);
+            }}>
+            <View>
+              <View style={styles.wrapHeader}>
                 <FastImage
-                  style={styles.iconWrapCalendar}
-                  source={images.icons.wrapCalendar}
+                  resizeMode={FastImage.resizeMode.contain}
+                  style={styles.logoLock}
+                  source={images.logos.lock}
                 />
-                <Text style={styles.calendarDay}>{day}</Text>
-              </View>
-              <Text style={styles.calendarMonth}>Tháng {month}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.chartContainer}>
-            {deviceList && deviceList.length > 0 ? (
-              <PieChart
-                selectedKey={pieChartActive}
-                onSelected={handleActivePieChart}
-                dataList={dataPieChartList}
-              />
-            ) : (
-              <PieCharPlaceholder />
-            )}
-            <View style={styles.wrapParams}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => console.log('website')}
-                style={styles.paramInfo}>
-                <Text style={styles.paramInfoLabel}>Website</Text>
-                {dataPieChartList.map((item, key) => {
-                  return (
+                {isLoadingDeviceList ? (
+                  <DevicePlaceholder />
+                ) : (
+                  <View style={styles.selectedContainer}>
                     <TouchableOpacity
-                      key={key}
+                      style={styles.wrapSelected}
                       activeOpacity={0.9}
-                      onPress={() => handlePieChartActive(key)}
-                      style={styles.wrapParamInfoValue}>
-                      <View
-                        style={[
-                          styles.paramInfoValueDot,
-                          {backgroundColor: item.color},
-                        ]}
+                      onPress={handleShowDeviceSelect}>
+                      <MaterialCommunityIcons
+                        name="chevron-left"
+                        size={sizes.SIZE_20}
+                        color={colors.COLOR_WHITE}
+                        style={styles.iconChevronLeft}
                       />
-                      <Text
-                        style={[
-                          styles.paramInfoValue,
-                          pieChartActive === key
-                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                            : {},
-                        ]}>
-                        {item.label}: {item.total}
+                      <View style={styles.wrapAvatarDevice}>
+                        <FastImage
+                          source={
+                            selectedDevice?.is_block === 0
+                              ? selectedDevice.avatar
+                                ? {uri: selectedDevice.avatar}
+                                : images.avatars.default
+                              : images.avatars.shield
+                          }
+                          style={styles.avatarShield}
+                          resizeMode={FastImage.resizeMode.contain}
+                        />
+                        {selectedDevice && selectedDevice?.is_online === 1 && (
+                          <View style={styles.dotOnline} />
+                        )}
+                        {selectedDevice && selectedDevice?.is_online !== 1 && (
+                          <View style={styles.dotOffline} />
+                        )}
+                      </View>
+                      <Text style={styles.titleShield}>
+                        {truncateWords(
+                          selectedDevice?.full_name,
+                          sizes.SIZE_2,
+                          '...',
+                        )}
                       </Text>
                     </TouchableOpacity>
-                  );
-                })}
-              </TouchableOpacity>
-              {/* <TouchableOpacity
+                    {toggleDeviceSelected && (
+                      <ScrollView
+                        contentContainerStyle={styles.contentItemDeviceSelect}
+                        style={styles.scrollItemDeviceSelect}>
+                        {deviceList.map((item, key) => {
+                          return (
+                            <TouchableOpacity
+                              activeOpacity={0.9}
+                              onPress={() => handleActiveItemDevice(item)}
+                              key={key}
+                              style={styles.wrapItemDeviceSelect}>
+                              <View
+                                style={[
+                                  styles.circleItemSelected,
+                                  selectedDevice?.id === item.value
+                                    ? {backgroundColor: colors.COLOR_BLACK}
+                                    : {},
+                                ]}
+                              />
+                              <Text
+                                props={{
+                                  numberOfLines: sizes.SIZE_1,
+                                }}
+                                style={styles.itemDeviceSelect}>
+                                {item.label}
+                              </Text>
+                            </TouchableOpacity>
+                          );
+                        })}
+                        {/* <View style={styles.wrapItemDeviceSelect}>
+                    <View style={styles.circleItemSelected} />
+                    <Text style={styles.itemDeviceSelect}>Bé nam</Text>
+                  </View>
+                  <View style={styles.wrapItemDeviceSelect}>
+                    <View style={styles.circleItemSelected} />
+                    <Text style={styles.itemDeviceSelect}>Bé nam</Text>
+                  </View> */}
+                      </ScrollView>
+                    )}
+                  </View>
+                )}
+              </View>
+              <View style={styles.wrapContainerTitle}>
+                <View style={styles.wrapTitle}>
+                  <View style={styles.bar} />
+                  <Text style={styles.title}>Thống kê truy cập</Text>
+                </View>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={handleShowDatePicker}
+                  style={styles.wrapSelectCalendar}>
+                  <View style={styles.wrapCalendar}>
+                    <FastImage
+                      style={styles.iconWrapCalendar}
+                      source={images.icons.wrapCalendar}
+                    />
+                    <Text style={styles.calendarDay}>{day}</Text>
+                  </View>
+                  <Text style={styles.calendarMonth}>Tháng {month}</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.chartContainer}>
+                {deviceList && deviceList.length > 0 ? (
+                  <PieChart
+                    selectedKey={pieChartActive}
+                    onSelected={handleActivePieChart}
+                    dataList={dataPieChartList}
+                  />
+                ) : (
+                  <PieCharPlaceholder />
+                )}
+                <View style={styles.wrapParams}>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => console.log('website')}
+                    style={styles.paramInfo}>
+                    <Text style={styles.paramInfoLabel}>Website</Text>
+                    {dataPieChartList.map((item, key) => {
+                      return (
+                        <TouchableOpacity
+                          key={key}
+                          activeOpacity={0.9}
+                          onPress={() => handlePieChartActive(key)}
+                          style={styles.wrapParamInfoValue}>
+                          <View
+                            style={[
+                              styles.paramInfoValueDot,
+                              {backgroundColor: item.color},
+                            ]}
+                          />
+                          <Text
+                            style={[
+                              styles.paramInfoValue,
+                              pieChartActive === key
+                                ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                                : {},
+                            ]}>
+                            {item.label}: {item.total}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </TouchableOpacity>
+                  {/* <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => console.log('application')}
               style={styles.paramInfo}>
@@ -409,9 +468,10 @@ const Home = ({navigation}) => {
                 </Text>
               </TouchableOpacity>
             </TouchableOpacity> */}
+                </View>
+              </View>
             </View>
-          </View>
-
+          </TouchableWithoutFeedback>
           <View style={styles.wrapHeaderList}>
             <View style={styles.wrapHeaderSelect}>
               <View style={styles.headerVerticalBar} />
@@ -445,13 +505,46 @@ const Home = ({navigation}) => {
               </Text> */}
               </View>
             </View>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={handleShowFilterSelect}
-              style={styles.wrapFilter}>
-              <Text style={styles.labelFilter}>Bộ lọc</Text>
-              <Image style={styles.iconFilter} source={images.icons.filter} />
-            </TouchableOpacity>
+            <View style={styles.filterContainer}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={handleShowFilterSelect}
+                style={styles.wrapFilter}>
+                <Text style={styles.labelFilter}>Bộ lọc</Text>
+                <Image style={styles.iconFilter} source={images.icons.filter} />
+              </TouchableOpacity>
+              {toggleFilterSelected && (
+                <ScrollView
+                  contentContainerStyle={styles.contentItemFilterSelect}
+                  style={styles.scrollItemFilterSelect}>
+                  {DATA_FILTER.map((item, key) => {
+                    return (
+                      <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={() => handleSelectedFilter(item.value)}
+                        key={key}
+                        style={styles.wrapItemDeviceSelect}>
+                        <View
+                          style={[
+                            styles.circleItemSelected,
+                            selected === item.value
+                              ? {backgroundColor: colors.COLOR_BLACK}
+                              : {},
+                          ]}
+                        />
+                        <Text
+                          props={{
+                            numberOfLines: sizes.SIZE_1,
+                          }}
+                          style={styles.itemDeviceSelect}>
+                          {item.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              )}
+            </View>
           </View>
           {status === 'loading' ? (
             <ScrollView
@@ -542,7 +635,7 @@ const Home = ({navigation}) => {
         maxDate={moment().format('DD/MM/YYYY').toString()}
         onDateChange={val => onDate(val)}
       />
-      <RNPickerSelect
+      {/* <RNPickerSelect
         pickerProps={{ref: Platform.OS === 'android' ? selectFilterRef : null}}
         ref={Platform.OS === 'ios' ? selectFilterRef : null}
         placeholder={{
@@ -566,8 +659,8 @@ const Home = ({navigation}) => {
             height: sizes.ZERO,
           },
         }}
-      />
-      <RNPickerSelect
+      /> */}
+      {/* <RNPickerSelect
         pickerProps={{ref: Platform.OS === 'android' ? selectDeviceRef : null}}
         ref={Platform.OS === 'ios' ? selectDeviceRef : null}
         placeholder={{
@@ -595,7 +688,7 @@ const Home = ({navigation}) => {
             height: sizes.ZERO,
           },
         }}
-      />
+      /> */}
     </Background>
   );
 };

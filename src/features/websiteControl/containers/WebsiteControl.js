@@ -269,7 +269,7 @@ const WebsiteControl = ({route}) => {
   };
 
   return (
-    <Background bout>
+    <Background bin>
       <Loading
         isLoading={mutationCreate.isLoading || mutationUpdate.isLoading}
       />

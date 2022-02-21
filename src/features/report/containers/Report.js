@@ -95,7 +95,7 @@ const Report = ({route}) => {
   };
 
   return (
-    <Background bout>
+    <Background bin>
       {/* <Loading isLoading={isRefetching} /> */}
       <ButtonBack />
       <View style={styles.container}>

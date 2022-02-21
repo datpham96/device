@@ -93,7 +93,7 @@ const ChildrenInfo: React.FC<Props> = ({route}) => {
   const handleSetupAccess = () => {};
 
   return (
-    <Background bout>
+    <Background bin>
       <Loading isLoading={mutationRemoveDevice.isLoading} />
       <ModalSetupAccess
         visible={visibleSetup}
