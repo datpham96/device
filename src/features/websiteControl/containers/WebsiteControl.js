@@ -18,7 +18,6 @@ import * as RootNavigation from 'RootNavigation';
 import {useQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
 import {webListApi, webUpdateApi} from 'src/api/methods/web';
-import {checkVar} from 'src/helpers/funcs';
 import {webCreateApi} from 'src/api/methods/web';
 import {useMutation} from 'react-query';
 import {Toast} from 'customs';
@@ -378,15 +377,16 @@ const WebsiteControl = ({route}) => {
         </Text>
         <View style={styles.wrapTableHeader}>
           <Text style={styles.headerTableTitleOne}>Trang website</Text>
-          <Text style={styles.headerTableTitleTwo}>Sử dụng</Text>
+          {/* <Text style={styles.headerTableTitleTwo}>Sử dụng</Text> */}
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (
           <LoadingData />
-        ) : isSuccess && !checkVar.isEmpty(websiteList) ? (
+        ) : (
           <FlatList
             style={styles.flatList}
             contentContainerStyle={styles.contentContainerFlatlist}
+            ListEmptyComponent={<EmptyData />}
             data={websiteList}
             keyExtractor={item => item.id.toString() + item.status}
             refreshControl={
@@ -404,8 +404,6 @@ const WebsiteControl = ({route}) => {
               />
             )}
           />
-        ) : (
-          <EmptyData />
         )}
       </View>
     </Background>

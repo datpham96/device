@@ -35,6 +35,13 @@ const styles = StyleSheet.create({
     borderRadius: sizes.SIZE_5,
     position: 'absolute',
   },
+  dotOffline: {
+    width: sizes.SIZE_10,
+    height: sizes.SIZE_10,
+    backgroundColor: colors.COLOR_RED_ORANGE,
+    borderRadius: sizes.SIZE_5,
+    position: 'absolute',
+  },
   titleShield: {
     marginLeft: sizes.SIZE_8,
     // width: sizes.SIZE_80,
@@ -132,6 +139,9 @@ const styles = StyleSheet.create({
     fontSize: sizes.SIZE_13,
   },
   //list
+  contentContainerFlatlist: {
+    flexGrow: 1,
+  },
   wrapHeaderList: {
     ...commonStyles.flexRowCenter,
     justifyContent: 'space-between',

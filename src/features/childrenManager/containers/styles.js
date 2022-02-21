@@ -32,4 +32,7 @@ export default StyleSheet.create({
   flatListStyle: {
     marginTop: sizes.SIZE_30,
   },
+  contentContainerFlatlist: {
+    flexGrow: 1,
+  },
 });

@@ -11,6 +11,8 @@ export type Props = {
   onPressCancel?: any;
   onPressAgree?: any;
   content?: any;
+  labelBtnLeft?: any;
+  labelBtnRight?: any;
 };
 
 const PopupConfirmComponent: React.FC<Props> = ({
@@ -18,6 +20,8 @@ const PopupConfirmComponent: React.FC<Props> = ({
   onPressCancel,
   onPressAgree,
   content,
+  labelBtnLeft = 'Có',
+  labelBtnRight = 'Không',
 }) => {
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
@@ -37,12 +41,12 @@ const PopupConfirmComponent: React.FC<Props> = ({
             <Button
               customStyle={styles.btn}
               onPress={onPressAgree}
-              label="Có"
+              label={labelBtnLeft}
             />
             <Button
               customStyle={styles.btn}
               onPress={onPressCancel}
-              label="Không"
+              label={labelBtnRight}
             />
           </View>
         </View>

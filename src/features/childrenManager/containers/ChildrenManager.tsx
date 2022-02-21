@@ -13,7 +13,6 @@ import {Toast} from 'customs';
 import {useQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
 import {deviceListApi} from 'methods/device';
-import {checkVar} from 'src/helpers/funcs';
 import {ItemChildrenPlaceholder} from '../placeholders';
 
 export type Props = {
@@ -24,7 +23,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
   const queryClient = useQueryClient();
   const [visibleQrCode, setVisibleQrCode] = useState(false);
 
-  const {data, isLoading, isSuccess, refetch} = useQuery(
+  const {data, isLoading, refetch} = useQuery(
     keyTypes.DEVICE_LIST,
     () => deviceListApi(),
     {
@@ -87,8 +86,10 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
             <ItemChildrenPlaceholder />
             <ItemChildrenPlaceholder />
           </View>
-        ) : isSuccess && !checkVar.isEmpty(data?.data) ? (
+        ) : (
           <FlatList
+            ListEmptyComponent={<EmptyData />}
+            contentContainerStyle={styles.contentContainerFlatlist}
             style={[commonStyles.flex1, styles.flatListStyle]}
             data={data.data}
             keyExtractor={item => item.id.toString()}
@@ -101,8 +102,6 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
               />
             }
           />
-        ) : (
-          <EmptyData />
         )}
       </View>
     </Background>

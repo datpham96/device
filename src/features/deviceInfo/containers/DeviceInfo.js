@@ -16,6 +16,9 @@ import navigationTypes from 'navigationTypes';
 import Validator from 'validatorjs';
 import moment from 'moment';
 import images from 'images';
+import {useMutation} from 'react-query';
+import {deviceActivationApi} from 'src/api/methods/device';
+import {Toast} from 'customs';
 
 const options = {
   mediaType: 'photo',
@@ -34,6 +37,7 @@ const options = {
 const DeviceInfo = ({route}) => {
   const deviceInfo = route?.params?.device_info;
   const deviceName = deviceInfo?.ManufacturerName;
+  const deviceSN = deviceInfo?.SerialNumber;
   const [avatarUri, setAvatarUri] = useState('');
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
   const [name, setName] = useState('');
@@ -42,58 +46,53 @@ const DeviceInfo = ({route}) => {
   const [errors, setErrors] = useState({});
   const [visibleImagePicker, setVisibleImagePicker] = useState(false);
 
+  const mutationActivatedDevice = useMutation(
+    ({
+      data_imei,
+      data_device_info,
+      data_name,
+      data_birthday,
+      data_gender,
+      data_avatar,
+    }) =>
+      deviceActivationApi(
+        data_imei,
+        data_device_info,
+        data_name,
+        data_birthday,
+        data_gender,
+        data_avatar,
+      ),
+  );
+
   const handleOpenCamera = () => {
     setVisibleImagePicker(false);
-    options.mediaType = 'photo';
-    launchCamera(options, response => {
-      if (Platform.OS === 'android') {
-        // if (response.data && !response.didCancel) {
-        //   let formatData = 'data:' + response.type + ';base64,' + response.data;
-        //   setDataRequestAvatar(formatData);
-        //   setAvatarUri({uri: response.uri});
-        // }
+    setTimeout(() => {
+      options.mediaType = 'photo';
+      launchCamera(options, response => {
         if (response && response?.assets) {
           let item = response.assets?.[0];
           let formatData = 'data:' + item.type + ';base64,' + item.base64;
           setDataRequestAvatar(formatData);
           setAvatarUri({uri: item.uri});
         }
-      } else {
-        if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
-          setAvatarUri({uri: item.uri});
-        }
-      }
-    });
+      });
+    }, 100);
   };
 
   const handleOpenLibrary = () => {
     setVisibleImagePicker(false);
-    options.mediaType = 'photo';
-    launchImageLibrary(options, response => {
-      if (Platform.OS === 'android') {
-        // if (response.data && !response.didCancel) {
-        //   let formatData = 'data:' + response.type + ';base64,' + response.data;
-        //   setDataRequestAvatar(formatData);
-        //   setAvatarUri({uri: response.uri});
-        // }
+    setTimeout(() => {
+      options.mediaType = 'photo';
+      launchImageLibrary(options, response => {
         if (response && response?.assets) {
           let item = response.assets?.[0];
           let formatData = 'data:' + item.type + ';base64,' + item.base64;
           setDataRequestAvatar(formatData);
           setAvatarUri({uri: item.uri});
         }
-      } else {
-        if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
-          setAvatarUri({uri: item.uri});
-        }
-      }
-    });
+      });
+    }, 100);
   };
 
   const handleOpenBottomSheetImagePicker = () => {
@@ -138,14 +137,38 @@ const DeviceInfo = ({route}) => {
       });
     }
 
-    RootNavigation.navigate(navigationTypes.imeiManager.screen, {
-      name: name,
-      deviceName: deviceName,
-      birthday: birthday,
-      gender: gender,
-      dataRequestAvatar: dataRequestAvatar,
-      deviceInfo: deviceInfo,
-    });
+    //thực hiện kích hoạt
+    mutationActivatedDevice
+      .mutateAsync({
+        data_imei: deviceSN,
+        data_device_info: deviceInfo,
+        data_name: name,
+        data_birthday: birthday,
+        data_gender: gender,
+        data_avatar: dataRequestAvatar,
+      })
+      .then(resp => {
+        if (resp.status) {
+          Toast(resp?.msg);
+          RootNavigation.navigate(navigationTypes.childrenManager.screen);
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationActivatedDevice.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationActivatedDevice.reset();
+      });
+
+    // RootNavigation.navigate(navigationTypes.imeiManager.screen, {
+    //   name: name,
+    //   deviceName: deviceName,
+    //   birthday: birthday,
+    //   gender: gender,
+    //   dataRequestAvatar: dataRequestAvatar,
+    //   deviceInfo: deviceInfo,
+    // });
   };
   return (
     <Background isKeyboard bout>
@@ -213,7 +236,7 @@ const DeviceInfo = ({route}) => {
         </View>
         <Button
           customStyle={styles.btn}
-          label="Lưu thông tin"
+          label="Kích hoạt"
           onPress={handleSaveInfo}
         />
       </View>

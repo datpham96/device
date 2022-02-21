@@ -26,7 +26,11 @@ import {deviceReportApi, deviceListApi} from 'src/api/methods/device';
 import {checkVar, truncateWords} from 'src/helpers/funcs';
 import lodash from 'lodash';
 import navigationTypes from 'navigationTypes';
-import {ItemListPlaceholder} from '../placeholders';
+import {
+  ItemListPlaceholder,
+  DevicePlaceholder,
+  PieCharPlaceholder,
+} from '../placeholders';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const DATA_FILTER = [
@@ -254,13 +258,16 @@ const Home = ({navigation}) => {
     navigation.jumpTo(navigationTypes.childrenManager.screen);
   };
 
+  let checkDeviceData =
+    isSuccessDeviceList &&
+    dataDeviceList?.data &&
+    dataDeviceList?.data?.length > 0;
+
   return (
     <Background bottomTab bout>
       {isLoadingDeviceList ? (
         <LoadingData />
-      ) : isSuccessDeviceList &&
-        dataDeviceList?.data &&
-        dataDeviceList?.data?.length > 0 ? (
+      ) : checkDeviceData ? (
         <View style={styles.container}>
           <View style={styles.wrapHeader}>
             <FastImage
@@ -268,36 +275,43 @@ const Home = ({navigation}) => {
               style={styles.logoLock}
               source={images.logos.lock}
             />
-            <TouchableOpacity
-              style={styles.wrapSelected}
-              activeOpacity={0.9}
-              onPress={handleShowDeviceSelect}>
-              <MaterialCommunityIcons
-                name="chevron-left"
-                size={sizes.SIZE_20}
-                color={colors.COLOR_WHITE}
-                style={styles.iconChevronLeft}
-              />
-              <View style={styles.wrapAvatarDevice}>
-                <FastImage
-                  source={
-                    selectedDevice?.is_block === 0
-                      ? selectedDevice.avatar
-                        ? {uri: selectedDevice.avatar}
-                        : images.avatars.default
-                      : images.avatars.shield
-                  }
-                  style={styles.avatarShield}
-                  resizeMode={FastImage.resizeMode.contain}
+            {isLoadingDeviceList ? (
+              <DevicePlaceholder />
+            ) : (
+              <TouchableOpacity
+                style={styles.wrapSelected}
+                activeOpacity={0.9}
+                onPress={handleShowDeviceSelect}>
+                <MaterialCommunityIcons
+                  name="chevron-left"
+                  size={sizes.SIZE_20}
+                  color={colors.COLOR_WHITE}
+                  style={styles.iconChevronLeft}
                 />
-                {selectedDevice && selectedDevice?.is_online === 1 && (
-                  <View style={styles.dotOnline} />
-                )}
-              </View>
-              <Text style={styles.titleShield}>
-                {truncateWords(selectedDevice?.full_name, 2, '...')}
-              </Text>
-            </TouchableOpacity>
+                <View style={styles.wrapAvatarDevice}>
+                  <FastImage
+                    source={
+                      selectedDevice?.is_block === 0
+                        ? selectedDevice.avatar
+                          ? {uri: selectedDevice.avatar}
+                          : images.avatars.default
+                        : images.avatars.shield
+                    }
+                    style={styles.avatarShield}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
+                  {selectedDevice && selectedDevice?.is_online === 1 && (
+                    <View style={styles.dotOnline} />
+                  )}
+                  {selectedDevice && selectedDevice?.is_online !== 1 && (
+                    <View style={styles.dotOffline} />
+                  )}
+                </View>
+                <Text style={styles.titleShield}>
+                  {truncateWords(selectedDevice?.full_name, 2, '...')}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.wrapContainerTitle}>
             <View style={styles.wrapTitle}>
@@ -318,46 +332,50 @@ const Home = ({navigation}) => {
               <Text style={styles.calendarMonth}>Tháng {month}</Text>
             </TouchableOpacity>
           </View>
-          {deviceList && deviceList.length > 0 && (
-            <View style={styles.chartContainer}>
+
+          <View style={styles.chartContainer}>
+            {deviceList && deviceList.length > 0 ? (
               <PieChart
                 selectedKey={pieChartActive}
                 onSelected={handleActivePieChart}
                 dataList={dataPieChartList}
               />
-              <View style={styles.wrapParams}>
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() => console.log('website')}
-                  style={styles.paramInfo}>
-                  <Text style={styles.paramInfoLabel}>Website</Text>
-                  {dataPieChartList.map((item, key) => {
-                    return (
-                      <TouchableOpacity
-                        key={key}
-                        activeOpacity={0.9}
-                        onPress={() => handlePieChartActive(key)}
-                        style={styles.wrapParamInfoValue}>
-                        <View
-                          style={[
-                            styles.paramInfoValueDot,
-                            {backgroundColor: item.color},
-                          ]}
-                        />
-                        <Text
-                          style={[
-                            styles.paramInfoValue,
-                            pieChartActive === key
-                              ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                              : {},
-                          ]}>
-                          {item.label}: {item.total}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </TouchableOpacity>
-                {/* <TouchableOpacity
+            ) : (
+              <PieCharPlaceholder />
+            )}
+            <View style={styles.wrapParams}>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => console.log('website')}
+                style={styles.paramInfo}>
+                <Text style={styles.paramInfoLabel}>Website</Text>
+                {dataPieChartList.map((item, key) => {
+                  return (
+                    <TouchableOpacity
+                      key={key}
+                      activeOpacity={0.9}
+                      onPress={() => handlePieChartActive(key)}
+                      style={styles.wrapParamInfoValue}>
+                      <View
+                        style={[
+                          styles.paramInfoValueDot,
+                          {backgroundColor: item.color},
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.paramInfoValue,
+                          pieChartActive === key
+                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                            : {},
+                        ]}>
+                        {item.label}: {item.total}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </TouchableOpacity>
+              {/* <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => console.log('application')}
               style={styles.paramInfo}>
@@ -391,9 +409,8 @@ const Home = ({navigation}) => {
                 </Text>
               </TouchableOpacity>
             </TouchableOpacity> */}
-              </View>
             </View>
-          )}
+          </View>
 
           <View style={styles.wrapHeaderList}>
             <View style={styles.wrapHeaderSelect}>
@@ -462,8 +479,9 @@ const Home = ({navigation}) => {
                 <ItemListPlaceholder />
               </View>
             </ScrollView>
-          ) : status === 'success' && !checkVar.isEmpty(data?.pages) ? (
+          ) : (
             <FlatList
+              ListEmptyComponent={<EmptyData />}
               ListFooterComponent={
                 isFetchingNextPage && isFetching && <BaseLoading />
               }
@@ -492,8 +510,6 @@ const Home = ({navigation}) => {
               }}
               renderItem={({item}) => <Item item={item} />}
             />
-          ) : (
-            <EmptyData />
           )}
         </View>
       ) : (

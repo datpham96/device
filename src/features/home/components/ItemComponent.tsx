@@ -3,6 +3,7 @@ import {View, StyleSheet, Alert, TouchableOpacity, Linking} from 'react-native';
 import {Avatar, Text} from 'base';
 import {commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
+import {checkVar} from 'src/helpers/funcs';
 
 export type Props = {
   item?: any;
@@ -32,16 +33,18 @@ const ItemComponent: React.FC<Props> = ({item}) => {
         containerStyle={styles.image}
       />
       <View style={styles.info}>
+        {!checkVar.isEmpty(item.name) && (
+          <Text
+            props={{
+              numberOfLines: 1,
+            }}
+            style={styles.label}>
+            {item.name}
+          </Text>
+        )}
         <Text
           props={{
-            numberOfLines: 2,
-          }}
-          style={styles.label}>
-          {item.name}
-        </Text>
-        <Text
-          props={{
-            numberOfLines: 2,
+            numberOfLines: 1,
           }}
           style={styles.domain}>
           {item.domain}
@@ -73,10 +76,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: sizes.SIZE_16,
     fontFamily: fonts.lexendDeca.FONT_BOLD,
+    marginBottom: sizes.SIZE_5,
   },
   domain: {
-    marginTop: sizes.SIZE_5,
-    fontSize: sizes.SIZE_12,
+    fontSize: sizes.SIZE_14,
     fontFamily: fonts.lexendDeca.FONT_EXTRA_LIGHT,
   },
   total: {

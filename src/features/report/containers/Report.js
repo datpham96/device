@@ -148,7 +148,7 @@ const Report = ({route}) => {
           </View>
           <Text style={styles.headerTableTitleThree}>Thời gian truy cập</Text>
         </View>
-        {status === 'loading' ? (
+        {/* {status === 'loading' ? (
           <LoadingData />
         ) : status === 'success' && !checkVar.isEmpty(data?.pages) ? (
           <FlatList
@@ -159,6 +159,7 @@ const Report = ({route}) => {
               {marginTop: sizes.SIZE_10},
               commonStyles.center,
             ]}
+            Em
             style={styles.flatList}
             contentContainerStyle={styles.contentContainerFlatlist}
             data={lodash.flattenDeep(data?.pages)}
@@ -182,6 +183,40 @@ const Report = ({route}) => {
           />
         ) : (
           <EmptyData />
+        )} */}
+        {status === 'loading' ? (
+          <LoadingData />
+        ) : (
+          <FlatList
+            ListFooterComponent={
+              isFetchingNextPage && isFetching && <BaseLoading />
+            }
+            ListFooterComponentStyle={[
+              {marginTop: sizes.SIZE_10},
+              commonStyles.center,
+            ]}
+            ListEmptyComponent={<EmptyData />}
+            style={styles.flatList}
+            contentContainerStyle={styles.contentContainerFlatlist}
+            data={lodash.flattenDeep(data?.pages)}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(_, key) => key}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={onRefresh}
+                tintColor={colors.COLOR_WHITE}
+              />
+            }
+            refreshing={false}
+            onRefresh={onRefresh}
+            onEndReached={getMore}
+            onEndReachedThreshold={0.05}
+            onScrollBeginDrag={() => {
+              stopLoadMore = false;
+            }}
+            renderItem={({item}) => <ItemComponent item={item} />}
+          />
         )}
       </View>
       <DatePicker

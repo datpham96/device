@@ -1,21 +1,45 @@
 import React from 'react';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {View} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {colors, commonStyles, fonts, sizes} from 'styles';
+import metrics from 'metrics';
+import {Text} from 'base';
+
+const widthChart = metrics.screenWidth / sizes.SIZE_2;
 
 const PieCharPlaceholder = () => {
   return (
-    <SkeletonPlaceholder speed={1000} backgroundColor="#bdbdbd">
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{width: 60, height: 60, borderRadius: 50}} />
-        <View style={{marginLeft: 20}}>
-          <View style={{width: 200, height: 20, borderRadius: 4}} />
-          <View
-            style={{marginTop: 6, width: 80, height: 20, borderRadius: 4}}
-          />
-        </View>
-      </View>
-    </SkeletonPlaceholder>
+    <View style={styles.circleContainer}>
+      <SkeletonPlaceholder backgroundColor={colors.COLOR_LOADING_PLACEHOLDER}>
+        <View style={styles.circle} />
+      </SkeletonPlaceholder>
+      <View style={styles.inCircle} />
+      <Text style={styles.percent}>0%</Text>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  circleContainer: {
+    ...commonStyles.center,
+  },
+  circle: {
+    width: widthChart,
+    height: widthChart,
+    borderRadius: widthChart / sizes.SIZE_2,
+  },
+  inCircle: {
+    width: widthChart / sizes.SIZE_2,
+    height: widthChart / sizes.SIZE_2,
+    borderRadius: widthChart / sizes.SIZE_4,
+    backgroundColor: colors.COLOR_UNDERLAY_BUTTON_BLACK,
+    position: 'absolute',
+  },
+  percent: {
+    fontSize: sizes.SIZE_20,
+    position: 'absolute',
+    fontFamily: fonts.lexendDeca.FONT_BOLD,
+  },
+});
 
 export default PieCharPlaceholder;

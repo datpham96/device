@@ -22,7 +22,6 @@ import navigationTypes from '../types';
 import BottomTabs from '../BottomTabs';
 import {useSelector} from 'react-redux';
 import {Platform} from 'react-native';
-import * as RootNavigation from 'RootNavigation';
 
 const RootNavStack = createStackNavigator();
 

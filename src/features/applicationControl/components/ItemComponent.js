@@ -48,7 +48,7 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
       .mutateAsync({
         data_application_id: item.id,
         data_status: enableSwitch ? 1 : 0,
-        data_time_remaining: 10,
+        data_time_remaining: 0,
       })
       .then(resp => {
         if (resp.status) {
@@ -107,7 +107,7 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
           </Text>
         </View>
       </TouchableOpacity>
-      <View style={styles.wrapUse}>
+      {/* <View style={styles.wrapUse}>
         <TouchableOpacity
           disabled={!enableSwitch}
           style={styles.wrapTime}
@@ -129,7 +129,7 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
             />
           </TouchableOpacity>
         )}
-      </View>
+      </View> */}
       <View style={styles.wrapRadio}>
         <Switch
           value={enableSwitch}

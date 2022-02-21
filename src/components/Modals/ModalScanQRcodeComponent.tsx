@@ -35,6 +35,7 @@ const ModalScanQRcode: React.FC<Props> = ({
             cameraStyle={styles.cameraStyles}
             topContent={<Text>Quét mã QR</Text>}
             cameraProps={{ratio: '1:1'}}
+            // showMarker={true}
             bottomContent={
               <View>
                 {/* <FastImage

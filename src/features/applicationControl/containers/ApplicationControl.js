@@ -20,7 +20,6 @@ import {
   applicationListApi,
   applicationUpdateApi,
 } from 'src/api/methods/application';
-import {checkVar} from 'src/helpers/funcs';
 import {useMutation} from 'react-query';
 import {Toast} from 'customs';
 import moment from 'moment';
@@ -288,10 +287,35 @@ const ApplicationControl = ({route}) => {
         </Text>
         <View style={styles.wrapTableHeader}>
           <Text style={styles.headerTableTitleOne}>Ứng dụng</Text>
-          <Text style={styles.headerTableTitleTwo}>Sử dụng</Text>
+          {/* <Text style={styles.headerTableTitleTwo}>Sử dụng</Text> */}
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (
+          <LoadingData />
+        ) : (
+          <FlatList
+            style={styles.flatList}
+            contentContainerStyle={styles.contentContainerFlatlist}
+            ListEmptyComponent={<EmptyData />}
+            data={applicationList}
+            keyExtractor={item => item.id.toString() + item.status}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={onRefresh}
+                tintColor={colors.COLOR_WHITE}
+              />
+            }
+            renderItem={({item}) => (
+              <ItemComponent
+                onPressResetTime={() => showPopupConfirmRemoveTime(item)}
+                onPressTime={obj => showModalTimeBlockAccess(obj)}
+                item={item}
+              />
+            )}
+          />
+        )}
+        {/* {isLoading ? (
           <LoadingData />
         ) : isSuccess && !checkVar.isEmpty(applicationList) ? (
           <FlatList
@@ -316,7 +340,7 @@ const ApplicationControl = ({route}) => {
           />
         ) : (
           <EmptyData />
-        )}
+        )} */}
       </View>
     </Background>
   );

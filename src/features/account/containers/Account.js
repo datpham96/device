@@ -20,6 +20,7 @@ import navigationTypes from 'navigationTypes';
 import Validator from 'validatorjs';
 import {Toast} from 'customs';
 import {buildAvatar} from 'src/helpers/funcs';
+import VersionInfo from 'react-native-version-info';
 
 const options = {
   mediaType: 'photo',
@@ -169,8 +170,9 @@ const Account = () => {
   const handleOpenBottomSheetImagePicker = () => {
     setVisibleImagePicker(true);
   };
+
   return (
-    <Background isKeyboard bout>
+    <Background bout>
       <ModalBottomSheet
         onPressOne={() => {
           setVisibleImagePicker(false);
@@ -250,6 +252,7 @@ const Account = () => {
           />
         </View>
       </ScrollView>
+      <Text style={styles.version}>Ver {VersionInfo.appVersion}</Text>
     </Background>
   );
 };

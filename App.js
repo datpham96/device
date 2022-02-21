@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 // import {PersistGate} from 'redux-persist/es/integration/react';
-import {BackHandler, Alert, Linking} from 'react-native';
+import {BackHandler, Alert, Linking, Text, TextInput} from 'react-native';
 // import SplashScreen from 'react-native-splash-screen';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
@@ -15,6 +15,12 @@ import VersionCheck from 'react-native-version-check';
 import * as Validator from 'src/helpers/customs/Validator';
 
 const {store} = configureStore;
+
+//fix text not scale
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+TextInput.defaultProps = Text.defaultProps || {};
+TextInput.defaultProps.allowFontScaling = false;
 
 const App = () => {
   React.useEffect(() => {

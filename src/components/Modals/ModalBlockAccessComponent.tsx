@@ -96,7 +96,7 @@ const ModalBlockAccess: React.FC<Props> = ({
                 />
               </TouchableOpacity>
             </View>
-            <View style={styles.wrapInputTimes}>
+            {/* <View style={styles.wrapInputTimes}>
               <TextInput
                 onFocus={onFocusHour}
                 editable={isActive}
@@ -142,7 +142,7 @@ const ModalBlockAccess: React.FC<Props> = ({
                 maxLength={2}
                 keyboardType="number-pad"
               />
-            </View>
+            </View> */}
             <TouchableHighlight
               underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
               activeOpacity={0.9}

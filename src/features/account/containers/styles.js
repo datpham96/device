@@ -9,6 +9,7 @@ export default StyleSheet.create({
   container: {
     paddingHorizontal: sizes.SIZE_20,
     marginTop: sizes.SIZE_30,
+    ...commonStyles.flex1,
   },
   mainTitleStyle: {
     ...commonStyles.flexRowCenter,
@@ -48,5 +49,10 @@ export default StyleSheet.create({
   btn: {
     alignSelf: 'auto',
     width: '46%',
+  },
+  version: {
+    textAlign: 'center',
+    // position: 'absolute',
+    bottom: sizes.SIZE_20,
   },
 });

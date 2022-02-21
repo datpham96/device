@@ -5,6 +5,7 @@ import {commonStyles, sizes} from 'styles';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {checkVar} from 'src/helpers/funcs';
 momentDurationFormatSetup(moment);
 
 const ItemComponent = ({item}) => {
@@ -47,13 +48,15 @@ const ItemComponent = ({item}) => {
           imageStyle={styles.image}
         />
         <View style={styles.wrapInfo}>
-          <Text
-            props={{
-              numberOfLines: 1,
-            }}
-            style={styles.name}>
-            {item.name}
-          </Text>
+          {!checkVar.isEmpty(item.name) && (
+            <Text
+              props={{
+                numberOfLines: 1,
+              }}
+              style={styles.name}>
+              {item.name}
+            </Text>
+          )}
           <Text
             props={{
               numberOfLines: 1,
@@ -97,10 +100,11 @@ const styles = StyleSheet.create({
     marginLeft: sizes.SIZE_10,
     flex: 1,
   },
-  name: {},
+  name: {
+    marginBottom: sizes.SIZE_3,
+  },
   domain: {
     fontSize: sizes.SIZE_13,
-    marginTop: sizes.SIZE_3,
   },
   wrapTime: {},
   time: {},
