@@ -45,7 +45,9 @@ const Home = ({navigation}) => {
     refetch: refetchReportAccess,
     isLoading: isLoadingReportAccess,
     isSuccess: isSuccessReportAccess,
-    isFetching: isFetchingReportAccess,
+    // isFetching: isFetchingReportAccess,
+    // isRefetching: isRefetchingReportAccess,
+    isFetched: isFetchedReportAccess,
   } = useQuery(
     keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id + '_' + date,
     () =>
@@ -111,29 +113,23 @@ const Home = ({navigation}) => {
   const dataPieChartList = useMemo(() => {
     let tmpDataList = [];
     if (isSuccessReportAccess && !checkVar.isEmpty(dataReportAccess)) {
-      let percentOfTotal =
-        // eslint-disable-next-line radix
-        parseInt(dataReportAccess?.total_request?.total_request) +
-        // eslint-disable-next-line radix
-        parseInt(dataReportAccess?.blocked?.total_blocked);
+      let totalRequest = dataReportAccess?.total_request?.total_request;
+      let totalBlocked = dataReportAccess?.blocked?.total_blocked;
+      let totalAccess = totalRequest - totalBlocked;
+      let percentBlock = (totalAccess / totalRequest) * 100;
       tmpDataList.push({
-        value: Math.round(
-          (dataReportAccess?.total_request?.total_request / percentOfTotal) *
-            100,
-        ),
+        value: percentBlock.toFixed(1),
         color: colors.COLOR_CHART_BLUE,
         label: types.status.allow.name,
         code: types.status.allow.code,
-        total: dataReportAccess?.total_request?.total_request,
+        total: totalAccess,
       });
       tmpDataList.push({
-        value: Math.round(
-          (dataReportAccess?.blocked?.total_blocked / percentOfTotal) * 100,
-        ),
+        value: (100 - percentBlock).toFixed(1),
         color: colors.COLOR_CHART_RED,
         label: types.status.block.name,
         code: types.status.block.code,
-        total: dataReportAccess?.blocked?.total_blocked,
+        total: totalBlocked,
       });
     }
 
@@ -230,7 +226,7 @@ const Home = ({navigation}) => {
         <LoadingData />
       ) : checkDeviceData ? (
         <View style={styles.container}>
-          <Loading isLoading={isFetchingReportAccess} />
+          {/* <Loading isLoading={isFetchingReportAccess} /> */}
           <TouchableWithoutFeedback
             onPress={() => {
               setToggleDeviceSelected(false);
@@ -314,7 +310,7 @@ const Home = ({navigation}) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.chartContainer}>
-                {isLoadingReportAccess || isFetchingReportAccess ? (
+                {isLoadingReportAccess || !isFetchedReportAccess ? (
                   <PieCharPlaceholder />
                 ) : (
                   <PieChart
@@ -362,7 +358,7 @@ const Home = ({navigation}) => {
           <ScrollView
             refreshControl={
               <RefreshControl
-                refreshing={false}
+                refreshing={isLoadingReportAccess || !isFetchedReportAccess}
                 onRefresh={onRefresh}
                 tintColor={colors.COLOR_WHITE}
               />

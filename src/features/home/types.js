@@ -15,7 +15,7 @@ export default {
       code: 'block',
     },
     allow: {
-      name: 'Truy vấn',
+      name: 'An toàn',
       code: 'allow',
     },
   },
