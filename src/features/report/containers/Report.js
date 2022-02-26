@@ -94,7 +94,6 @@ const Report = ({route}) => {
   const handleShowDatePicker = () => {
     dateTimeRef.current.onPressDate();
   };
-
   return (
     <Background bin>
       {/* <Loading isLoading={isRefetching} /> */}
@@ -187,8 +186,8 @@ const Report = ({route}) => {
         )} */}
         {status === 'loading' ? (
           <FlatList
-            initialNumToRender={7}
-            data={[0, 1, 2, 3, 4, 5, 6, 7]}
+            initialNumToRender={10}
+            data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
             removeClippedSubviews={true}
             renderItem={() => <ItemListPlaceholder />}
             contentContainerStyle={styles.loadingContainer}

@@ -110,4 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BlockFilterSearchComponent;
+export default React.memo(BlockFilterSearchComponent);

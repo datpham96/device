@@ -11,10 +11,7 @@ const ItemListPlaceholder = () => {
       <View style={[commonStyles.flexRowCenter, styles.container]}>
         <View style={styles.avatar} />
         <View style={styles.wrapInfo}>
-          <View>
-            <View style={styles.name} />
-            <View style={styles.domain} />
-          </View>
+          <View style={styles.name} />
           <View style={styles.time} />
         </View>
       </View>
@@ -42,12 +39,7 @@ const styles = StyleSheet.create({
     height: sizes.SIZE_15,
     borderRadius: sizes.SIZE_4,
   },
-  domain: {
-    width: metrics.screenWidth / sizes.SIZE_3,
-    height: sizes.SIZE_15,
-    borderRadius: sizes.SIZE_4,
-    marginTop: sizes.SIZE_5,
-  },
+
   time: {
     width: metrics.screenWidth / sizes.SIZE_8,
     height: sizes.SIZE_15,

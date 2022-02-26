@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {PieChart, LoadingData} from 'components';
+import {PieChart, LoadingData, Loading} from 'components';
 import {Text, Background, Button} from 'base';
 import images from 'images';
 import styles from './styles';
@@ -45,6 +45,7 @@ const Home = ({navigation}) => {
     refetch: refetchReportAccess,
     isLoading: isLoadingReportAccess,
     isSuccess: isSuccessReportAccess,
+    isFetching: isFetchingReportAccess,
   } = useQuery(
     keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id + '_' + date,
     () =>
@@ -229,6 +230,7 @@ const Home = ({navigation}) => {
         <LoadingData />
       ) : checkDeviceData ? (
         <View style={styles.container}>
+          <Loading isLoading={isFetchingReportAccess} />
           <TouchableWithoutFeedback
             onPress={() => {
               setToggleDeviceSelected(false);
@@ -312,7 +314,7 @@ const Home = ({navigation}) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.chartContainer}>
-                {isLoadingReportAccess ? (
+                {isLoadingReportAccess || isFetchingReportAccess ? (
                   <PieCharPlaceholder />
                 ) : (
                   <PieChart

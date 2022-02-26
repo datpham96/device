@@ -108,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BlockTotalComponent;
+export default React.memo(BlockTotalComponent);

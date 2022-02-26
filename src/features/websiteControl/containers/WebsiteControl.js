@@ -26,6 +26,7 @@ import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 import types from '../types';
 import {ModalCreateUpdateWebComponent} from '../components';
+import {ItemListPlaceholder} from '../placeholders';
 
 momentDurationFormatSetup(moment);
 
@@ -363,7 +364,13 @@ const WebsiteControl = ({route}) => {
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (
-          <LoadingData />
+          <FlatList
+            initialNumToRender={10}
+            data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            removeClippedSubviews={true}
+            renderItem={() => <ItemListPlaceholder />}
+            contentContainerStyle={styles.loadingContainer}
+          />
         ) : (
           <FlatList
             style={styles.flatList}

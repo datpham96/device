@@ -43,6 +43,10 @@ export default StyleSheet.create({
   headerTableTitleTwo: {
     width: sizes.SIZE_100,
   },
+  loadingContainer: {
+    paddingHorizontal: sizes.SIZE_10,
+    paddingVertical: sizes.SIZE_10,
+  },
   headerTableTitleThree: {
     width: sizes.SIZE_100,
     textAlign: 'right',

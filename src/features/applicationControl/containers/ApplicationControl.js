@@ -24,6 +24,7 @@ import {useMutation} from 'react-query';
 import {Toast} from 'customs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+import {ItemListPlaceholder} from '../placeholders';
 
 momentDurationFormatSetup(moment);
 
@@ -296,7 +297,13 @@ const ApplicationControl = ({route}) => {
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (
-          <LoadingData />
+          <FlatList
+            initialNumToRender={10}
+            data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            removeClippedSubviews={true}
+            renderItem={() => <ItemListPlaceholder />}
+            contentContainerStyle={styles.loadingContainer}
+          />
         ) : (
           <FlatList
             style={styles.flatList}

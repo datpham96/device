@@ -5,7 +5,7 @@ import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
 import {Text} from 'base';
 
-const widthChart = metrics.screenWidth / 2.3;
+const widthChart = metrics.screenWidth / 2.2;
 
 const PieCharPlaceholder = () => {
   return (

@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   textLabel: {
     position: 'absolute',
-    fontSize: sizes.SIZE_21,
+    fontSize: sizes.SIZE_17,
     textAlign: 'center',
     fontFamily: fonts.lexendDeca.FONT_BOLD,
     color: colors.COLOR_WHITE,

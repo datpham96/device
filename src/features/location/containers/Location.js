@@ -32,6 +32,7 @@ import navigationTypes from 'navigationTypes';
 import Geocoder from 'react-native-geocoder';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView} from 'react-native-gesture-handler';
+import {MapMarker} from '../components';
 // simply add your google key
 Geocoder.fallbackToGoogle(
   // Platform.OS === 'ios'
@@ -351,39 +352,7 @@ const Location = ({navigation}) => {
           <LoadingData />
         ) : (
           <View style={styles.contentContainer}>
-            <MapView
-              provider={PROVIDER_GOOGLE}
-              style={styles.map}
-              region={markers}
-              onPress={handleMaker}>
-              <Marker
-                pinColor={colors.COLOR_RED_ORANGE}
-                coordinate={markers}
-                tappable={false}>
-                {markers?.latitude > 0 && markers?.longitude > 0 && (
-                  <>
-                    {markers?.address && (
-                      <View style={styles.wrapLabelLocation}>
-                        <Text style={styles.labelLocation}>
-                          {markers?.address}
-                        </Text>
-                      </View>
-                    )}
-                    <View style={styles.wrapImageMarkers}>
-                      <Image
-                        style={styles.imageMarker}
-                        source={
-                          markers?.avatar
-                            ? {uri: markers.avatar}
-                            : images.avatars.default
-                        }
-                      />
-                      <View style={styles.triangleMarker} />
-                    </View>
-                  </>
-                )}
-              </Marker>
-            </MapView>
+            <MapMarker markers={markers} />
           </View>
         )}
       </View>

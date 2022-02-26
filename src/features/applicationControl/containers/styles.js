@@ -37,6 +37,9 @@ export default StyleSheet.create({
     paddingVertical: sizes.SIZE_10,
     marginTop: sizes.SIZE_20,
   },
+  loadingContainer: {
+    padding: sizes.SIZE_10,
+  },
   headerTableTitleOne: {
     ...commonStyles.flex1,
   },
