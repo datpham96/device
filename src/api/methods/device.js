@@ -110,10 +110,6 @@ export function deviceSettingListApi(device_id) {
 }
 
 export function deviceSettingUpdateApi(device_id, setting_id, name, status) {
-  console.log(device_id, 'device_id');
-  console.log(setting_id, 'setting_id');
-  console.log(name, 'name');
-  console.log(status, 'status');
   //Cập nhật cài đặt thiết bị
   let bodyFormData = new FormData();
   bodyFormData.append('device_id', device_id);

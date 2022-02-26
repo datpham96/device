@@ -15,14 +15,16 @@ const BlockFilterSearchComponent = ({
   title,
   total,
   svgFillColor,
+  containerStyle,
+  areaChartStyle,
 }) => {
   const maxNumber = lodash.max(data);
   const unitNumber = landmarkUnitOfNumber(maxNumber);
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <>
         <AreaChart
-          style={styles.areaChart}
+          style={[styles.areaChart, areaChartStyle]}
           data={data?.map(val => {
             return unitNumber > 0 ? Math.ceil(val / unitNumber) * 1.5 : 0;
           })}
@@ -35,7 +37,7 @@ const BlockFilterSearchComponent = ({
           animationDuration={500}
         />
         <AreaChart
-          style={styles.areaChart}
+          style={[styles.areaChart, areaChartStyle]}
           data={data?.map(val => {
             return unitNumber > 0 ? Math.ceil(val / unitNumber) : 0;
           })}

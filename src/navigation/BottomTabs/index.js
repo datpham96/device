@@ -150,8 +150,6 @@ const BottomTabs = () => {
   );
 };
 
-console.log(metrics.heightBottomTab, 'metrics.heightBottomTab');
-
 const styles = StyleSheet.create({
   barStyle: {},
   touchTabBar: {

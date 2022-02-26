@@ -13,12 +13,7 @@ import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
-import {
-  DropdownSelected,
-  InputSelectComponent,
-  Loading,
-  PopupConfirm,
-} from 'components';
+import {DropdownSelected, LoadingData, Loading, PopupConfirm} from 'components';
 import keyTypes from 'keyTypes';
 import {deviceListApi, deviceUpdateApi} from 'methods/device';
 import {useQuery, useMutation} from 'react-query';
@@ -60,7 +55,7 @@ const Location = ({navigation}) => {
     useState(false);
   const [toggleDropDownSelected, setToggleDropDownSelected] = useState(false);
 
-  const {data, isSuccess} = useQuery(
+  const {data, isSuccess, isLoading} = useQuery(
     keyTypes.DEVICE_LIST,
     () => deviceListApi(),
     {
@@ -352,41 +347,45 @@ const Location = ({navigation}) => {
             <Text style={styles.btnLabel}>Khoá thiết bị</Text>
           </TouchableHighlight>
         </View>
-        <View style={styles.contentContainer}>
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            region={markers}
-            onPress={handleMaker}>
-            <Marker
-              pinColor={colors.COLOR_RED_ORANGE}
-              coordinate={markers}
-              tappable={false}>
-              {markers?.latitude > 0 && markers?.longitude > 0 && (
-                <>
-                  {markers?.address && (
-                    <View style={styles.wrapLabelLocation}>
-                      <Text style={styles.labelLocation}>
-                        {markers?.address}
-                      </Text>
+        {isLoading ? (
+          <LoadingData />
+        ) : (
+          <View style={styles.contentContainer}>
+            <MapView
+              provider={PROVIDER_GOOGLE}
+              style={styles.map}
+              region={markers}
+              onPress={handleMaker}>
+              <Marker
+                pinColor={colors.COLOR_RED_ORANGE}
+                coordinate={markers}
+                tappable={false}>
+                {markers?.latitude > 0 && markers?.longitude > 0 && (
+                  <>
+                    {markers?.address && (
+                      <View style={styles.wrapLabelLocation}>
+                        <Text style={styles.labelLocation}>
+                          {markers?.address}
+                        </Text>
+                      </View>
+                    )}
+                    <View style={styles.wrapImageMarkers}>
+                      <Image
+                        style={styles.imageMarker}
+                        source={
+                          markers?.avatar
+                            ? {uri: markers.avatar}
+                            : images.avatars.default
+                        }
+                      />
+                      <View style={styles.triangleMarker} />
                     </View>
-                  )}
-                  <View style={styles.wrapImageMarkers}>
-                    <Image
-                      style={styles.imageMarker}
-                      source={
-                        markers?.avatar
-                          ? {uri: markers.avatar}
-                          : images.avatars.default
-                      }
-                    />
-                    <View style={styles.triangleMarker} />
-                  </View>
-                </>
-              )}
-            </Marker>
-          </MapView>
-        </View>
+                  </>
+                )}
+              </Marker>
+            </MapView>
+          </View>
+        )}
       </View>
     </Background>
   );

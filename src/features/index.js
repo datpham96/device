@@ -54,6 +54,3 @@ export {default as ReportScreen} from './report/containers/Report';
 
 //application
 export {default as ApplicationControlScreen} from './applicationControl/containers/ApplicationControl';
-
-//setting
-export {default as SettingScreen} from './setting/containers/Setting';

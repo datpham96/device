@@ -118,8 +118,7 @@ const ModalSetupAccessComponent = ({
         }
         mutationUpdate.reset();
       })
-      .catch(err => {
-        console.log(err, 'err');
+      .catch(() => {
         Alert.alert('Thông báo', 'Thiết lập không thành công', [
           {
             text: 'Đóng',

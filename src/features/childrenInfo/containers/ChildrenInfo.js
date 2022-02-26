@@ -188,8 +188,7 @@ const ChildrenInfo = ({route}) => {
         }
         mutationUpdate.reset();
       })
-      .catch(err => {
-        console.log(err, 'err');
+      .catch(() => {
         Toast('Thiết lập không thành công');
         mutationUpdate.reset();
       });

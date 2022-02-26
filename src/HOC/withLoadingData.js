@@ -9,10 +9,7 @@ const withLoadingData = (WrappedComponent, isLoading, isSuccess) => {
       super(props);
     }
 
-    componentDidMount() {
-      console.log(isLoading, '===isLoading==');
-      console.log(isSuccess, '===isSuccess==');
-    }
+    componentDidMount() {}
 
     render() {
       return <WrappedComponent />;

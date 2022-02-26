@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
 import {
   View,
@@ -38,6 +37,7 @@ const Home = ({navigation}) => {
   const [selectedDevice, onSelectedDevice] = useState(null);
   const [pieChartActive, setPieChartActive] = useState(0);
   const [toggleDeviceSelected, setToggleDeviceSelected] = useState(false);
+  const [heightSectionTwo, setHeightSectionTwo] = useState(0);
 
   //request report
   const {
@@ -46,7 +46,7 @@ const Home = ({navigation}) => {
     isLoading: isLoadingReportAccess,
     isSuccess: isSuccessReportAccess,
   } = useQuery(
-    keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id,
+    keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id + '_' + date,
     () =>
       webReportAccessApi(
         selectedDevice?.id,
@@ -116,7 +116,6 @@ const Home = ({navigation}) => {
         // eslint-disable-next-line radix
         parseInt(dataReportAccess?.blocked?.total_blocked);
       tmpDataList.push({
-        // device: types.type.website.code,
         value: Math.round(
           (dataReportAccess?.total_request?.total_request / percentOfTotal) *
             100,
@@ -127,7 +126,6 @@ const Home = ({navigation}) => {
         total: dataReportAccess?.total_request?.total_request,
       });
       tmpDataList.push({
-        // device: types.type.website.code,
         value: Math.round(
           (dataReportAccess?.blocked?.total_blocked / percentOfTotal) * 100,
         ),
@@ -143,7 +141,7 @@ const Home = ({navigation}) => {
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
-      keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id,
+      keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id + '_' + date,
       {
         exact: true,
       },
@@ -155,6 +153,19 @@ const Home = ({navigation}) => {
     // await refetchDeviceList();
   };
 
+  const formatHeightBlock = useMemo(() => {
+    let heightBlock = sizes.ZERO;
+    let heightAreaChart = sizes.ZERO;
+    if (heightSectionTwo) {
+      heightBlock = heightSectionTwo / sizes.SIZE_2 - sizes.SIZE_25;
+      heightAreaChart = heightBlock / 2.5;
+    }
+    return {
+      heightBlock,
+      heightAreaChart,
+    };
+  }, [heightSectionTwo]);
+
   const handleShowDatePicker = () => {
     dateTimeRef.current.onPressDate();
   };
@@ -164,11 +175,6 @@ const Home = ({navigation}) => {
   };
 
   const handleShowDeviceSelect = () => {
-    // if (Platform.OS === 'ios') {
-    //   selectDeviceRef.current.togglePicker();
-    // } else {
-    //   selectDeviceRef.current.focus();
-    // }
     setToggleDeviceSelected(!toggleDeviceSelected);
   };
 
@@ -205,10 +211,17 @@ const Home = ({navigation}) => {
     return total;
   };
 
+  const onLayoutSectionOne = event => {
+    const {height} = event.nativeEvent.layout;
+    const heightOutSideBottomTab =
+      metrics.screenHeight - metrics.heightBottomTab - metrics.statusBarHeight;
+    setHeightSectionTwo(heightOutSideBottomTab - height);
+  };
+
   let checkDeviceData =
     isSuccessDeviceList &&
     dataDeviceList?.data &&
-    dataDeviceList?.data?.length > 0;
+    dataDeviceList?.data?.length > sizes.ZERO;
 
   return (
     <Background bottomTab bout>
@@ -220,7 +233,7 @@ const Home = ({navigation}) => {
             onPress={() => {
               setToggleDeviceSelected(false);
             }}>
-            <View style={styles.sectionOne}>
+            <View onLayout={onLayoutSectionOne} style={styles.sectionOne}>
               <View style={styles.wrapHeader}>
                 <FastImage
                   resizeMode={FastImage.resizeMode.contain}
@@ -340,40 +353,6 @@ const Home = ({navigation}) => {
                       );
                     })}
                   </TouchableOpacity>
-                  {/* <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => console.log('application')}
-              style={styles.paramInfo}>
-              <Text
-                style={[styles.paramInfoLabel, {color: colors.COLOR_WHITE}]}>
-                Ứng dụng
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => console.log('Đã chặn')}
-                style={styles.wrapParamInfoValue}>
-                <View style={styles.paramInfoValueDot} />
-                <Text style={styles.paramInfoValue}>Đã chặn: 8</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() => console.log('Cho phép')}
-                style={styles.wrapParamInfoValue}>
-                <View
-                  style={[
-                    styles.paramInfoValueDot,
-                    {backgroundColor: colors.COLOR_CHART_YELLOW},
-                  ]}
-                />
-                <Text
-                  style={[
-                    styles.paramInfoValue,
-                    {fontFamily: fonts.lexendDeca.FONT_BOLD},
-                  ]}>
-                  Cho phép: 8
-                </Text>
-              </TouchableOpacity>
-            </TouchableOpacity> */}
                 </View>
               </View>
             </View>
@@ -386,7 +365,7 @@ const Home = ({navigation}) => {
                 tintColor={colors.COLOR_WHITE}
               />
             }
-            style={styles.sectionTwo}>
+            style={[styles.sectionTwo, {height: heightSectionTwo}]}>
             <View style={styles.wrapHeaderList}>
               <View style={styles.wrapHeaderSelect}>
                 <View style={styles.headerVerticalBar} />
@@ -398,6 +377,8 @@ const Home = ({navigation}) => {
             {/* Thống kê truy cập */}
             <View style={styles.reportContainer}>
               <BlockTotal
+                containerStyle={{height: formatHeightBlock.heightBlock}}
+                areaChartStyle={{height: formatHeightBlock.heightAreaChart}}
                 total={formatNumberThousand(
                   dataReportAccess?.total_request?.total_request,
                 )}
@@ -413,6 +394,8 @@ const Home = ({navigation}) => {
               />
               <View style={styles.wrapBlockChildren}>
                 <BlockFilterSearch
+                  containerStyle={{height: formatHeightBlock.heightBlock}}
+                  areaChartStyle={{height: formatHeightBlock.heightAreaChart}}
                   iconImage={images.icons.area_filter}
                   total={formatNumberThousand(
                     dataReportAccess?.blocked?.total_blocked,
@@ -430,6 +413,8 @@ const Home = ({navigation}) => {
                   svgFillColor={colors.COLOR_AREA_CHART_RED}
                 />
                 <BlockFilterSearch
+                  containerStyle={{height: formatHeightBlock.heightBlock}}
+                  areaChartStyle={{height: formatHeightBlock.heightAreaChart}}
                   iconImage={images.icons.area_safe_search}
                   total={formatNumberThousand(
                     dataReportAccess?.safe_search?.total_safe_search,

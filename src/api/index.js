@@ -83,7 +83,6 @@ export async function apiToken(path, method, params = {}, token) {
           data: null,
         };
       }
-      console.log(error, '401');
       if (error?.response?.status === statusCode.CODE_401) {
         RootNavigation.navigate(navigationType.error401.screen);
         return {

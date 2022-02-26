@@ -77,8 +77,6 @@ const ItemComponent = ({item, onPressDetail}) => {
     ]);
   };
 
-  console.log(item.icon, 'item.icon==');
-
   return (
     <View style={styles.container}>
       <Loading isLoading={mutation.isLoading} />

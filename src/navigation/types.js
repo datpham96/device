@@ -87,10 +87,6 @@ const types = {
     screen: 'report',
     name: 'Thống kê',
   },
-  setting: {
-    screen: 'setting',
-    name: 'Cài đặt',
-  },
 };
 
 export default types;

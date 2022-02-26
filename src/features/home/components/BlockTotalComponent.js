@@ -15,14 +15,20 @@ const heightOutSideBottomTab =
 const HEIGHT_BLOCK =
   (heightOutSideBottomTab / 2 - sizes.SIZE_50) / sizes.SIZE_2;
 
-const BlockTotalComponent = ({data = [], total}) => {
+const BlockTotalComponent = ({
+  data = [],
+  total,
+  containerStyle,
+  areaChartStyle,
+  sizeIcon,
+}) => {
   const maxNumber = lodash.max(data);
   const unitNumber = landmarkUnitOfNumber(maxNumber);
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       <>
         <AreaChart
-          style={styles.areaChart}
+          style={[styles.areaChart, areaChartStyle]}
           data={data?.map(val => {
             return unitNumber > 0
               ? Math.ceil(val / unitNumber) * 1.5
@@ -37,7 +43,7 @@ const BlockTotalComponent = ({data = [], total}) => {
           animationDuration={500}
         />
         <AreaChart
-          style={styles.areaChart}
+          style={[styles.areaChart, areaChartStyle]}
           data={data?.map(val => {
             return unitNumber > 0 ? Math.ceil(val / unitNumber) : unitNumber;
           })}
@@ -56,7 +62,7 @@ const BlockTotalComponent = ({data = [], total}) => {
           <Text style={styles.total}>{total}</Text>
         </View>
         <FastImage
-          style={styles.iconTotal}
+          style={[styles.iconTotal, sizeIcon]}
           source={images.icons.area_chart_total}
           resizeMode={FastImage.resizeMode.contain}
         />
