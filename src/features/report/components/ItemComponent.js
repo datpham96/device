@@ -46,24 +46,25 @@ const ItemComponent = ({item}) => {
           uriImage={item.icon}
           containerStyle={styles.imageContainer}
           imageStyle={styles.image}
+          isWeb
         />
         <View style={styles.wrapInfo}>
-          {!checkVar.isEmpty(item.name) && (
-            <Text
-              props={{
-                numberOfLines: 1,
-              }}
-              style={styles.name}>
-              {item.name}
-            </Text>
-          )}
           <Text
             props={{
               numberOfLines: 1,
             }}
-            style={styles.domain}>
-            {item.domain}
+            style={styles.name}>
+            {item.name}
           </Text>
+          {!checkVar.isEmpty(item.domain) && (
+            <Text
+              props={{
+                numberOfLines: 1,
+              }}
+              style={styles.domain}>
+              {item.domain}
+            </Text>
+          )}
         </View>
       </View>
       <View style={styles.wrapTime}>

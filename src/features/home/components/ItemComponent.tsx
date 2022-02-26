@@ -28,6 +28,7 @@ const ItemComponent: React.FC<Props> = ({item}) => {
       onLongPress={() => handleShowDetail(item.url)}
       style={styles.container}>
       <Avatar
+        isWeb
         imageStyle={styles.image}
         uriImage={item.icon}
         containerStyle={styles.image}

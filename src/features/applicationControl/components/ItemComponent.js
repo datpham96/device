@@ -6,13 +6,13 @@ import FastImage from 'react-native-fast-image';
 import images from 'images';
 import {useMutation} from 'react-query';
 import {applicationUpdateApi} from 'src/api/methods/application';
-import {PopupConfirm} from 'components';
+import {PopupConfirm, Loading} from 'components';
 import {Toast} from 'customs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 momentDurationFormatSetup(moment);
 
-const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
+const ItemComponent = ({item, onPressDetail}) => {
   const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
     moment(),
     'minutes',
@@ -44,6 +44,7 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
   };
 
   const handleAgreeUpdate = () => {
+    setVisibleModal(false);
     mutation
       .mutateAsync({
         data_application_id: item.id,
@@ -53,7 +54,8 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
       .then(resp => {
         if (resp.status) {
           Toast(resp.msg);
-          setVisibleModal(false);
+        } else {
+          Toast(resp.msg);
         }
         mutation.reset();
       })
@@ -79,6 +81,7 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
 
   return (
     <View style={styles.container}>
+      <Loading isLoading={mutation.isLoading} />
       <PopupConfirm
         visible={visibleModal}
         onPressAgree={() => handleAgreeUpdate()}
@@ -107,29 +110,13 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
           </Text>
         </View>
       </TouchableOpacity>
-      {/* <View style={styles.wrapUse}>
-        <TouchableOpacity
-          disabled={!enableSwitch}
-          style={styles.wrapTime}
-          activeOpacity={0.9}
-          onPress={() => onPressTime({...item, status: enableSwitch})}>
-          <Text style={styles.timeValue}>{duration.toString()}</Text>
-          <FastImage
-            source={images.icons.time}
-            resizeMode={FastImage.resizeMode.contain}
-            style={styles.iconTime}
-          />
-        </TouchableOpacity>
-        {enableSwitch && !isNaN(timeUse) && (
-          <TouchableOpacity activeOpacity={0.9} onPress={onPressResetTime}>
-            <FastImage
-              source={images.icons.close}
-              resizeMode={FastImage.resizeMode.contain}
-              style={styles.iconClose}
-            />
-          </TouchableOpacity>
-        )}
-      </View> */}
+      {/* <TouchableOpacity
+        disabled={!enableSwitch}
+        style={styles.wrapUse}
+        activeOpacity={0.9}
+        onPress={() => onPressDetail({...item, status: enableSwitch})}>
+        <Text>Xem chi tiết</Text>
+      </TouchableOpacity> */}
       <View style={styles.wrapRadio}>
         <Switch
           value={enableSwitch}

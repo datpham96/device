@@ -1,11 +1,18 @@
 import React from 'react';
 import {Background, Text} from 'base';
-import {View, StyleSheet, TouchableOpacity, Modal} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Platform,
+} from 'react-native';
 import images from 'images';
 import FastImage from 'react-native-fast-image';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {commonStyles, sizes} from 'styles';
 import metrics from 'metrics';
+import {isIphoneX} from 'react-native-iphone-x-helper';
 // import Modal from 'react-native-modal';
 
 export type Props = {
@@ -55,14 +62,16 @@ const ModalScanQRcode: React.FC<Props> = ({
 const styles = StyleSheet.create({
   modalContainer: {
     width: metrics.screenWidth,
-    // height: metrics.screenHeight,
   },
   wrapClose: {
     width: sizes.SIZE_30,
     height: sizes.SIZE_30,
     position: 'absolute',
     right: sizes.SIZE_20,
-    top: metrics.statusBarHeight + sizes.SIZE_10,
+    top:
+      Platform.OS === 'ios'
+        ? metrics.statusBarHeight + sizes.SIZE_10
+        : sizes.SIZE_10,
   },
   iconClose: {
     width: sizes.SIZE_30,

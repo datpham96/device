@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React, {useState} from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -9,12 +10,14 @@ export type Props = {
   uriImage?: any;
   containerStyle?: any;
   imageStyle?: any;
+  isWeb?: boolean;
 };
 
 const Avatar: React.FC<Props> = ({
   uriImage = null,
   containerStyle,
   imageStyle,
+  isWeb,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   let tmpSrcImage = {
@@ -31,7 +34,13 @@ const Avatar: React.FC<Props> = ({
   //   };
   // }
   // console.log(tmpSrcImage, 'tmpSrcImage====');
-  // const [uri, setUri] = useState(tmpSrcImage);
+  const [uri, setUri] = useState(
+    uriImage
+      ? tmpSrcImage
+      : isWeb
+      ? images.icons.web_default
+      : images.avatars.picture_default,
+  );
 
   // console.log(uri, 'uri====');
   return (
@@ -43,10 +52,22 @@ const Avatar: React.FC<Props> = ({
       )}
       <FastImage
         onLoadStart={() => setIsLoading(true)}
-        onError={() => setIsLoading(false)}
+        onError={() => {
+          setIsLoading(false);
+          setUri(
+            isWeb ? images.icons.web_default : images.avatars.picture_default,
+          );
+        }}
         onLoadEnd={() => setIsLoading(false)}
         style={[styles.image, imageStyle]}
-        source={uriImage ? tmpSrcImage : images.avatars.picture_default}
+        // source={
+        //   uriImage
+        //     ? tmpSrcImage
+        //     : isWeb
+        //     ? images.icons.web_default
+        //     : images.avatars.picture_default
+        // }
+        source={uri}
         // resizeMode={FastImage.resizeMode.contain}
       />
     </View>

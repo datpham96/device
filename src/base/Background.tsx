@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     paddingTop:
       Platform.OS === 'ios'
         ? isIphoneX()
-          ? getStatusBarHeight()
-          : sizes.SIZE_10
+          ? getStatusBarHeight() + sizes.SIZE_5
+          : getStatusBarHeight()
         : sizes.ZERO,
     paddingBottom: isIphoneX() ? getBottomSpace() : sizes.ZERO,
   },

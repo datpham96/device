@@ -4,7 +4,7 @@ import {View, FlatList, TouchableOpacity, RefreshControl} from 'react-native';
 import styles from './styles';
 import {colors, commonStyles} from 'styles';
 import images from 'images';
-import {ItemComponent} from '../components';
+import {ItemComponent, ModalUpdateApplicationComponent} from '../components';
 import FastImage from 'react-native-fast-image';
 import {
   EmptyData,
@@ -47,10 +47,11 @@ const ApplicationControl = ({route}) => {
   const [debounceTextSearch, setDebounceTextSearch] = useState(false);
   const [hours, setHours] = useState(HOURS_DEFAULT);
   const [minutes, setMinutes] = useState(MINUTE_DEFAULT);
-  const [itemBlockAccess, setItemBlockAccess] = useState({});
+  const [activeItem, setActiveItem] = useState({});
   const [itemRemoveTime, setItemRemoveTime] = useState({});
   const [visiblePopupConfirmRemoveTime, setVisiblePopupConfirmRemoveTime] =
     useState(false);
+  const [visibleDetailModal, setVisibleDetailModal] = useState(false);
 
   //application list
   const {data, isLoading, isSuccess, refetch} = useQuery(
@@ -132,7 +133,6 @@ const ApplicationControl = ({route}) => {
     setActiveRadio(false);
     setHours(HOURS_DEFAULT);
     setMinutes(MINUTE_DEFAULT);
-    setItemBlockAccess({});
   };
 
   const showModalTimeBlockAccess = item => {
@@ -152,7 +152,6 @@ const ApplicationControl = ({route}) => {
     setHours(tmpTime.split(':').length > 0 ? tmpTime.split(':')[0] : '00');
     setMinutes(tmpTime.split(':').length > 0 ? tmpTime.split(':')[1] : '00');
 
-    setItemBlockAccess(item);
     setActiveRadio(item.status ? true : false);
     setVisibleTimeBlockAccessModal(true);
   };
@@ -211,6 +210,12 @@ const ApplicationControl = ({route}) => {
       });
   };
 
+  const showModalDetail = item => {
+    setVisibleDetailModal(true);
+    setActiveItem(item);
+  };
+
+  const handleWebUpdate = () => {};
   return (
     <Background bin>
       <Loading isLoading={mutationUpdate.isLoading} />
@@ -223,7 +228,9 @@ const ApplicationControl = ({route}) => {
           setItemRemoveTime({});
         }}
       />
-      <ModalTimeBlockAccess
+      <ModalUpdateApplicationComponent
+        iconApp={activeItem?.icon}
+        nameApp={activeItem?.name}
         onFocusHour={() => {
           // eslint-disable-next-line radix
           if (hours.length === 2 && parseInt(hours) === 0) {
@@ -236,24 +243,22 @@ const ApplicationControl = ({route}) => {
             setMinutes('');
           }
         }}
-        isWebsite={false}
-        title="Chặn truy cập ứng dụng"
         onPressClose={() => {
-          setVisibleTimeBlockAccessModal(false);
+          setVisibleDetailModal(false);
           resetState();
         }}
+        visible={visibleDetailModal}
         isActive={activeRadio}
         onPressActive={() => {
           setActiveRadio(!activeRadio);
           setHours(HOURS_DEFAULT);
           setMinutes(MINUTE_DEFAULT);
         }}
-        visible={visibleTimeBlockAccessModal}
+        onPressSubmit={handleWebUpdate}
         valueHours={hours}
         valueMinutes={minutes}
         onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
         onChangeTextMinutes={val => setMinutes(val.replace(/[^0-9]/g, ZERO))}
-        onPressSubmit={() => handleTimeBlockAccess()}
       />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -308,39 +313,12 @@ const ApplicationControl = ({route}) => {
             }
             renderItem={({item}) => (
               <ItemComponent
-                onPressResetTime={() => showPopupConfirmRemoveTime(item)}
-                onPressTime={obj => showModalTimeBlockAccess(obj)}
+                onPressDetail={obj => showModalDetail(obj)}
                 item={item}
               />
             )}
           />
         )}
-        {/* {isLoading ? (
-          <LoadingData />
-        ) : isSuccess && !checkVar.isEmpty(applicationList) ? (
-          <FlatList
-            style={styles.flatList}
-            contentContainerStyle={styles.contentContainerFlatlist}
-            data={applicationList}
-            keyExtractor={item => item.id.toString() + item.status}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={onRefresh}
-                tintColor={colors.COLOR_WHITE}
-              />
-            }
-            renderItem={({item}) => (
-              <ItemComponent
-                onPressResetTime={() => showPopupConfirmRemoveTime(item)}
-                onPressTime={obj => showModalTimeBlockAccess(obj)}
-                item={item}
-              />
-            )}
-          />
-        ) : (
-          <EmptyData />
-        )} */}
       </View>
     </Background>
   );

@@ -14,7 +14,7 @@ import {ItemListPlaceholder} from '../placeholders';
 
 momentDurationFormatSetup(moment);
 
-const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
+const ItemComponent = ({item, onPressDetail}) => {
   const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
     moment(),
     'minutes',
@@ -77,6 +77,8 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
     ]);
   };
 
+  console.log(item.icon, 'item.icon==');
+
   return (
     <View style={styles.container}>
       <Loading isLoading={mutation.isLoading} />
@@ -94,6 +96,7 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
         onLongPress={() => handleShowDetail(item.url)}
         style={styles.wrapItemWebsite}>
         <Avatar
+          isWeb
           uriImage={item.icon}
           containerStyle={styles.imageContainer}
           imageStyle={styles.image}
@@ -115,29 +118,12 @@ const ItemComponent = ({item, onPressTime, onPressResetTime}) => {
           </Text>
         </View>
       </TouchableOpacity>
-      {/* <View style={styles.wrapUse}>
-        <TouchableOpacity
-          disabled={!enableSwitch}
-          style={styles.wrapTime}
-          activeOpacity={0.9}
-          onPress={() => onPressTime({...item, status: enableSwitch})}>
-          <Text style={styles.timeValue}>{duration.toString()}</Text>
-          <FastImage
-            source={images.icons.time}
-            resizeMode={FastImage.resizeMode.contain}
-            style={styles.iconTime}
-          />
-        </TouchableOpacity>
-        {enableSwitch && !isNaN(timeUse) && (
-          <TouchableOpacity activeOpacity={0.9} onPress={onPressResetTime}>
-            <FastImage
-              source={images.icons.close}
-              resizeMode={FastImage.resizeMode.contain}
-              style={styles.iconClose}
-            />
-          </TouchableOpacity>
-        )}
-      </View> */}
+      {/* <TouchableOpacity
+        activeOpacity={0.9}
+        style={styles.wrapUse}
+        onPress={() => onPressDetail({...item, status: enableSwitch})}>
+        <Text>Xem chi tiết</Text>
+      </TouchableOpacity> */}
       <View style={styles.wrapRadio}>
         <Switch
           value={enableSwitch}

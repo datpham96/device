@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text, Background, Button, Input, ButtonBack} from 'base';
+import {Text, Background, Button, Input} from 'base';
 import {
   ScrollView,
   View,
@@ -181,9 +181,6 @@ const Account = () => {
         onPressCancel={() => setVisibleConfirm(!visibleConfirm)}
         onPressAgree={handleLogout}
       />
-      <View>
-        <ButtonBack />
-      </View>
       <ScrollView style={styles.container}>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
           Quản lý thông tin

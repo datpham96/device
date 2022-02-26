@@ -11,11 +11,11 @@ export default {
   },
   status: {
     block: {
-      name: 'Đã chặn',
+      name: 'Bị chặn',
       code: 'block',
     },
     allow: {
-      name: 'Cho phép',
+      name: 'Truy vấn',
       code: 'allow',
     },
   },

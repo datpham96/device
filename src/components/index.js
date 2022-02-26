@@ -6,10 +6,9 @@ export {default as InputSelectComponent} from './Inputs/InputSelectComponent';
 //backgrounds
 export {default as Background} from './BackgroundComponent';
 
-//modals ModalScanQRcodeComponent
+//Modal
 export {default as ModalScanQRcode} from './Modals/ModalScanQRcodeComponent';
-export {default as ModalBlockAccess} from './Modals/ModalBlockAccessComponent';
-export {default as ModalTimeBlockAccess} from './Modals/ModalTimeBlockAccessComponent';
+export {default as ModalSetTimeBlockAccess} from './Modals/ModalSetTimeBlockAccessComponent';
 export {default as ModalBarcode} from './Modals/ModalBarcodeComponent';
 export {default as ModalBottomSheet} from './Modals/ModalBottomSheetComponent';
 
@@ -38,3 +37,6 @@ export {default as PieChart} from './charts/PieChartComponent';
 
 //line
 export {default as Line} from './LineComponent';
+
+//dropdown
+export {default as DropdownSelected} from './Dropdown/SelectedComponent';

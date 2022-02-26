@@ -13,9 +13,10 @@ import keyTypes from 'keyTypes';
 import {checkVar} from 'src/helpers/funcs';
 import {deviceHistoryApi} from 'src/api/methods/device';
 import moment from 'moment';
-import {TouchableHighlight} from 'react-native-gesture-handler';
+import {ScrollView, TouchableHighlight} from 'react-native-gesture-handler';
 import DatePicker from 'react-native-datepicker';
 import lodash from 'lodash';
+import {ItemListPlaceholder} from '../placeholders';
 
 let perPage = 15;
 let stopLoadMore = true;
@@ -185,7 +186,13 @@ const Report = ({route}) => {
           <EmptyData />
         )} */}
         {status === 'loading' ? (
-          <LoadingData />
+          <FlatList
+            initialNumToRender={7}
+            data={[0, 1, 2, 3, 4, 5, 6, 7]}
+            removeClippedSubviews={true}
+            renderItem={() => <ItemListPlaceholder />}
+            contentContainerStyle={styles.loadingContainer}
+          />
         ) : (
           <FlatList
             ListFooterComponent={

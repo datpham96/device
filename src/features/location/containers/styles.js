@@ -1,6 +1,8 @@
 import {StyleSheet} from 'react-native';
 import {commonStyles, sizes, colors} from 'styles';
 
+const size400 = 400;
+
 export default StyleSheet.create({
   container: {
     ...commonStyles.flex1,
@@ -20,11 +22,35 @@ export default StyleSheet.create({
   contentContainer: {
     ...commonStyles.flex1,
     ...commonStyles.center,
-    backgroundColor: '#fff',
+    backgroundColor: colors.COLOR_WHITE,
+  },
+  containerDropdownSelected: {
+    width: '100%',
+    top: sizes.SIZE_48,
   },
   wrapBtnSelect: {
-    width: '45%',
+    width: '100%',
+    backgroundColor: colors.COLOR_WHITE,
+    ...commonStyles.flexRowCenter,
+    height: sizes.SIZE_44,
+    borderRadius: sizes.SIZE_25,
+    paddingHorizontal: sizes.SIZE_20,
   },
+  labelSelect: {
+    color: colors.COLOR_BLACK,
+    ...commonStyles.flex1,
+  },
+  iconChervonRightSelect: {
+    marginRight: -sizes.SIZE_8,
+  },
+  //selected
+  contentItemDeviceSelect: {
+    paddingBottom: sizes.SIZE_15,
+  },
+  scrollItemDeviceSelect: {},
+  wrapItemDeviceSelect: {},
+  circleItemSelected: {},
+  itemDeviceSelect: {},
   btn: {
     backgroundColor: colors.COLOR_RED_ORANGE,
     paddingHorizontal: sizes.SIZE_25,
@@ -42,12 +68,17 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: sizes.SIZE_15,
     marginVertical: sizes.SIZE_25,
+    zIndex: 1,
   },
+  wrapButtonSelected: {
+    width: '45%',
+  },
+
   //google map
   mapContainer: {
     ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
+    height: size400,
+    width: size400,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
@@ -64,7 +95,7 @@ export default StyleSheet.create({
     borderRadius: sizes.SIZE_25 / sizes.SIZE_2,
     borderColor: colors.COLOR_RED_ORANGE,
     borderWidth: sizes.SIZE_1,
-    zIndex: 1,
+    zIndex: sizes.SIZE_1,
   },
   triangleMarker: {
     width: sizes.ZERO,
@@ -80,6 +111,7 @@ export default StyleSheet.create({
     borderBottomColor: 'transparent',
     borderLeftColor: 'transparent',
     marginTop: -sizes.SIZE_9,
+    zIndex: 0,
   },
   labelLocation: {
     color: colors.COLOR_BLACK,

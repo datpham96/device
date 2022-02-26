@@ -27,6 +27,11 @@ const images = {
     info_manager: require('../../assets/images/icons/icon_account_info.png'),
     safe_web: require('../../assets/images/icons/icon_web_safe.png'),
     safe_search: require('../../assets/images/icons/icon_safe_search.png'),
+    edit: require('../../assets/images/icons/edit.png'),
+    web_default: require('../../assets/images/icons/web_default.jpg'),
+    area_chart_total: require('../../assets/images/icons/area_chart_total.png'),
+    area_filter: require('../../assets/images/icons/area_filter.png'),
+    area_safe_search: require('../../assets/images/icons/area_safe_search.png'),
   },
   avatars: {
     default: require('../../assets/images/avatars/default.jpeg'),

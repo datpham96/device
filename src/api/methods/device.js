@@ -101,3 +101,27 @@ export function deviceUpdateApi(
 
   return apiToken(ApiConstants.DEVICE_UPDATE, 'post', bodyFormData);
 }
+
+export function deviceSettingListApi(device_id) {
+  //Danh sách cài đặt thiết bị
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  return apiToken(ApiConstants.DEVICE_SETTING_LIST, 'post', bodyFormData);
+}
+
+export function deviceSettingUpdateApi(device_id, setting_id, name, status) {
+  console.log(device_id, 'device_id');
+  console.log(setting_id, 'setting_id');
+  console.log(name, 'name');
+  console.log(status, 'status');
+  //Cập nhật cài đặt thiết bị
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  if (setting_id) {
+    bodyFormData.append('setting_id', setting_id);
+  }
+
+  bodyFormData.append('name', name);
+  bodyFormData.append('status', status);
+  return apiToken(ApiConstants.DEVICE_SETTING_UPDATE, 'post', bodyFormData);
+}

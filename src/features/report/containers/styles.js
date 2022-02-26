@@ -68,6 +68,9 @@ export default StyleSheet.create({
     width: sizes.SIZE_130,
     textAlign: 'right',
   },
+  loadingContainer: {
+    paddingHorizontal: sizes.SIZE_10,
+  },
   contentContainerFlatlist: {
     paddingHorizontal: sizes.SIZE_10,
     paddingVertical: sizes.SIZE_15,

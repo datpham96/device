@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {sizes, commonStyles, colors} from 'styles';
+import {sizes, commonStyles, colors, fonts} from 'styles';
 import metrics from 'metrics';
 
 export default StyleSheet.create({
@@ -52,5 +52,38 @@ export default StyleSheet.create({
   },
   wrapBtn: {
     flexDirection: 'row',
+  },
+  //setting
+  settingContainer: {
+    marginTop: sizes.SIZE_25,
+  },
+  wrapSafeWeb: {
+    // ...commonStyles.flexRowCenter,
+    marginBottom: sizes.SIZE_25,
+  },
+  headerSafeWeb: {
+    ...commonStyles.flexRowCenter,
+  },
+  switchSafeWeb: {
+    alignSelf: 'center',
+  },
+  contentSafeWeb: {
+    marginTop: sizes.SIZE_15,
+    textAlign: 'justify',
+    fontSize: sizes.SIZE_12,
+    fontFamily: fonts.lexendDeca.FONT_LIGHT,
+  },
+  iconInfo: {
+    width: sizes.SIZE_40,
+    height: sizes.SIZE_40,
+  },
+  labelInfo: {
+    fontFamily: fonts.lexendDeca.FONT_MEDIUM,
+    fontSize: sizes.SIZE_14,
+    ...commonStyles.flex1,
+    paddingHorizontal: sizes.SIZE_10,
+  },
+  lineOne: {
+    marginVertical: sizes.SIZE_20,
   },
 });

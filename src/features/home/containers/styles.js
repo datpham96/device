@@ -2,15 +2,24 @@ import {Platform, StyleSheet} from 'react-native';
 import {sizes, fonts, colors, commonStyles} from 'styles';
 import metrics from 'metrics';
 
+const heightOutSideBottomTab =
+  metrics.screenHeight - metrics.heightBottomTab - metrics.statusBarHeight;
+
 const styles = StyleSheet.create({
   container: {
     ...commonStyles.flex1,
+  },
+  sectionOne: {
+    height: heightOutSideBottomTab / sizes.SIZE_2,
+  },
+  sectionTwo: {
+    height: heightOutSideBottomTab / sizes.SIZE_2,
   },
   wrapHeader: {
     ...commonStyles.flexRowCenter,
     justifyContent: 'space-between',
     paddingHorizontal: sizes.SIZE_10,
-    marginTop: sizes.SIZE_15,
+    marginTop: sizes.SIZE_10,
     zIndex: sizes.SIZE_1,
   },
   logoLock: {
@@ -53,14 +62,8 @@ const styles = StyleSheet.create({
     // width: sizes.SIZE_80,
   },
   scrollItemDeviceSelect: {
-    backgroundColor: colors.COLOR_WHITE,
-    borderRadius: sizes.SIZE_10,
-    padding: sizes.SIZE_10,
-    width: '95%',
-    alignSelf: 'flex-end',
-    position: 'absolute',
     top: metrics.screenWidth / sizes.SIZE_10 + sizes.SIZE_5,
-    maxHeight: sizes.SIZE_80,
+    width: '95%',
   },
   contentItemDeviceSelect: {
     paddingBottom: sizes.SIZE_15,
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
     ...commonStyles.flexRowCenter,
     justifyContent: 'space-between',
     paddingHorizontal: sizes.SIZE_10,
-    marginTop: sizes.SIZE_15,
+    marginTop: sizes.SIZE_10,
   },
   wrapTitle: {
     ...commonStyles.flexRowCenter,
@@ -146,16 +149,15 @@ const styles = StyleSheet.create({
   },
   wrapParams: {
     // backgroundColor: 'green',
-    width: sizes.SIZE_120,
+    width: '40%',
     alignItems: 'center',
   },
   paramInfo: {
     marginBottom: sizes.SIZE_25,
   },
   paramInfoLabel: {
-    color: colors.COLOR_UNDERLAY_BUTTON_BACK,
     fontSize: sizes.SIZE_16,
-    fontFamily: fonts.lexendDeca.FONT_BOLD,
+    fontFamily: fonts.lexendDeca.FONT_REGULAR,
     marginBottom: sizes.SIZE_10,
   },
   wrapParamInfoValue: {
@@ -177,13 +179,13 @@ const styles = StyleSheet.create({
   //list
   contentContainerFlatlist: {
     flexGrow: 1,
+    paddingTop: sizes.SIZE_10,
   },
   wrapHeaderList: {
     ...commonStyles.flexRowCenter,
     justifyContent: 'space-between',
-    paddingHorizontal: sizes.SIZE_15,
-    marginTop: sizes.SIZE_20,
-    zIndex: 1,
+    paddingHorizontal: sizes.SIZE_10,
+    height: sizes.SIZE_20,
   },
   wrapHeaderSelect: {
     ...commonStyles.flexRowCenter,
@@ -199,6 +201,7 @@ const styles = StyleSheet.create({
   },
   labelSelectLeft: {
     fontSize: sizes.SIZE_16,
+    fontFamily: fonts.lexendDeca.FONT_BOLD,
   },
   spaceVerticalBar: {
     width: sizes.SIZE_1,
@@ -209,33 +212,11 @@ const styles = StyleSheet.create({
   labelSelectRight: {
     fontSize: sizes.SIZE_16,
   },
-  filterContainer: {
-    // zIndex: 1,
-  },
-  wrapFilter: {
-    ...commonStyles.flexRowCenter,
-  },
-  labelFilter: {
-    color: colors.COLOR_BLUE,
-  },
-  iconFilter: {
-    width: sizes.SIZE_15,
-    height: sizes.SIZE_15,
-    tintColor: colors.COLOR_BLUE,
-    marginLeft: sizes.SIZE_8,
-  },
   contentItemFilterSelect: {
     paddingBottom: sizes.SIZE_15,
   },
   scrollItemFilterSelect: {
-    backgroundColor: colors.COLOR_WHITE,
-    borderRadius: sizes.SIZE_10,
-    padding: sizes.SIZE_10,
     width: sizes.SIZE_110,
-    alignSelf: 'flex-end',
-    position: 'absolute',
-    top: sizes.SIZE_25,
-    maxHeight: sizes.SIZE_90,
   },
   //flatlist
   placeholderContainer: {
@@ -257,6 +238,16 @@ const styles = StyleSheet.create({
   },
   btnNowConnect: {
     alignSelf: 'auto',
+  },
+  //report
+  reportContainer: {
+    marginTop: sizes.SIZE_10,
+    marginHorizontal: sizes.SIZE_10,
+  },
+  wrapBlockChildren: {
+    ...commonStyles.flexRowCenter,
+    justifyContent: 'space-between',
+    marginTop: sizes.SIZE_10,
   },
 });
 

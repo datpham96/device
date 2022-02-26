@@ -15,7 +15,7 @@ import BarcodeMask from 'react-native-barcode-mask';
 import metrics from 'metrics';
 // import SoundPlayer from 'react-native-sound-player';
 
-const {width, height} = Dimensions.get('screen');
+const {width, height} = Dimensions.get('window');
 
 const ModalBarcodeComponent = ({visible = 'false', onPressClose, onImei}) => {
   const insets = useSafeAreaInsets();
@@ -91,21 +91,21 @@ const ModalBarcodeComponent = ({visible = 'false', onPressClose, onImei}) => {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    width: width,
-    height: height,
+    width: metrics.screenWidth,
+    height: metrics.screenHeight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   background: {
-    width: width,
-    height: height,
+    width: metrics.screenWidth,
+    height: metrics.screenHeight,
     backgroundColor: colors.COLOR_BLACK,
     opacity: 0.4,
   },
   containerContent: {
     alignItems: 'center',
-    width: width,
-    height: height,
+    width: metrics.screenWidth,
+    height: metrics.screenHeight,
     backgroundColor: colors.COLOR_WHITE,
     position: 'absolute',
     paddingBottom: sizes.SIZE_10,

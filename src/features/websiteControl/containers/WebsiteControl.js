@@ -24,6 +24,8 @@ import {Toast} from 'customs';
 import Validator from 'validatorjs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+import types from '../types';
+import {ModalCreateUpdateWebComponent} from '../components';
 
 momentDurationFormatSetup(moment);
 
@@ -53,6 +55,7 @@ const WebsiteControl = ({route}) => {
   const [itemRemoveTime, setItemRemoveTime] = useState({});
   const [visiblePopupConfirmRemoveTime, setVisiblePopupConfirmRemoveTime] =
     useState(false);
+  const [type, setType] = useState(null);
 
   const [errors, setErrors] = useState({});
 
@@ -154,6 +157,10 @@ const WebsiteControl = ({route}) => {
       });
   };
 
+  const handleWebUpdate = () => {
+    setVisibleModal(false);
+  };
+
   const websiteList = useMemo(() => {
     let tmpList = [];
     if (textSearch === '') {
@@ -192,31 +199,27 @@ const WebsiteControl = ({route}) => {
     setItemBlockAccess({});
   };
 
-  const showModalTimeBlockAccess = item => {
-    const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
-      moment(),
-      'minutes',
-    );
-    let tmpTime = '00:00';
-    if (timeUse && timeUse > 0) {
-      if (timeUse > 60) {
-        tmpTime = moment.duration(timeUse, 'minutes').format('HH:mm');
-      } else {
-        tmpTime = moment.duration(timeUse, 'minutes').format('00:mm');
-      }
-    }
+  const showModalDetail = item => {
+    setVisibleModal(true);
+    // const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
+    //   moment(),
+    //   'minutes',
+    // );
+    // let tmpTime = '00:00';
+    // if (timeUse && timeUse > 0) {
+    //   if (timeUse > 60) {
+    //     tmpTime = moment.duration(timeUse, 'minutes').format('HH:mm');
+    //   } else {
+    //     tmpTime = moment.duration(timeUse, 'minutes').format('00:mm');
+    //   }
+    // }
 
-    setHours(tmpTime.split(':').length > 0 ? tmpTime.split(':')[0] : '00');
-    setMinutes(tmpTime.split(':').length > 0 ? tmpTime.split(':')[1] : '00');
+    // setHours(tmpTime.split(':').length > 0 ? tmpTime.split(':')[0] : '00');
+    // setMinutes(tmpTime.split(':').length > 0 ? tmpTime.split(':')[1] : '00');
 
-    setItemBlockAccess(item);
-    setActiveRadio(item.status ? true : false);
-    setVisibleTimeBlockAccessModal(true);
-  };
-
-  const showPopupConfirmRemoveTime = item => {
-    setItemRemoveTime(item);
-    setVisiblePopupConfirmRemoveTime(true);
+    // setItemBlockAccess(item);
+    // setActiveRadio(item.status ? true : false);
+    // setVisibleTimeBlockAccessModal(true);
   };
 
   const handleTimeBlockAccess = () => {
@@ -282,37 +285,7 @@ const WebsiteControl = ({route}) => {
           setItemRemoveTime({});
         }}
       />
-      <ModalTimeBlockAccess
-        onFocusHour={() => {
-          // eslint-disable-next-line radix
-          if (hours.length === 2 && parseInt(hours) === 0) {
-            setHours('');
-          }
-        }}
-        onFocusMinute={() => {
-          // eslint-disable-next-line radix
-          if (minutes.length === 2 && parseInt(minutes) === 0) {
-            setMinutes('');
-          }
-        }}
-        onPressClose={() => {
-          setVisibleTimeBlockAccessModal(false);
-          resetState();
-        }}
-        isActive={activeRadio}
-        onPressActive={() => {
-          setActiveRadio(!activeRadio);
-          setHours(HOURS_DEFAULT);
-          setMinutes(MINUTE_DEFAULT);
-        }}
-        visible={visibleTimeBlockAccessModal}
-        valueHours={hours}
-        valueMinutes={minutes}
-        onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
-        onChangeTextMinutes={val => setMinutes(val.replace(/[^0-9]/g, ZERO))}
-        onPressSubmit={() => handleTimeBlockAccess()}
-      />
-      <ModalBlockAccess
+      <ModalCreateUpdateWebComponent
         onFocusHour={() => {
           // eslint-disable-next-line radix
           if (hours.length === 2 && parseInt(hours) === 0) {
@@ -338,7 +311,13 @@ const WebsiteControl = ({route}) => {
         }}
         value={url}
         onChangeValue={text => setUrl(text)}
-        onPressSubmit={() => handleWebCreate()}
+        onPressSubmit={() => {
+          if (type === types.create.code) {
+            handleWebCreate();
+          } else {
+            handleWebUpdate();
+          }
+        }}
         valueHours={hours}
         valueMinutes={minutes}
         onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
@@ -364,7 +343,10 @@ const WebsiteControl = ({route}) => {
           </View>
           <TouchableOpacity
             activeOpacity={0.9}
-            onPress={() => setVisibleModal(!visibleModal)}>
+            onPress={() => {
+              setVisibleModal(true);
+              setType(types.create.code);
+            }}>
             <FastImage
               style={styles.iconHeaderPlus}
               source={images.icons.header_plus}
@@ -398,8 +380,7 @@ const WebsiteControl = ({route}) => {
             }
             renderItem={({item}) => (
               <ItemComponent
-                onPressResetTime={() => showPopupConfirmRemoveTime(item)}
-                onPressTime={obj => showModalTimeBlockAccess(obj)}
+                onPressDetail={obj => showModalDetail(obj, types.update.code)}
                 item={item}
               />
             )}

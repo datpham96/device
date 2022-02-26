@@ -6,15 +6,15 @@ const Tab = createBottomTabNavigator();
 import LinearGradient from 'react-native-linear-gradient';
 
 import {
+  AccountScreen,
   ChildrenManagerScreen,
   HomeScreen,
   LocationScreen,
-  SettingScreen,
 } from 'features';
 import navigationTypes from 'navigationTypes';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import images from 'images';
-import {getBottomSpace, isIphoneX} from 'react-native-iphone-x-helper';
+import metrics from 'metrics';
 
 const MyTabBar = ({state, descriptors, navigation}) => {
   return (
@@ -40,9 +40,9 @@ const MyTabBar = ({state, descriptors, navigation}) => {
             label = navigationTypes.location.name;
             icon = images.icons.bt_location;
             break;
-          case navigationTypes.setting.screen:
-            label = navigationTypes.setting.name;
-            icon = images.icons.bt_setting;
+          case navigationTypes.account.screen:
+            label = navigationTypes.account.name;
+            icon = images.icons.bt_account;
             break;
           default:
             label = navigationTypes.home.name;
@@ -143,12 +143,14 @@ const BottomTabs = () => {
         options={{
           headerShown: false,
         }}
-        name={navigationTypes.setting.screen}
-        component={SettingScreen}
+        name={navigationTypes.account.screen}
+        component={AccountScreen}
       />
     </Tab.Navigator>
   );
 };
+
+console.log(metrics.heightBottomTab, 'metrics.heightBottomTab');
 
 const styles = StyleSheet.create({
   barStyle: {},
@@ -159,10 +161,10 @@ const styles = StyleSheet.create({
   },
   containerTabBar: {
     flexDirection: 'row',
-    // height: metrics.heightBottomTab,
-    paddingBottom: isIphoneX()
-      ? getBottomSpace()
-      : getBottomSpace() + sizes.SIZE_8,
+    height: metrics.heightBottomTab,
+    // paddingBottom: isIphoneX()
+    //   ? getBottomSpace()
+    //   : getBottomSpace() + sizes.SIZE_10,
   },
   btIcon: {
     width: sizes.SIZE_25,

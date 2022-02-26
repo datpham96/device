@@ -22,6 +22,7 @@ const ApiConstants = {
   WEB_UPDATE: 'application/webUpdate', //cập nhật website
   WEB_DELETE: 'application/webDelete', //xoá website
   WEB_LIST: 'application/webList', //danh sách website
+  WEB_REPORT_ACCESS: 'history/webAccessStatistics', //thống kê truy cập
 
   //path application
   APPLICATION_UPDATE: 'application/appUpdate', //cập nhật application
@@ -33,6 +34,8 @@ const ApiConstants = {
   DEVICE_INFO: 'device/detail', //Thông tin thiết bị
   REMOVE_DEVICE: 'device/deleteDevice', //Xoá thiết bị
   DEVICE_UPDATE: 'device/update', //Cập nhật thiết bị
+  DEVICE_SETTING_LIST: 'settingDevice/list', //Danh sách cài đặt thiết bị
+  DEVICE_SETTING_UPDATE: 'settingDevice/update', //Cập nhật cài đặt thiết bị
 
   //Path history
   DEVICE_HISTORY: 'history/listWebHistory', //Lịch sử truy cập web

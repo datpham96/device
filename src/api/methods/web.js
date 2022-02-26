@@ -33,3 +33,11 @@ export function webDeleteApi(web_id) {
   bodyFormData.append('web_id', web_id);
   return apiToken(ApiConstants.WEB_DELETE, 'post', bodyFormData, null);
 }
+
+export function webReportAccessApi(device_id, date) {
+  //Xoá web
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  bodyFormData.append('date', date);
+  return apiToken(ApiConstants.WEB_REPORT_ACCESS, 'post', bodyFormData, null);
+}

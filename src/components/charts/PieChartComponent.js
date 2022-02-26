@@ -5,7 +5,7 @@ import metrics from 'metrics';
 import {colors, fonts, sizes} from 'styles';
 import {checkVar} from 'src/helpers/funcs';
 
-const widthChart = metrics.screenWidth / sizes.SIZE_2;
+const widthChart = metrics.screenWidth / 2.2;
 
 const PieChartComponent = ({dataList, onSelected, selectedKey = 0}) => {
   const [labelWidth, setLabelWidth] = useState('');

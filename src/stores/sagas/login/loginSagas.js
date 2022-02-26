@@ -143,17 +143,8 @@ export function* resetPasswordRequest(action) {
 //logout
 export function* logoutRequest() {
   try {
-    let status = yield removeAll();
-    if (status) {
-      yield put({type: types.LOGOUT.SUCCESS});
-    } else {
-      yield put({
-        type: types.LOGOUT.FAILURE,
-        payload: {
-          msg: 'Xảy ra lỗi khi đăng xuất',
-        },
-      });
-    }
+    yield removeAll();
+    yield put({type: types.LOGOUT.SUCCESS});
   } catch (error) {
     yield put({
       type: types.LOGOUT.FAILURE,

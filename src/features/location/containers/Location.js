@@ -10,10 +10,15 @@ import {
   AppState,
 } from 'react-native';
 import styles from './styles';
-import {commonStyles, colors} from 'styles';
+import {commonStyles, colors, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
-import {InputSelectComponent, Loading, PopupConfirm} from 'components';
+import {
+  DropdownSelected,
+  InputSelectComponent,
+  Loading,
+  PopupConfirm,
+} from 'components';
 import keyTypes from 'keyTypes';
 import {deviceListApi, deviceUpdateApi} from 'methods/device';
 import {useQuery, useMutation} from 'react-query';
@@ -30,6 +35,8 @@ import {
 } from 'react-native-permissions';
 import navigationTypes from 'navigationTypes';
 import Geocoder from 'react-native-geocoder';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ScrollView} from 'react-native-gesture-handler';
 // simply add your google key
 Geocoder.fallbackToGoogle(
   // Platform.OS === 'ios'
@@ -39,7 +46,7 @@ Geocoder.fallbackToGoogle(
 );
 
 const Location = ({navigation}) => {
-  const [selectedDevice, setSelectedDevice] = useState('');
+  const [selectedDevice, setSelectedDevice] = useState({});
   const [refresh, setRefresh] = useState(false);
   const [markers, serMarkers] = useState({
     latitude: 0,
@@ -51,6 +58,7 @@ const Location = ({navigation}) => {
     useState(false);
   const [visiblePermissionLocation, setVisiblePermissionLocation] =
     useState(false);
+  const [toggleDropDownSelected, setToggleDropDownSelected] = useState(false);
 
   const {data, isSuccess} = useQuery(
     keyTypes.DEVICE_LIST,
@@ -142,7 +150,7 @@ const Location = ({navigation}) => {
 
   useEffect(() => {
     if (selectedDevice && data?.data) {
-      let deviceInfo = lodash.find(data.data, {id: selectedDevice});
+      let deviceInfo = lodash.find(data.data, {id: selectedDevice.value});
       if (
         deviceInfo &&
         !checkVar.isEmpty(deviceInfo?.latitude) &&
@@ -211,6 +219,7 @@ const Location = ({navigation}) => {
           value: item.id,
         });
       });
+      setSelectedDevice(tmpSelectList?.[0]);
     }
     return tmpSelectList;
   }, [data, isSuccess]);
@@ -236,7 +245,7 @@ const Location = ({navigation}) => {
 
     mutationDeviceLock
       .mutateAsync({
-        data_device_id: selectedDevice,
+        data_device_id: selectedDevice.value,
         data_is_block: 1,
         data_full_name: null,
         data_birthday: null,
@@ -254,6 +263,11 @@ const Location = ({navigation}) => {
         Toast(err?.msg);
         mutationDeviceLock.reset();
       });
+  };
+
+  const handleSelectedDevice = item => {
+    setSelectedDevice(item);
+    setToggleDropDownSelected(false);
   };
 
   return (
@@ -282,18 +296,6 @@ const Location = ({navigation}) => {
         onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
         onPressAgree={handleDeviceLock}
       />
-      {/* <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        showTickIcon={false}
-        containerStyle={{width: 100}}
-        style={{borderRadius: 30, height: 44}}
-        closeOnBackPressed={false}
-      /> */}
       <View style={styles.container}>
         <View style={styles.wrapMainTitle}>
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
@@ -309,12 +311,32 @@ const Location = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={styles.wrapButtonAction}>
-          <View style={styles.wrapBtnSelect}>
-            <InputSelectComponent
-              onDonePress={val => setSelectedDevice(val)}
-              placeholder="--Chọn--"
-              listData={deviceList}
-            />
+          <View style={styles.wrapButtonSelected}>
+            <TouchableOpacity
+              onPress={() => setToggleDropDownSelected(!toggleDropDownSelected)}
+              activeOpacity={0.9}
+              style={styles.wrapBtnSelect}>
+              <Text
+                props={{
+                  numberOfLines: 1,
+                }}
+                style={styles.labelSelect}>
+                {selectedDevice.label}
+              </Text>
+              <MaterialCommunityIcons
+                style={styles.iconChervonRightSelect}
+                name="chevron-right"
+                size={sizes.SIZE_25}
+              />
+            </TouchableOpacity>
+            {toggleDropDownSelected && (
+              <DropdownSelected
+                selected={selectedDevice.value}
+                containerStyle={styles.containerDropdownSelected}
+                data={deviceList}
+                onPressItem={item => handleSelectedDevice(item)}
+              />
+            )}
           </View>
           <TouchableHighlight
             underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}

@@ -2,117 +2,58 @@
 import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
 import {
   View,
-  Image,
-  FlatList,
   TouchableOpacity,
   RefreshControl,
-  Platform,
+  ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {PieChart, EmptyData, LoadingData} from 'components';
-import {Text, Background, Loading as BaseLoading, Button} from 'base';
+import {PieChart, LoadingData} from 'components';
+import {Text, Background, Button} from 'base';
 import images from 'images';
 import styles from './styles';
 import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, sizes, fonts, commonStyles} from 'styles';
-import {Item} from '../components';
+import {BlockFilterSearch, BlockTotal} from '../components';
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
-import RNPickerSelect from 'react-native-picker-select';
 import types from '../types';
-import {useInfiniteQuery, useQueryClient, useQuery} from 'react-query';
+import {useQueryClient, useQuery} from 'react-query';
 import keyTypes from 'keyTypes';
-import {deviceReportApi, deviceListApi} from 'src/api/methods/device';
+import {deviceListApi} from 'src/api/methods/device';
+import {webReportAccessApi} from 'src/api/methods/web';
 import {checkVar, truncateWords} from 'src/helpers/funcs';
 import lodash from 'lodash';
 import navigationTypes from 'navigationTypes';
-import {
-  ItemListPlaceholder,
-  DevicePlaceholder,
-  PieCharPlaceholder,
-} from '../placeholders';
-import {ScrollView} from 'react-native-gesture-handler';
-
-const DATA_FILTER = [
-  {
-    label: 'Tất cả',
-    value: '',
-  },
-  {
-    label: 'Đã chặn',
-    value: 0,
-  },
-  {
-    label: 'Cho phép',
-    value: 1,
-  },
-];
-
-let perPage = 15;
-let stopLoadMore = true;
+import {DevicePlaceholder, PieCharPlaceholder} from '../placeholders';
+import {DropdownSelected} from 'components';
+import metrics from 'metrics';
 
 const Home = ({navigation}) => {
   const queryClient = useQueryClient();
   const dateTimeRef = useRef(null);
-  const selectFilterRef = useRef(null);
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
   const [day, onDay] = useState('');
   const [month, onMonth] = useState('');
-  const [selected, onSelected] = useState('');
   const [selectedDevice, onSelectedDevice] = useState(null);
-  const [cateActive, setCateActive] = useState(types.type.website.code);
   const [pieChartActive, setPieChartActive] = useState(0);
   const [toggleDeviceSelected, setToggleDeviceSelected] = useState(false);
-  const [toggleFilterSelected, setToggleFilterSelected] = useState(false);
 
+  //request report
   const {
-    data,
-    fetchNextPage,
-    status,
-    isFetching,
-    hasNextPage,
-    refetch,
-    isFetchingNextPage,
-  } = useInfiniteQuery(
-    keyTypes.DEVICE_REPORT_LIST +
-      '_' +
-      selectedDevice?.id +
-      '_' +
-      date +
-      '_' +
-      selected,
-    ({pageParam = 1}) =>
-      deviceReportApi(
-        pageParam,
-        perPage,
+    data: dataReportAccess,
+    refetch: refetchReportAccess,
+    isLoading: isLoadingReportAccess,
+    isSuccess: isSuccessReportAccess,
+  } = useQuery(
+    keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id,
+    () =>
+      webReportAccessApi(
         selectedDevice?.id,
         moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-        selected,
-        null,
       ),
     {
       keepPreviousData: true,
-      getNextPageParam: lastPage => {
-        // eslint-disable-next-line radix
-        return parseInt(lastPage.current_page) < lastPage.last_page
-          ? // eslint-disable-next-line radix
-            parseInt(lastPage.current_page) + 1
-          : undefined;
-      },
-      // eslint-disable-next-line no-shadow
-      select: data => {
-        return {
-          pages: data.pages.flatMap(pageItem => {
-            if (checkVar.isEmpty(pageItem.data)) {
-              return [];
-            }
-            return pageItem.data;
-          }),
-          total_block: data?.pages[0].total_block,
-          total_allow: data?.pages[0].total_allow,
-        };
-      },
     },
   );
 
@@ -132,22 +73,23 @@ const Home = ({navigation}) => {
     if (date) {
       onDay(moment(date, 'DD/MM/YYYY').format('DD'));
       onMonth(moment(date, 'DD/MM/YYYY').format('MM'));
-      refetch();
     }
-  }, [date, refetch]);
-
-  //event when change filter
-  useEffect(() => {
-    refetch();
-  }, [selected, refetch]);
+  }, [date]);
 
   //get device list when focus screen
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       refetchDeviceList();
+      refetchReportAccess();
     });
     return unsubscribe;
-  }, [navigation, refetchDeviceList]);
+  }, [navigation, refetchDeviceList, refetchReportAccess]);
+
+  useEffect(() => {
+    if (isSuccessDeviceList && dataDeviceList?.data) {
+      onSelectedDevice(dataDeviceList?.data[0]);
+    }
+  }, [dataDeviceList, isSuccessDeviceList]);
 
   //format device list
   const deviceList = useMemo(() => {
@@ -167,74 +109,58 @@ const Home = ({navigation}) => {
   //format report list
   const dataPieChartList = useMemo(() => {
     let tmpDataList = [];
-    if (status === 'success' && !checkVar.isEmpty(data)) {
+    if (isSuccessReportAccess && !checkVar.isEmpty(dataReportAccess)) {
       let percentOfTotal =
         // eslint-disable-next-line radix
-        parseInt(data?.total_block) + parseInt(data?.total_allow);
+        parseInt(dataReportAccess?.total_request?.total_request) +
+        // eslint-disable-next-line radix
+        parseInt(dataReportAccess?.blocked?.total_blocked);
       tmpDataList.push({
         // device: types.type.website.code,
-        value: Math.round((data?.total_block / percentOfTotal) * 100),
-        color: colors.COLOR_CHART_YELLOW,
-        label: types.status.block.name,
-        code: types.status.block.code,
-        total: data?.total_block,
-      });
-      tmpDataList.push({
-        // device: types.type.website.code,
-        value: Math.round((data?.total_allow / percentOfTotal) * 100),
+        value: Math.round(
+          (dataReportAccess?.total_request?.total_request / percentOfTotal) *
+            100,
+        ),
         color: colors.COLOR_CHART_BLUE,
         label: types.status.allow.name,
         code: types.status.allow.code,
-        total: data?.total_allow,
+        total: dataReportAccess?.total_request?.total_request,
+      });
+      tmpDataList.push({
+        // device: types.type.website.code,
+        value: Math.round(
+          (dataReportAccess?.blocked?.total_blocked / percentOfTotal) * 100,
+        ),
+        color: colors.COLOR_CHART_RED,
+        label: types.status.block.name,
+        code: types.status.block.code,
+        total: dataReportAccess?.blocked?.total_blocked,
       });
     }
 
     return tmpDataList;
-  }, [data, status]);
-
-  useEffect(() => {
-    if (isSuccessDeviceList && dataDeviceList?.data) {
-      onSelectedDevice(dataDeviceList?.data[0]);
-    }
-  }, [dataDeviceList, isSuccessDeviceList]);
+  }, [dataReportAccess, isSuccessReportAccess]);
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
-      keyTypes.DEVICE_REPORT_LIST +
-        '_' +
-        selectedDevice?.id +
-        '_' +
-        date +
-        '_' +
-        selected,
+      keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id,
       {
         exact: true,
       },
     );
-    await refetch();
-  };
-
-  const getMore = () => {
-    if (!stopLoadMore && hasNextPage) {
-      fetchNextPage();
-    }
+    // await queryClient.removeQueries(keyTypes.DEVICE_LIST, {
+    //   exact: true,
+    // });
+    await refetchReportAccess();
+    // await refetchDeviceList();
   };
 
   const handleShowDatePicker = () => {
     dateTimeRef.current.onPressDate();
   };
 
-  const handleSelectedFilter = val => {
-    onSelected(val);
-    setToggleFilterSelected(false);
-  };
-
   const handleSelectedDevice = val => {
     onSelectedDevice(val);
-  };
-
-  const handleShowFilterSelect = () => {
-    setToggleFilterSelected(!toggleFilterSelected);
   };
 
   const handleShowDeviceSelect = () => {
@@ -266,6 +192,19 @@ const Home = ({navigation}) => {
     }
   };
 
+  const formatNumberThousand = num => {
+    let total = num;
+    if (num / 1000000000 > 1) {
+      total = (num / 1000000000).toFixed(1) + 'B';
+    } else if (num / 1000000 > 1) {
+      total = (num / 1000000).toFixed(1) + 'M';
+    } else if (num / 1000 > 1) {
+      total = (num / 1000).toFixed(1) + 'K';
+    }
+
+    return total;
+  };
+
   let checkDeviceData =
     isSuccessDeviceList &&
     dataDeviceList?.data &&
@@ -280,9 +219,8 @@ const Home = ({navigation}) => {
           <TouchableWithoutFeedback
             onPress={() => {
               setToggleDeviceSelected(false);
-              setToggleFilterSelected(false);
             }}>
-            <View>
+            <View style={styles.sectionOne}>
               <View style={styles.wrapHeader}>
                 <FastImage
                   resizeMode={FastImage.resizeMode.contain}
@@ -313,7 +251,7 @@ const Home = ({navigation}) => {
                               : images.avatars.shield
                           }
                           style={styles.avatarShield}
-                          resizeMode={FastImage.resizeMode.contain}
+                          resizeMode={FastImage.resizeMode.cover}
                         />
                         {selectedDevice && selectedDevice?.is_online === 1 && (
                           <View style={styles.dotOnline} />
@@ -331,43 +269,12 @@ const Home = ({navigation}) => {
                       </Text>
                     </TouchableOpacity>
                     {toggleDeviceSelected && (
-                      <ScrollView
-                        contentContainerStyle={styles.contentItemDeviceSelect}
-                        style={styles.scrollItemDeviceSelect}>
-                        {deviceList.map((item, key) => {
-                          return (
-                            <TouchableOpacity
-                              activeOpacity={0.9}
-                              onPress={() => handleActiveItemDevice(item)}
-                              key={key}
-                              style={styles.wrapItemDeviceSelect}>
-                              <View
-                                style={[
-                                  styles.circleItemSelected,
-                                  selectedDevice?.id === item.value
-                                    ? {backgroundColor: colors.COLOR_BLACK}
-                                    : {},
-                                ]}
-                              />
-                              <Text
-                                props={{
-                                  numberOfLines: sizes.SIZE_1,
-                                }}
-                                style={styles.itemDeviceSelect}>
-                                {item.label}
-                              </Text>
-                            </TouchableOpacity>
-                          );
-                        })}
-                        {/* <View style={styles.wrapItemDeviceSelect}>
-                    <View style={styles.circleItemSelected} />
-                    <Text style={styles.itemDeviceSelect}>Bé nam</Text>
-                  </View>
-                  <View style={styles.wrapItemDeviceSelect}>
-                    <View style={styles.circleItemSelected} />
-                    <Text style={styles.itemDeviceSelect}>Bé nam</Text>
-                  </View> */}
-                      </ScrollView>
+                      <DropdownSelected
+                        onPressItem={item => handleActiveItemDevice(item)}
+                        containerStyle={styles.scrollItemDeviceSelect}
+                        data={deviceList}
+                        selected={selectedDevice?.id}
+                      />
                     )}
                   </View>
                 )}
@@ -375,7 +282,7 @@ const Home = ({navigation}) => {
               <View style={styles.wrapContainerTitle}>
                 <View style={styles.wrapTitle}>
                   <View style={styles.bar} />
-                  <Text style={styles.title}>Thống kê truy cập</Text>
+                  <Text style={styles.title}>Thống kê chung</Text>
                 </View>
                 <TouchableOpacity
                   activeOpacity={0.9}
@@ -391,23 +298,22 @@ const Home = ({navigation}) => {
                   <Text style={styles.calendarMonth}>Tháng {month}</Text>
                 </TouchableOpacity>
               </View>
-
               <View style={styles.chartContainer}>
-                {deviceList && deviceList.length > 0 ? (
+                {isLoadingReportAccess ? (
+                  <PieCharPlaceholder />
+                ) : (
                   <PieChart
                     selectedKey={pieChartActive}
                     onSelected={handleActivePieChart}
                     dataList={dataPieChartList}
                   />
-                ) : (
-                  <PieCharPlaceholder />
                 )}
                 <View style={styles.wrapParams}>
                   <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={() => console.log('website')}
                     style={styles.paramInfo}>
-                    <Text style={styles.paramInfoLabel}>Website</Text>
+                    <Text style={styles.paramInfoLabel}>Thống kê</Text>
                     {dataPieChartList.map((item, key) => {
                       return (
                         <TouchableOpacity
@@ -428,7 +334,7 @@ const Home = ({navigation}) => {
                                 ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
                                 : {},
                             ]}>
-                            {item.label}: {item.total}
+                            {item.label}: {formatNumberThousand(item.total)}
                           </Text>
                         </TouchableOpacity>
                       );
@@ -472,138 +378,77 @@ const Home = ({navigation}) => {
               </View>
             </View>
           </TouchableWithoutFeedback>
-          <View style={styles.wrapHeaderList}>
-            <View style={styles.wrapHeaderSelect}>
-              <View style={styles.headerVerticalBar} />
-              <View style={styles.headerSelect}>
-                <Text
-                  onPress={() => setCateActive(types.type.website.code)}
-                  style={[
-                    styles.labelSelectLeft,
-                    {
-                      fontFamily:
-                        cateActive === types.type.website.code
-                          ? fonts.lexendDeca.FONT_BOLD
-                          : fonts.lexendDeca.FONT_REGULAR,
-                    },
-                  ]}>
-                  Website
-                </Text>
-                {/* <View style={styles.spaceVerticalBar} />
-              <Text
-                onPress={() => setCateActive(types.type.application.code)}
-                style={[
-                  styles.labelSelectRight,
-                  {
-                    fontFamily:
-                      cateActive === types.type.application.code
-                        ? fonts.lexendDeca.FONT_BOLD
-                        : fonts.lexendDeca.FONT_REGULAR,
-                  },
-                ]}>
-                Ứng dụng
-              </Text> */}
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={onRefresh}
+                tintColor={colors.COLOR_WHITE}
+              />
+            }
+            style={styles.sectionTwo}>
+            <View style={styles.wrapHeaderList}>
+              <View style={styles.wrapHeaderSelect}>
+                <View style={styles.headerVerticalBar} />
+                <View style={styles.headerSelect}>
+                  <Text style={styles.labelSelectLeft}>Thống kê truy vấn</Text>
+                </View>
               </View>
             </View>
-            <View style={styles.filterContainer}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={handleShowFilterSelect}
-                style={styles.wrapFilter}>
-                <Text style={styles.labelFilter}>Bộ lọc</Text>
-                <Image style={styles.iconFilter} source={images.icons.filter} />
-              </TouchableOpacity>
-              {toggleFilterSelected && (
-                <ScrollView
-                  contentContainerStyle={styles.contentItemFilterSelect}
-                  style={styles.scrollItemFilterSelect}>
-                  {DATA_FILTER.map((item, key) => {
-                    return (
-                      <TouchableOpacity
-                        activeOpacity={0.9}
-                        onPress={() => handleSelectedFilter(item.value)}
-                        key={key}
-                        style={styles.wrapItemDeviceSelect}>
-                        <View
-                          style={[
-                            styles.circleItemSelected,
-                            selected === item.value
-                              ? {backgroundColor: colors.COLOR_BLACK}
-                              : {},
-                          ]}
-                        />
-                        <Text
-                          props={{
-                            numberOfLines: sizes.SIZE_1,
-                          }}
-                          style={styles.itemDeviceSelect}>
-                          {item.label}
-                        </Text>
-                      </TouchableOpacity>
-                    );
+            {/* Thống kê truy cập */}
+            <View style={styles.reportContainer}>
+              <BlockTotal
+                total={formatNumberThousand(
+                  dataReportAccess?.total_request?.total_request,
+                )}
+                data={dataReportAccess?.total_request?.data.map(item => {
+                  // eslint-disable-next-line radix
+                  if (item?.total && parseInt(item?.total) > 0) {
+                    // eslint-disable-next-line radix
+                    return parseInt(item.total);
+                  } else {
+                    return 0;
+                  }
+                })}
+              />
+              <View style={styles.wrapBlockChildren}>
+                <BlockFilterSearch
+                  iconImage={images.icons.area_filter}
+                  total={formatNumberThousand(
+                    dataReportAccess?.blocked?.total_blocked,
+                  )}
+                  title="Chặn bởi bộ lọc"
+                  data={dataReportAccess?.blocked?.data.map(item => {
+                    // eslint-disable-next-line radix
+                    if (item?.total && parseInt(item?.total) > 0) {
+                      // eslint-disable-next-line radix
+                      return parseInt(item.total);
+                    } else {
+                      return 0;
+                    }
                   })}
-                </ScrollView>
-              )}
+                  svgFillColor={colors.COLOR_AREA_CHART_RED}
+                />
+                <BlockFilterSearch
+                  iconImage={images.icons.area_safe_search}
+                  total={formatNumberThousand(
+                    dataReportAccess?.safe_search?.total_safe_search,
+                  )}
+                  title="Tìm kiếm an toàn"
+                  data={dataReportAccess?.safe_search?.data.map(item => {
+                    // eslint-disable-next-line radix
+                    if (item?.total && parseInt(item?.total) > 0) {
+                      // eslint-disable-next-line radix
+                      return parseInt(item.total);
+                    } else {
+                      return 0;
+                    }
+                  })}
+                  svgFillColor={colors.COLOR_AREA_CHART_GREEN}
+                />
+              </View>
             </View>
-          </View>
-          {status === 'loading' ? (
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={onRefresh}
-                  tintColor={colors.COLOR_WHITE}
-                />
-              }
-              style={styles.placeholderContainer}>
-              <View style={styles.wrapItemPlaceholder}>
-                <ItemListPlaceholder />
-              </View>
-              <View style={styles.wrapItemPlaceholder}>
-                <ItemListPlaceholder />
-              </View>
-              <View style={styles.wrapItemPlaceholder}>
-                <ItemListPlaceholder />
-              </View>
-              <View style={styles.wrapItemPlaceholder}>
-                <ItemListPlaceholder />
-              </View>
-              <View style={styles.wrapItemPlaceholder}>
-                <ItemListPlaceholder />
-              </View>
-            </ScrollView>
-          ) : (
-            <FlatList
-              ListEmptyComponent={<EmptyData />}
-              ListFooterComponent={
-                isFetchingNextPage && isFetching && <BaseLoading />
-              }
-              ListFooterComponentStyle={[
-                {marginTop: sizes.SIZE_10},
-                commonStyles.center,
-              ]}
-              style={styles.flatList}
-              contentContainerStyle={styles.contentContainerFlatlist}
-              data={lodash.flattenDeep(data?.pages)}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(_, key) => key}
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={onRefresh}
-                  tintColor={colors.COLOR_WHITE}
-                />
-              }
-              refreshing={false}
-              onRefresh={onRefresh}
-              onEndReached={getMore}
-              onEndReachedThreshold={0.05}
-              onScrollBeginDrag={() => {
-                stopLoadMore = false;
-              }}
-              renderItem={({item}) => <Item item={item} />}
-            />
-          )}
+          </ScrollView>
         </View>
       ) : (
         <View style={[commonStyles.flex1, commonStyles.center]}>
@@ -630,65 +475,17 @@ const Home = ({navigation}) => {
           btnTextConfirm: {
             color: colors.COLOR_BLUE,
           },
+          datePicker: {
+            backgroundColor: metrics.colorScheme === 'dark' ? '#222' : 'white',
+          },
+          datePickerCon: {
+            backgroundColor: metrics.colorScheme === 'dark' ? '#333' : 'white',
+          },
         }}
         format="DD/MM/YYYY"
         maxDate={moment().format('DD/MM/YYYY').toString()}
         onDateChange={val => onDate(val)}
       />
-      {/* <RNPickerSelect
-        pickerProps={{ref: Platform.OS === 'android' ? selectFilterRef : null}}
-        ref={Platform.OS === 'ios' ? selectFilterRef : null}
-        placeholder={{
-          label: '--Chọn--',
-          value: 0,
-        }}
-        value={selected}
-        onValueChange={val => {
-          handleSelectedFilter(val);
-          // if (Platform.OS === 'android') {
-          //   handleSelectedFilter(val);
-          // }
-        }}
-        items={DATA_FILTER}
-        doneText="Xác nhận"
-        // onDonePress={val => handleSelectedFilter(val)}
-        fixAndroidTouchableBug={true}
-        style={{
-          viewContainer: {
-            width: sizes.ZERO,
-            height: sizes.ZERO,
-          },
-        }}
-      /> */}
-      {/* <RNPickerSelect
-        pickerProps={{ref: Platform.OS === 'android' ? selectDeviceRef : null}}
-        ref={Platform.OS === 'ios' ? selectDeviceRef : null}
-        placeholder={{
-          label: '--Chọn--',
-          value: selectedDevice?.id,
-        }}
-        value={selectedDevice?.id}
-        onValueChange={val => {
-          if (dataDeviceList && dataDeviceList?.data) {
-            let info = lodash.find(dataDeviceList?.data, {id: val});
-            handleSelectedDevice(info);
-          }
-
-          // if (Platform.OS === 'android') {
-          //   handleSelectedDevice(val);
-          // }
-        }}
-        items={deviceList}
-        doneText="Xác nhận"
-        // onDonePress={val => handleSelectedDevice(val)}
-        // fixAndroidTouchableBug={true}
-        style={{
-          viewContainer: {
-            width: sizes.ZERO,
-            height: sizes.ZERO,
-          },
-        }}
-      /> */}
     </Background>
   );
 };
