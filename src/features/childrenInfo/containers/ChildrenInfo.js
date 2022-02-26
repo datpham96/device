@@ -35,7 +35,7 @@ const ChildrenInfo = ({route}) => {
   const [visibleRemoveDevice, setVisibleRemoveDevice] = useState(false);
   const [visibleSetup, setVisibleSetup] = useState(false);
   const [visibleConfirm, setVisibleConfirm] = useState(false);
-  const [enableSafeSearch, setEnableSafeSearch] = useState(false);
+  const [enableSafeSearch, setEnableSafeSearch] = useState(true);
   const [enableSafeWeb, setEnableSafeWeb] = useState(true);
   const [settingType, setSettingType] = useState('');
 

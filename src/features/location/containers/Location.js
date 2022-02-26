@@ -13,7 +13,13 @@ import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
-import {DropdownSelected, LoadingData, Loading, PopupConfirm} from 'components';
+import {
+  DropdownSelected,
+  LoadingData,
+  Loading,
+  PopupConfirm,
+  EmptyData,
+} from 'components';
 import keyTypes from 'keyTypes';
 import {deviceListApi, deviceUpdateApi} from 'methods/device';
 import {useQuery, useMutation} from 'react-query';
@@ -66,45 +72,7 @@ const Location = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      requestMultiple([
-        PERMISSIONS.IOS.LOCATION_ALWAYS,
-        PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-        // PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
-        // PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION,
-      ]).then(result => {
-        if (
-          (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.BLOCKED &&
-            result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.BLOCKED) ||
-          (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.DENIED &&
-            result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.DENIED) ||
-          result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.DENIED ||
-          result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.BLOCKED
-        ) {
-          serMarkers({
-            latitude: 0,
-            longitude: 0,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          });
-          setVisiblePermissionLocation(true);
-        }
-        if (
-          result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.GRANTED ||
-          result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED ||
-          result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.GRANTED
-        ) {
-          setRefresh(!refresh);
-        }
-      });
-    });
-    return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigation, refresh]);
-
-  useEffect(() => {
-    const listener = AppState.addEventListener('change', status => {
-      if (status === 'active') {
+      if (deviceList?.length > 0) {
         requestMultiple([
           PERMISSIONS.IOS.LOCATION_ALWAYS,
           PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
@@ -139,14 +107,59 @@ const Location = ({navigation}) => {
         });
       }
     });
+    return unsubscribe;
+  }, [navigation, refresh, deviceList]);
+
+  useEffect(() => {
+    const listener = AppState.addEventListener('change', status => {
+      if (status === 'active') {
+        if (deviceList?.length > 0) {
+          requestMultiple([
+            PERMISSIONS.IOS.LOCATION_ALWAYS,
+            PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+            PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+          ]).then(result => {
+            if (
+              (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.BLOCKED &&
+                result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] ===
+                  RESULTS.BLOCKED) ||
+              (result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.DENIED &&
+                result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] ===
+                  RESULTS.DENIED) ||
+              result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] ===
+                RESULTS.DENIED ||
+              result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] ===
+                RESULTS.BLOCKED
+            ) {
+              serMarkers({
+                latitude: 0,
+                longitude: 0,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0121,
+              });
+              setVisiblePermissionLocation(true);
+            }
+            if (
+              result[PERMISSIONS.IOS.LOCATION_ALWAYS] === RESULTS.GRANTED ||
+              result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] ===
+                RESULTS.GRANTED ||
+              result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] ===
+                RESULTS.GRANTED
+            ) {
+              setRefresh(!refresh);
+            }
+          });
+        }
+      }
+    });
 
     return listener.remove;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [deviceList]);
 
   useEffect(() => {
     if (selectedDevice && data?.data) {
-      let deviceInfo = lodash.find(data.data, {id: selectedDevice.value});
+      let deviceInfo = lodash.find(data.data, {id: selectedDevice?.value});
       if (
         deviceInfo &&
         !checkVar.isEmpty(deviceInfo?.latitude) &&
@@ -172,13 +185,13 @@ const Location = ({navigation}) => {
             console.log(err, 'err');
           });
       } else {
-        Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
-          {
-            text: 'Đóng',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-        ]);
+        // Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
+        //   {
+        //     text: 'Đóng',
+        //     onPress: () => console.log('Cancel Pressed'),
+        //     style: 'cancel',
+        //   },
+        // ]);
         serMarkers({
           latitude: 0,
           longitude: 0,
@@ -241,7 +254,7 @@ const Location = ({navigation}) => {
 
     mutationDeviceLock
       .mutateAsync({
-        data_device_id: selectedDevice.value,
+        data_device_id: selectedDevice?.value,
         data_is_block: 1,
         data_full_name: null,
         data_birthday: null,
@@ -297,63 +310,71 @@ const Location = ({navigation}) => {
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
             Định vị thiết bị
           </Text>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => setRefresh(!refresh)}>
-            <FastImage
-              source={images.icons.refresh}
-              style={styles.iconRefresh}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.wrapButtonAction}>
-          <View style={styles.wrapButtonSelected}>
+          {deviceList?.length > 0 && (
             <TouchableOpacity
-              onPress={() => setToggleDropDownSelected(!toggleDropDownSelected)}
               activeOpacity={0.9}
-              style={styles.wrapBtnSelect}>
-              <Text
-                props={{
-                  numberOfLines: 1,
-                }}
-                style={styles.labelSelect}>
-                {selectedDevice.label}
-              </Text>
-              <MaterialCommunityIcons
-                style={styles.iconChervonRightSelect}
-                name="chevron-right"
-                size={sizes.SIZE_25}
+              onPress={() => setRefresh(!refresh)}>
+              <FastImage
+                source={images.icons.refresh}
+                style={styles.iconRefresh}
               />
             </TouchableOpacity>
-            {toggleDropDownSelected && (
-              <DropdownSelected
-                selected={selectedDevice.value}
-                containerStyle={styles.containerDropdownSelected}
-                data={deviceList}
-                onPressItem={item => handleSelectedDevice(item)}
-              />
-            )}
-          </View>
-          <TouchableHighlight
-            underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
-            activeOpacity={0.9}
-            style={styles.btn}
-            onPress={() => {
-              if (selectedDevice) {
-                setVisibleConfirmDeviceBlock(true);
-              } else {
-                Toast('Vui lòng chọn thiết bị');
-              }
-            }}>
-            <Text style={styles.btnLabel}>Khoá thiết bị</Text>
-          </TouchableHighlight>
+          )}
         </View>
+        {deviceList?.length > 0 && (
+          <View style={styles.wrapButtonAction}>
+            <View style={styles.wrapButtonSelected}>
+              <TouchableOpacity
+                onPress={() =>
+                  setToggleDropDownSelected(!toggleDropDownSelected)
+                }
+                activeOpacity={0.9}
+                style={styles.wrapBtnSelect}>
+                <Text
+                  props={{
+                    numberOfLines: 1,
+                  }}
+                  style={styles.labelSelect}>
+                  {selectedDevice?.label}
+                </Text>
+                <MaterialCommunityIcons
+                  style={styles.iconChervonRightSelect}
+                  name="chevron-right"
+                  size={sizes.SIZE_25}
+                />
+              </TouchableOpacity>
+              {toggleDropDownSelected && selectedDevice && (
+                <DropdownSelected
+                  selected={selectedDevice?.value}
+                  containerStyle={styles.containerDropdownSelected}
+                  data={deviceList}
+                  onPressItem={item => handleSelectedDevice(item)}
+                />
+              )}
+            </View>
+            <TouchableHighlight
+              underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
+              activeOpacity={0.9}
+              style={styles.btn}
+              onPress={() => {
+                if (selectedDevice) {
+                  setVisibleConfirmDeviceBlock(true);
+                } else {
+                  Toast('Vui lòng chọn thiết bị');
+                }
+              }}>
+              <Text style={styles.btnLabel}>Khoá thiết bị</Text>
+            </TouchableHighlight>
+          </View>
+        )}
         {isLoading ? (
           <LoadingData />
-        ) : (
+        ) : isSuccess && deviceList?.length > 0 ? (
           <View style={styles.contentContainer}>
             <MapMarker markers={markers} />
           </View>
+        ) : (
+          <EmptyData />
         )}
       </View>
     </Background>
