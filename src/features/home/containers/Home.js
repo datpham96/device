@@ -24,7 +24,11 @@ import {webReportAccessApi} from 'src/api/methods/web';
 import {checkVar, truncateWords} from 'src/helpers/funcs';
 import lodash from 'lodash';
 import navigationTypes from 'navigationTypes';
-import {DevicePlaceholder, PieCharPlaceholder} from '../placeholders';
+import {
+  DevicePlaceholder,
+  NumberPlaceholder,
+  PieCharPlaceholder,
+} from '../placeholders';
 import {DropdownSelected} from 'components';
 import metrics from 'metrics';
 
@@ -45,7 +49,7 @@ const Home = ({navigation}) => {
     refetch: refetchReportAccess,
     isLoading: isLoadingReportAccess,
     isSuccess: isSuccessReportAccess,
-    // isFetching: isFetchingReportAccess,
+    isFetching: isFetchingReportAccess,
     // isRefetching: isRefetchingReportAccess,
     isFetched: isFetchedReportAccess,
   } = useQuery(
@@ -55,9 +59,9 @@ const Home = ({navigation}) => {
         selectedDevice?.id,
         moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
       ),
-    {
-      keepPreviousData: true,
-    },
+    // {
+    //   keepPreviousData: true,
+    // },
   );
 
   //device list
@@ -118,14 +122,14 @@ const Home = ({navigation}) => {
       let totalAccess = totalRequest - totalBlocked;
       let percentBlock = (totalAccess / totalRequest) * 100;
       tmpDataList.push({
-        value: percentBlock.toFixed(1),
+        value: parseFloat(percentBlock.toFixed(1)),
         color: colors.COLOR_CHART_BLUE,
         label: types.status.allow.name,
         code: types.status.allow.code,
         total: totalAccess,
       });
       tmpDataList.push({
-        value: (100 - percentBlock).toFixed(1),
+        value: parseFloat((100 - percentBlock).toFixed(1)),
         color: colors.COLOR_CHART_RED,
         label: types.status.block.name,
         code: types.status.block.code,
@@ -215,6 +219,22 @@ const Home = ({navigation}) => {
     setHeightSectionTwo(heightOutSideBottomTab - height);
   };
 
+  const formatAreaChart24h = arr => {
+    let arrChart = [];
+    for (var i = 0; i < 24; i++) {
+      arrChart[i] = 0;
+    }
+    if (!arr) {
+      return arrChart;
+    }
+
+    arr.map(item => {
+      arrChart[item.hour] = parseFloat(item.total);
+    });
+
+    return arrChart;
+  };
+
   let checkDeviceData =
     isSuccessDeviceList &&
     dataDeviceList?.data &&
@@ -226,7 +246,7 @@ const Home = ({navigation}) => {
         <LoadingData />
       ) : checkDeviceData ? (
         <View style={styles.container}>
-          {/* <Loading isLoading={isFetchingReportAccess} /> */}
+          <Loading isLoading={isLoadingReportAccess} />
           <TouchableWithoutFeedback
             onPress={() => {
               setToggleDeviceSelected(false);
@@ -310,22 +330,78 @@ const Home = ({navigation}) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.chartContainer}>
-                {isLoadingReportAccess || !isFetchedReportAccess ? (
+                {isLoadingReportAccess ? (
                   <PieCharPlaceholder />
-                ) : (
+                ) : deviceList && deviceList.length > 0 ? (
                   <PieChart
                     selectedKey={pieChartActive}
                     onSelected={handleActivePieChart}
                     dataList={dataPieChartList}
                   />
+                ) : (
+                  <></>
                 )}
                 <View style={styles.wrapParams}>
-                  <TouchableOpacity
+                  <View
                     activeOpacity={0.9}
                     onPress={() => console.log('website')}
                     style={styles.paramInfo}>
                     <Text style={styles.paramInfoLabel}>Thống kê</Text>
-                    {dataPieChartList.map((item, key) => {
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => handlePieChartActive(0)}
+                      style={styles.wrapParamInfoValue}>
+                      <View
+                        style={[
+                          styles.paramInfoValueDot,
+                          {backgroundColor: colors.COLOR_CHART_BLUE},
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.paramInfoValue,
+                          pieChartActive === 0
+                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                            : {},
+                        ]}>
+                        {types.status.allow.name}:{' '}
+                        {!checkVar.isEmpty(dataPieChartList) ? (
+                          <Text>
+                            {formatNumberThousand(dataPieChartList[0]?.total)}
+                          </Text>
+                        ) : (
+                          <NumberPlaceholder />
+                        )}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      activeOpacity={0.9}
+                      onPress={() => handlePieChartActive(1)}
+                      style={styles.wrapParamInfoValue}>
+                      <View
+                        style={[
+                          styles.paramInfoValueDot,
+                          {backgroundColor: colors.COLOR_CHART_RED},
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.paramInfoValue,
+                          pieChartActive === 1
+                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                            : {},
+                        ]}>
+                        {types.status.block.name}:{' '}
+                        {!checkVar.isEmpty(dataPieChartList) ? (
+                          <Text>
+                            {formatNumberThousand(dataPieChartList[1]?.total)}
+                          </Text>
+                        ) : (
+                          <NumberPlaceholder />
+                        )}
+                      </Text>
+                    </TouchableOpacity>
+                    {/* {dataPieChartList.map((item, key) => {
                       return (
                         <TouchableOpacity
                           key={key}
@@ -349,8 +425,8 @@ const Home = ({navigation}) => {
                           </Text>
                         </TouchableOpacity>
                       );
-                    })}
-                  </TouchableOpacity>
+                    })} */}
+                  </View>
                 </View>
               </View>
             </View>
@@ -358,7 +434,7 @@ const Home = ({navigation}) => {
           <ScrollView
             refreshControl={
               <RefreshControl
-                refreshing={isLoadingReportAccess || !isFetchedReportAccess}
+                refreshing={false}
                 onRefresh={onRefresh}
                 tintColor={colors.COLOR_WHITE}
               />
@@ -380,15 +456,18 @@ const Home = ({navigation}) => {
                 total={formatNumberThousand(
                   dataReportAccess?.total_request?.total_request,
                 )}
-                data={dataReportAccess?.total_request?.data.map(item => {
-                  // eslint-disable-next-line radix
-                  if (item?.total && parseInt(item?.total) > 0) {
-                    // eslint-disable-next-line radix
-                    return parseInt(item.total);
-                  } else {
-                    return 0;
-                  }
-                })}
+                data={
+                  formatAreaChart24h(dataReportAccess?.total_request?.data)
+                  // .map(item => {
+                  //   // eslint-disable-next-line radix
+                  //   if (item?.total && parseInt(item?.total) > 0) {
+                  //     // eslint-disable-next-line radix
+                  //     return parseInt(item.total);
+                  //   } else {
+                  //     return 0;
+                  //   }
+                  // })
+                }
               />
               <View style={styles.wrapBlockChildren}>
                 <BlockFilterSearch
@@ -399,15 +478,18 @@ const Home = ({navigation}) => {
                     dataReportAccess?.blocked?.total_blocked,
                   )}
                   title="Chặn bởi bộ lọc"
-                  data={dataReportAccess?.blocked?.data.map(item => {
-                    // eslint-disable-next-line radix
-                    if (item?.total && parseInt(item?.total) > 0) {
-                      // eslint-disable-next-line radix
-                      return parseInt(item.total);
-                    } else {
-                      return 0;
-                    }
-                  })}
+                  data={
+                    formatAreaChart24h(dataReportAccess?.blocked?.data)
+                    // .map(item => {
+                    //   // eslint-disable-next-line radix
+                    //   if (item?.total && parseInt(item?.total) > 0) {
+                    //     // eslint-disable-next-line radix
+                    //     return parseInt(item.total);
+                    //   } else {
+                    //     return 0;
+                    //   }
+                    // })
+                  }
                   svgFillColor={colors.COLOR_AREA_CHART_RED}
                 />
                 <BlockFilterSearch
@@ -418,15 +500,18 @@ const Home = ({navigation}) => {
                     dataReportAccess?.safe_search?.total_safe_search,
                   )}
                   title="Tìm kiếm an toàn"
-                  data={dataReportAccess?.safe_search?.data.map(item => {
-                    // eslint-disable-next-line radix
-                    if (item?.total && parseInt(item?.total) > 0) {
-                      // eslint-disable-next-line radix
-                      return parseInt(item.total);
-                    } else {
-                      return 0;
-                    }
-                  })}
+                  data={
+                    formatAreaChart24h(dataReportAccess?.safe_search?.data)
+                    //   .map(item => {
+                    //   // eslint-disable-next-line radix
+                    //   if (item?.total && parseInt(item?.total) > 0) {
+                    //     // eslint-disable-next-line radix
+                    //     return parseInt(item.total);
+                    //   } else {
+                    //     return 0;
+                    //   }
+                    // })
+                  }
                   svgFillColor={colors.COLOR_AREA_CHART_GREEN}
                 />
               </View>

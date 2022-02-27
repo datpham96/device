@@ -19,7 +19,9 @@ const BlockFilterSearchComponent = ({
   areaChartStyle,
 }) => {
   const maxNumber = lodash.max(data);
-  const unitNumber = landmarkUnitOfNumber(maxNumber);
+  const unitNumber = landmarkUnitOfNumber(maxNumber)
+    ? landmarkUnitOfNumber(maxNumber)
+    : 0;
   return (
     <View style={[styles.container, containerStyle]}>
       <>
