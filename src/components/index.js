@@ -9,7 +9,6 @@ export {default as Background} from './BackgroundComponent';
 //Modal
 export {default as ModalScanQRcode} from './Modals/ModalScanQRcodeComponent';
 export {default as ModalSetTimeBlockAccess} from './Modals/ModalSetTimeBlockAccessComponent';
-export {default as ModalBarcode} from './Modals/ModalBarcodeComponent';
 export {default as ModalBottomSheet} from './Modals/ModalBottomSheetComponent';
 
 //loading

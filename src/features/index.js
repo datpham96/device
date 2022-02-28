@@ -26,9 +26,6 @@ export {default as ChildrenManagerScreen} from './childrenManager/containers/Chi
 //deviceInfo
 export {default as DeviceInfoScreen} from './deviceInfo/containers/DeviceInfo';
 
-//imeiManager
-export {default as ImeiManagerScreen} from './imeiManager/containers/ImeiManager';
-
 //websiteControl
 export {default as WebsiteControlScreen} from './websiteControl/containers/WebsiteControl';
 

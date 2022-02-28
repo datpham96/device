@@ -63,29 +63,6 @@ const BlockTotalComponent = ({
           animationDuration={500}
         />
       </>
-      {/* <View
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          width: sizes.ZERO,
-          height: sizes.ZERO,
-          backgroundColor: 'transparent',
-          borderStyle: 'solid',
-          borderTopWidth: 5,
-          borderRightWidth: 0,
-          borderBottomWidth: 20,
-          borderLeftWidth: 20,
-          borderRadius: 5,
-          // borderRadius: 10,
-          borderTopColor: 'transparent',
-          borderRightColor: colors.COLOR_RED_ORANGE,
-          borderBottomColor: colors.COLOR_RED_ORANGE,
-          borderLeftColor: 'transparent',
-          // marginTop: -sizes.SIZE_9,
-          zIndex: 0,
-        }}
-      /> */}
       <View style={styles.contentContainer}>
         <View style={styles.wrapInfo}>
           <Text style={styles.title}>Tổng truy vấn</Text>

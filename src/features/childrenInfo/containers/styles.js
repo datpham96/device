@@ -6,6 +6,7 @@ export default StyleSheet.create({
   container: {
     paddingHorizontal: sizes.SIZE_20,
     marginTop: sizes.SIZE_30,
+    ...commonStyles.flex1,
   },
   mainTitleStyle: {},
   wrapAvatar: {

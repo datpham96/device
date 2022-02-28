@@ -174,6 +174,9 @@ const styles = StyleSheet.create({
     borderWidth: sizes.SIZE_2,
     borderColor: colors.COLOR_WHITE,
   },
+  wrapReportLabel: {
+    ...commonStyles.flexRowCenter,
+  },
   paramInfoValue: {
     marginLeft: sizes.SIZE_10,
     fontSize: sizes.SIZE_13,

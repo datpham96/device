@@ -9,14 +9,16 @@ export type Props = {
   listData?: any;
   placeholder?: any;
   onDonePress?: any;
+  selectedValue?: any;
 };
 
 const InputSelectComponent: React.FC<Props> = ({
   listData,
   placeholder,
   onDonePress,
+  selectedValue = '',
 }) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(selectedValue);
   return (
     <RNPickerSelect
       placeholder={{

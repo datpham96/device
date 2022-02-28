@@ -121,3 +121,11 @@ export function deviceSettingUpdateApi(device_id, setting_id, name, status) {
   bodyFormData.append('status', status);
   return apiToken(ApiConstants.DEVICE_SETTING_UPDATE, 'post', bodyFormData);
 }
+
+export function deviceAvatarUpdateApi(device_id, imageBase64) {
+  //Cập nhật avatar thiết bị
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  bodyFormData.append('avatar', imageBase64);
+  return apiToken(ApiConstants.DEVICE_AVATAR_UPDATE, 'post', bodyFormData);
+}

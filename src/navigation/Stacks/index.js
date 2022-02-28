@@ -2,7 +2,6 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   ErrorScreen,
-  ImeiManagerScreen,
   LoginScreen,
   OtpScreen,
   RegisterScreen,
@@ -50,11 +49,6 @@ const RootStack = () => {
           <RootNavStack.Screen
             name={navigationTypes.applicationControl.screen}
             component={ApplicationControlScreen}
-            options={screenOptions}
-          />
-          <RootNavStack.Screen
-            name={navigationTypes.imeiManager.screen}
-            component={ImeiManagerScreen}
             options={screenOptions}
           />
           <RootNavStack.Screen

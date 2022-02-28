@@ -26,17 +26,18 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
   const {data, isLoading, refetch} = useQuery(
     keyTypes.DEVICE_LIST,
     () => deviceListApi(),
-    {
-      keepPreviousData: true,
-    },
+    // {
+    //   keepPreviousData: true,
+    // },
   );
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      refetch();
+      onRefresh();
     });
     return unsubscribe;
-  }, [navigation, refetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
 
   const onRefresh = async () => {
     await queryClient.removeQueries(keyTypes.DEVICE_LIST, {

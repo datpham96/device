@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Text, Input, Background, Button, ButtonBack} from 'base';
-import {View, TouchableOpacity, Platform} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
 import styles from './styles';
 import {colors, commonStyles} from 'styles';
 import FastImage from 'react-native-fast-image';

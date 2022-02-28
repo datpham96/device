@@ -229,7 +229,7 @@ const Home = ({navigation}) => {
     }
 
     arr.map(item => {
-      arrChart[item.hour] = parseFloat(item.total);
+      arrChart[item.hour] = item.total ? parseFloat(item.total) : 0;
     });
 
     return arrChart;
@@ -357,22 +357,26 @@ const Home = ({navigation}) => {
                           {backgroundColor: colors.COLOR_CHART_BLUE},
                         ]}
                       />
-                      <Text
-                        style={[
-                          styles.paramInfoValue,
-                          pieChartActive === 0
-                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                            : {},
-                        ]}>
-                        {types.status.allow.name}:{' '}
+                      <View style={styles.wrapReportLabel}>
+                        <Text
+                          style={[
+                            styles.paramInfoValue,
+                            pieChartActive === 0
+                              ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                              : {},
+                          ]}>
+                          {types.status.allow.name}:{' '}
+                        </Text>
                         {!checkVar.isEmpty(dataPieChartList) ? (
                           <Text>
                             {formatNumberThousand(dataPieChartList[0]?.total)}
                           </Text>
                         ) : (
-                          <NumberPlaceholder />
+                          <View>
+                            <NumberPlaceholder />
+                          </View>
                         )}
-                      </Text>
+                      </View>
                     </TouchableOpacity>
                     <TouchableOpacity
                       activeOpacity={0.9}
@@ -384,22 +388,26 @@ const Home = ({navigation}) => {
                           {backgroundColor: colors.COLOR_CHART_RED},
                         ]}
                       />
-                      <Text
-                        style={[
-                          styles.paramInfoValue,
-                          pieChartActive === 1
-                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                            : {},
-                        ]}>
-                        {types.status.block.name}:{' '}
+                      <View style={styles.wrapReportLabel}>
+                        <Text
+                          style={[
+                            styles.paramInfoValue,
+                            pieChartActive === 1
+                              ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                              : {},
+                          ]}>
+                          {types.status.block.name}:{' '}
+                        </Text>
                         {!checkVar.isEmpty(dataPieChartList) ? (
                           <Text>
                             {formatNumberThousand(dataPieChartList[1]?.total)}
                           </Text>
                         ) : (
-                          <NumberPlaceholder />
+                          <View>
+                            <NumberPlaceholder />
+                          </View>
                         )}
-                      </Text>
+                      </View>
                     </TouchableOpacity>
                     {/* {dataPieChartList.map((item, key) => {
                       return (
@@ -456,18 +464,7 @@ const Home = ({navigation}) => {
                 total={formatNumberThousand(
                   dataReportAccess?.total_request?.total_request,
                 )}
-                data={
-                  formatAreaChart24h(dataReportAccess?.total_request?.data)
-                  // .map(item => {
-                  //   // eslint-disable-next-line radix
-                  //   if (item?.total && parseInt(item?.total) > 0) {
-                  //     // eslint-disable-next-line radix
-                  //     return parseInt(item.total);
-                  //   } else {
-                  //     return 0;
-                  //   }
-                  // })
-                }
+                data={formatAreaChart24h(dataReportAccess?.total_request?.data)}
               />
               <View style={styles.wrapBlockChildren}>
                 <BlockFilterSearch
@@ -478,18 +475,7 @@ const Home = ({navigation}) => {
                     dataReportAccess?.blocked?.total_blocked,
                   )}
                   title="Chặn bởi bộ lọc"
-                  data={
-                    formatAreaChart24h(dataReportAccess?.blocked?.data)
-                    // .map(item => {
-                    //   // eslint-disable-next-line radix
-                    //   if (item?.total && parseInt(item?.total) > 0) {
-                    //     // eslint-disable-next-line radix
-                    //     return parseInt(item.total);
-                    //   } else {
-                    //     return 0;
-                    //   }
-                    // })
-                  }
+                  data={formatAreaChart24h(dataReportAccess?.blocked?.data)}
                   svgFillColor={colors.COLOR_AREA_CHART_RED}
                 />
                 <BlockFilterSearch
@@ -500,18 +486,7 @@ const Home = ({navigation}) => {
                     dataReportAccess?.safe_search?.total_safe_search,
                   )}
                   title="Tìm kiếm an toàn"
-                  data={
-                    formatAreaChart24h(dataReportAccess?.safe_search?.data)
-                    //   .map(item => {
-                    //   // eslint-disable-next-line radix
-                    //   if (item?.total && parseInt(item?.total) > 0) {
-                    //     // eslint-disable-next-line radix
-                    //     return parseInt(item.total);
-                    //   } else {
-                    //     return 0;
-                    //   }
-                    // })
-                  }
+                  data={formatAreaChart24h(dataReportAccess?.safe_search?.data)}
                   svgFillColor={colors.COLOR_AREA_CHART_GREEN}
                 />
               </View>

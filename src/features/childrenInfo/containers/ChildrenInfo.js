@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {Text, Background, ButtonBack, Avatar} from 'base';
 import {
   View,
@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import styles from './styles';
 import {commonStyles, colors} from 'styles';
-import {ButtonRedirect, PopupConfirm, Loading} from 'components';
+import {ButtonRedirect, PopupConfirm, Loading, LoadingData} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
 import {useQueryClient, useQuery, useMutation} from 'react-query';
@@ -18,13 +18,19 @@ import {
   removeDeviceApi,
   deviceSettingListApi,
   deviceSettingUpdateApi,
+  deviceAvatarUpdateApi,
+  deviceUpdateApi,
 } from 'methods/device';
 import {Toast} from 'customs';
-import {ModalSetupAccess, Switch} from '../components';
+import {ModalSetupAccess, ModalUpdateInfo, Switch} from '../components';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
 import types from '../types';
 import lodash from 'lodash';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {checkVar} from 'src/helpers/funcs';
+import Validator from 'validatorjs';
+import {ChildrenPlaceholder} from '../placeholders';
 
 const ChildrenInfo = ({route}) => {
   const params = route?.params;
@@ -38,13 +44,22 @@ const ChildrenInfo = ({route}) => {
   const [enableSafeSearch, setEnableSafeSearch] = useState(true);
   const [enableSafeWeb, setEnableSafeWeb] = useState(true);
   const [settingType, setSettingType] = useState('');
+  const [visibleUpdateInfoModal, setVisibleUpdateInfoModal] = useState(false);
 
-  const {data, refetch} = useQuery(
+  const [fullName, setFullname] = useState('');
+  const [deviceName, setDeviceName] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [dataRequestAvatar, setDataRequestAvatar] = useState('');
+  const [avatarUri, setAvatarUri] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const {data, refetch, isLoading} = useQuery(
     keyTypes.DEVICE_INFO + '_' + device_id,
     () => deviceInfoApi(device_id),
-    {
-      keepPreviousData: true,
-    },
+    // {
+    //   keepPreviousData: true,
+    // },
   );
 
   const {data: dataDeviceSettingList, refetch: refetchDeviceSettingList} =
@@ -56,6 +71,17 @@ const ChildrenInfo = ({route}) => {
       },
     );
 
+  useEffect(() => {
+    if (!checkVar.isEmpty(data?.data)) {
+      let detail = data.data;
+      setFullname(detail.full_name);
+      setDeviceName(detail.device_name);
+      setGender(detail.gender ? detail.gender : '');
+      setBirthday(detail.birthday);
+      setAvatarUri({uri: detail.avatar});
+    }
+  }, [data]);
+
   const mutationUpdate = useMutation(
     ({data_device_id, data_setting_id, data_name, data_status}) =>
       deviceSettingUpdateApi(
@@ -63,6 +89,30 @@ const ChildrenInfo = ({route}) => {
         data_setting_id,
         data_name,
         data_status,
+      ),
+  );
+
+  //cập nhật device avatar
+  const mutationDeviceAvatarUpdate = useMutation(
+    ({data_device_id, data_avatar}) =>
+      deviceAvatarUpdateApi(data_device_id, data_avatar),
+  );
+
+  //cập nhật device info
+  const mutationDeviceUpdate = useMutation(
+    ({
+      data_device_id,
+      data_is_block,
+      data_full_name,
+      data_birthday,
+      data_gender,
+    }) =>
+      deviceUpdateApi(
+        data_device_id,
+        data_is_block,
+        data_full_name,
+        data_birthday,
+        data_gender,
       ),
   );
 
@@ -86,6 +136,14 @@ const ChildrenInfo = ({route}) => {
       }
     }
   }, [dataDeviceSettingList]);
+
+  const avatarLink = useMemo(() => {
+    let avatar = '';
+    if (data?.data?.avatar) {
+      avatar = data.data.avatar;
+    }
+    return avatar;
+  }, [data]);
 
   const handleRedirectWebsiteControl = () => {
     RootNavigation.navigate(navigationTypes.websiteControl.screen, {
@@ -205,10 +263,103 @@ const ChildrenInfo = ({route}) => {
     }
   };
 
+  const handleCloseUpdateInfo = () => {
+    setVisibleUpdateInfoModal(false);
+    setErrors({});
+  };
+  const handleUpdateInfo = () => {
+    setVisibleUpdateInfoModal(false);
+    let validation = new Validator(
+      {
+        fullName: fullName,
+        gender: gender,
+        birthday: birthday,
+      },
+      {
+        fullName: 'required',
+        gender: 'required',
+        birthday: 'required',
+      },
+      {
+        'required.fullName': 'Tên không được bỏ trống',
+        'required.gender': 'Giới tính không được bỏ trống',
+        'required.birthday': 'Ngày sinh tính không được bỏ trống',
+      },
+    );
+    if (validation.fails()) {
+      setErrors({
+        ...errors,
+        fullName: validation.errors.first('fullName'),
+        gender: validation.errors.first('gender'),
+        birthday: validation.errors.first('birthday'),
+      });
+      return;
+    }
+
+    if (validation.passes()) {
+      setErrors({
+        ...errors,
+        fullName: validation.errors.first('fullName'),
+        gender: validation.errors.first('gender'),
+        birthday: validation.errors.first('birthday'),
+      });
+    }
+    //cập nhật avatar
+    mutationDeviceAvatarUpdate
+      .mutateAsync({
+        data_device_id: device_id,
+        data_avatar: dataRequestAvatar,
+      })
+      .then(() => {
+        return mutationDeviceUpdate.mutateAsync({
+          data_device_id: device_id,
+          data_is_block: data?.data?.is_block,
+          data_full_name: fullName,
+          data_birthday: birthday,
+          data_gender: gender,
+        });
+      })
+      .then(resp => {
+        if (resp?.status) {
+          Toast('Cập nhật thông tin thành công');
+          onRefresh();
+        } else {
+          Toast('Cập nhật thông tin thất bại');
+        }
+        mutationDeviceAvatarUpdate.reset();
+        mutationDeviceUpdate.reset();
+      })
+      .catch(err => {
+        mutationDeviceAvatarUpdate.reset();
+        mutationDeviceUpdate.reset();
+        console.log(err, 'err==');
+      });
+  };
+
   return (
     <Background bin>
+      <ModalUpdateInfo
+        avatarUri={avatarUri}
+        setAvatarUri={val => setAvatarUri(val)}
+        errors={errors}
+        setDataRequestAvatar={val => setDataRequestAvatar(val)}
+        visible={visibleUpdateInfoModal}
+        onPressClose={handleCloseUpdateInfo}
+        onPressSubmit={handleUpdateInfo}
+        nameValue={fullName}
+        onChangeName={val => setFullname(val)}
+        deviceNameValue={deviceName}
+        genderValue={gender}
+        onChangeGender={val => setGender(val)}
+        birthday={birthday}
+        onChangeBirthday={val => setBirthday(val)}
+      />
       <Loading
-        isLoading={mutationRemoveDevice.isLoading || mutationUpdate.isLoading}
+        isLoading={
+          mutationRemoveDevice.isLoading ||
+          mutationUpdate.isLoading ||
+          mutationDeviceUpdate.isLoading
+        }
       />
       <ModalSetupAccess
         deviceId={device_id}
@@ -228,112 +379,113 @@ const ChildrenInfo = ({route}) => {
         content="Bạn có muốn thực hiện tác vụ này không?"
       />
       <ButtonBack />
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={onRefresh}
-            tintColor={colors.COLOR_WHITE}
-          />
-        }
-        style={styles.container}>
+      <View style={styles.container}>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
           Quản lý thông tin
         </Text>
-        <View style={styles.wrapAvatar}>
-          <Avatar
-            containerStyle={styles.avatar}
-            imageStyle={styles.avatar}
-            uriImage={data?.data?.avatar}
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={onRefresh}
+              tintColor={colors.COLOR_WHITE}
+            />
+          }
+          style={commonStyles.flex1}>
+          {isLoading ? (
+            <ChildrenPlaceholder />
+          ) : (
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => setVisibleUpdateInfoModal(true)}
+              style={styles.wrapAvatar}>
+              <Avatar
+                containerStyle={styles.avatar}
+                imageStyle={styles.avatar}
+                uriImage={avatarLink}
+              />
+              <View style={styles.wrapInfo}>
+                <Text style={[styles.textInfo, styles.infoName]}>
+                  {data?.data?.full_name}
+                </Text>
+                <Text style={styles.textInfo}>{data?.data?.device_name}</Text>
+                <Text style={styles.textInfo}>
+                  {data?.data?.status ? 'Đã kết nối' : 'Chưa kết nối'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          <View style={styles.wrapBtn}>
+            <TouchableHighlight
+              onPress={() => setVisibleRemoveDevice(true)}
+              underlayColor={colors.COLOR_UNDERLAY_BUTTON_PINK}
+              style={styles.btnCancel}>
+              <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
+            </TouchableHighlight>
+          </View>
+          <ButtonRedirect
+            onPress={handleRedirectWebsiteControl}
+            label="Kiểm soát website"
           />
-          <View style={styles.wrapInfo}>
-            <Text style={[styles.textInfo, styles.infoName]}>
-              {data?.data?.full_name}
-            </Text>
-            <Text style={styles.textInfo}>{data?.data?.device_name}</Text>
-            <Text style={styles.textInfo}>
-              {data?.data?.status ? 'Đã kết nối' : 'Chưa kết nối'}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.wrapBtn}>
-          <TouchableHighlight
-            onPress={() => setVisibleRemoveDevice(true)}
-            underlayColor={colors.COLOR_UNDERLAY_BUTTON_PINK}
-            style={styles.btnCancel}>
-            <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
-          </TouchableHighlight>
-          {/* <TouchableHighlight
-            onPress={() => {
-              setVisibleSetup(true);
-            }}
-            underlayColor={colors.COLOR_UNDERLAY_BLUE}
-            style={styles.btnSetup}>
-            <Text style={styles.labelBtnSetup}>Thiết lập</Text>
-          </TouchableHighlight> */}
-        </View>
-        <ButtonRedirect
-          onPress={handleRedirectWebsiteControl}
-          label="Kiểm soát website"
-        />
-        <ButtonRedirect
-          containerStyle={styles.btnRedirect}
-          onPress={handleRedirectApplicationControl}
-          label="Kiếm soát ứng dụng"
-        />
-        <ButtonRedirect
-          containerStyle={styles.btnRedirect}
-          onPress={handleRedirectReport}
-          label="Lịch sử truy cập"
-        />
-        <View style={styles.settingContainer}>
-          <View style={styles.wrapSafeWeb}>
-            <View style={styles.headerSafeWeb}>
-              <FastImage
-                style={styles.iconInfo}
-                source={images.icons.safe_web}
-              />
-              <Text style={styles.labelInfo}>Lướt web an toàn</Text>
-              <Switch
-                value={enableSafeWeb}
-                onValueChange={() => {
-                  setEnableSafeWeb(!enableSafeWeb);
-                  setSettingType(types.safe_web.code);
-                  setVisibleConfirm(true);
-                }}
-                containerStyle={styles.switchSafeWeb}
-              />
+          <ButtonRedirect
+            containerStyle={styles.btnRedirect}
+            onPress={handleRedirectApplicationControl}
+            label="Kiếm soát ứng dụng"
+          />
+          <ButtonRedirect
+            containerStyle={styles.btnRedirect}
+            onPress={handleRedirectReport}
+            label="Lịch sử truy cập"
+          />
+          <View style={styles.settingContainer}>
+            <View style={styles.wrapSafeWeb}>
+              <View style={styles.headerSafeWeb}>
+                <FastImage
+                  style={styles.iconInfo}
+                  source={images.icons.safe_web}
+                />
+                <Text style={styles.labelInfo}>Lướt web an toàn</Text>
+                <Switch
+                  value={enableSafeWeb}
+                  onValueChange={() => {
+                    setEnableSafeWeb(!enableSafeWeb);
+                    setSettingType(types.safe_web.code);
+                    setVisibleConfirm(true);
+                  }}
+                  containerStyle={styles.switchSafeWeb}
+                />
+              </View>
+              <Text style={styles.contentSafeWeb}>
+                Ngăn chặn quyền truy cập các website người lớn, bạo lực, cờ bạc
+                và lừa đảo. {'\n'}Bảo vệ quyền riêng tư và loại bỏ quảng cáo.
+              </Text>
             </View>
-            <Text style={styles.contentSafeWeb}>
-              Ngăn chặn quyền truy cập các website người lớn, bạo lực, cờ bạc và
-              lừa đảo. {'\n'}Bảo vệ quyền riêng tư và loại bỏ quảng cáo.
-            </Text>
-          </View>
-          {/* <Line customStyle={styles.lineOne} /> */}
-          <View style={styles.wrapSafeWeb}>
-            <View style={styles.headerSafeWeb}>
-              <FastImage
-                style={styles.iconInfo}
-                source={images.icons.safe_search}
-              />
-              <Text style={styles.labelInfo}>Tìm kiếm an toàn</Text>
-              <Switch
-                value={enableSafeSearch}
-                onValueChange={() => {
-                  setEnableSafeSearch(!enableSafeSearch);
-                  setSettingType(types.safe_search.code);
-                  setVisibleConfirm(true);
-                }}
-                containerStyle={styles.switchSafeWeb}
-              />
+            {/* <Line customStyle={styles.lineOne} /> */}
+            <View style={styles.wrapSafeWeb}>
+              <View style={styles.headerSafeWeb}>
+                <FastImage
+                  style={styles.iconInfo}
+                  source={images.icons.safe_search}
+                />
+                <Text style={styles.labelInfo}>Tìm kiếm an toàn</Text>
+                <Switch
+                  value={enableSafeSearch}
+                  onValueChange={() => {
+                    setEnableSafeSearch(!enableSafeSearch);
+                    setSettingType(types.safe_search.code);
+                    setVisibleConfirm(true);
+                  }}
+                  containerStyle={styles.switchSafeWeb}
+                />
+              </View>
+              <Text style={styles.contentSafeWeb}>
+                Lọc bỏ kết quả tìm kiếm có chứa nội dung người lớn, bạo lực, cờ
+                bạc và lừa đảo.
+              </Text>
             </View>
-            <Text style={styles.contentSafeWeb}>
-              Lọc bỏ kết quả tìm kiếm có chứa nội dung người lớn, bạo lực, cờ
-              bạc và lừa đảo.
-            </Text>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </Background>
   );
 };

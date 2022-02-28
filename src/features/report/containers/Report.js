@@ -7,16 +7,17 @@ import {colors, commonStyles, fonts, sizes} from 'styles';
 import images from 'images';
 import {ItemComponent} from '../components';
 import FastImage from 'react-native-fast-image';
-import {EmptyData, LoadingData} from 'components';
+import {EmptyData} from 'components';
 import {useInfiniteQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
 import {checkVar} from 'src/helpers/funcs';
 import {deviceHistoryApi} from 'src/api/methods/device';
 import moment from 'moment';
-import {ScrollView, TouchableHighlight} from 'react-native-gesture-handler';
+import {TouchableHighlight} from 'react-native-gesture-handler';
 import DatePicker from 'react-native-datepicker';
 import lodash from 'lodash';
 import {ItemListPlaceholder} from '../placeholders';
+import metrics from 'metrics';
 
 let perPage = 15;
 let stopLoadMore = true;
@@ -148,42 +149,6 @@ const Report = ({route}) => {
           </View>
           <Text style={styles.headerTableTitleThree}>Thời gian truy cập</Text>
         </View>
-        {/* {status === 'loading' ? (
-          <LoadingData />
-        ) : status === 'success' && !checkVar.isEmpty(data?.pages) ? (
-          <FlatList
-            ListFooterComponent={
-              isFetchingNextPage && isFetching && <BaseLoading />
-            }
-            ListFooterComponentStyle={[
-              {marginTop: sizes.SIZE_10},
-              commonStyles.center,
-            ]}
-            Em
-            style={styles.flatList}
-            contentContainerStyle={styles.contentContainerFlatlist}
-            data={lodash.flattenDeep(data?.pages)}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(_, key) => key}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={onRefresh}
-                tintColor={colors.COLOR_WHITE}
-              />
-            }
-            refreshing={false}
-            onRefresh={onRefresh}
-            onEndReached={getMore}
-            onEndReachedThreshold={0.05}
-            onScrollBeginDrag={() => {
-              stopLoadMore = false;
-            }}
-            renderItem={({item}) => <ItemComponent item={item} />}
-          />
-        ) : (
-          <EmptyData />
-        )} */}
         {status === 'loading' ? (
           <FlatList
             initialNumToRender={10}
@@ -239,6 +204,12 @@ const Report = ({route}) => {
         customStyles={{
           btnTextConfirm: {
             color: colors.COLOR_BLUE,
+          },
+          datePicker: {
+            backgroundColor: metrics.colorScheme === 'dark' ? '#222' : 'white',
+          },
+          datePickerCon: {
+            backgroundColor: metrics.colorScheme === 'dark' ? '#333' : 'white',
           },
         }}
         format="DD/MM/YYYY"

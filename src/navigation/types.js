@@ -43,10 +43,6 @@ const types = {
     screen: 'deviceInfo',
     name: 'Quản lý thông tin trẻ',
   },
-  imeiManager: {
-    screen: 'imeiManager',
-    name: 'Quản lý Imei',
-  },
   websiteControl: {
     screen: 'websiteControl',
     name: 'Kiểm soát',

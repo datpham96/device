@@ -24,16 +24,7 @@ const Avatar: React.FC<Props> = ({
     uri: uriImage,
     priority: FastImage.priority.high,
   };
-  // console.log(uriImage, 'uriImage');
-  // if (!uriImage) {
-  //   tmpSrcImage = images.avatars.picture_default;
-  // } else {
-  //   tmpSrcImage = {
-  //     uri: uriImage,
-  //     priority: FastImage.priority.high,
-  //   };
-  // }
-  // console.log(tmpSrcImage, 'tmpSrcImage====');
+
   const [uri, setUri] = useState(
     uriImage
       ? tmpSrcImage
