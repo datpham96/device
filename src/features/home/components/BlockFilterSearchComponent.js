@@ -77,11 +77,10 @@ const styles = StyleSheet.create({
     // marginHorizontal: sizes.SIZE_15,
     backgroundColor: colors.COLOR_AREA_CHART_BLUE,
     height: HEIGHT_BLOCK,
-    borderRadius: sizes.SIZE_15,
+    borderRadius: sizes.SIZE_10,
     position: 'relative',
     width: '49%',
-    borderBottomLeftRadius: sizes.ZERO,
-    borderBottomRightRadius: sizes.ZERO,
+    overflow: 'hidden',
   },
   areaChart: {
     height: HEIGHT_BLOCK / 2.5,

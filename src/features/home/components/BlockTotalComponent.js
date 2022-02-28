@@ -13,7 +13,12 @@ import {landmarkUnitOfNumber} from 'src/helpers/funcs';
 const heightOutSideBottomTab =
   metrics.screenHeight - metrics.heightBottomTab - metrics.statusBarHeight;
 const HEIGHT_BLOCK =
-  (heightOutSideBottomTab / 2 - sizes.SIZE_50) / sizes.SIZE_2;
+  (heightOutSideBottomTab / sizes.SIZE_2 - sizes.SIZE_50) / sizes.SIZE_2;
+
+const DATA = [
+  24, 50, 13, 5, 20, 43, 35, 27, 44, 3, 10, 14, 29, 34, 30, 23, 32, 17, 48, 26,
+  12, 2, 30, 25,
+];
 
 const BlockTotalComponent = ({
   data = [],
@@ -51,13 +56,36 @@ const BlockTotalComponent = ({
           })}
           xMin={0}
           yMin={0}
-          contentInset={{top: sizes.SIZE_20, bottom: sizes.ZERO}}
+          contentInset={{top: sizes.SIZE_18, bottom: sizes.ZERO}}
           curve={shape.curveNatural}
           svg={{fill: colors.COLOR_AREA_CHART_GREEN_BOW}}
           animate={true}
           animationDuration={500}
         />
       </>
+      {/* <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          right: 0,
+          width: sizes.ZERO,
+          height: sizes.ZERO,
+          backgroundColor: 'transparent',
+          borderStyle: 'solid',
+          borderTopWidth: 5,
+          borderRightWidth: 0,
+          borderBottomWidth: 20,
+          borderLeftWidth: 20,
+          borderRadius: 5,
+          // borderRadius: 10,
+          borderTopColor: 'transparent',
+          borderRightColor: colors.COLOR_RED_ORANGE,
+          borderBottomColor: colors.COLOR_RED_ORANGE,
+          borderLeftColor: 'transparent',
+          // marginTop: -sizes.SIZE_9,
+          zIndex: 0,
+        }}
+      /> */}
       <View style={styles.contentContainer}>
         <View style={styles.wrapInfo}>
           <Text style={styles.title}>Tổng truy vấn</Text>
@@ -76,10 +104,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.COLOR_AREA_CHART_BLUE,
     height: HEIGHT_BLOCK,
-    borderRadius: sizes.SIZE_15,
+    borderRadius: sizes.SIZE_10,
     position: 'relative',
-    borderBottomLeftRadius: sizes.ZERO,
-    borderBottomRightRadius: sizes.ZERO,
+    overflow: 'hidden',
   },
   areaChart: {
     height: HEIGHT_BLOCK / 2.5,
