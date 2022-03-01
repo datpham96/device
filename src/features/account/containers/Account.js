@@ -26,6 +26,12 @@ import Validator from 'validatorjs';
 import {Toast} from 'customs';
 import {buildAvatar} from 'src/helpers/funcs';
 import VersionInfo from 'react-native-version-info';
+import {
+  checkMultiple,
+  PERMISSIONS,
+  openSettings,
+  RESULTS,
+} from 'react-native-permissions';
 
 const options = {
   mediaType: 'photo',
@@ -61,6 +67,7 @@ const Account = () => {
   );
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
   const [loadingAvatar, setLoadingAvatar] = useState(false);
+  const [visiblePermissionCamera, setVisiblePermissionCamera] = useState(false);
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
@@ -146,11 +153,47 @@ const Account = () => {
   };
 
   const handleOpenBottomSheetImagePicker = () => {
-    setVisibleImagePicker(true);
+    //check permission camera
+    checkMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
+      result => {
+        if (
+          result[PERMISSIONS.IOS.CAMERA] === RESULTS.BLOCKED ||
+          result[PERMISSIONS.IOS.CAMERA] === RESULTS.DENIED ||
+          result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.BLOCKED ||
+          result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.DENIED
+        ) {
+          setVisiblePermissionCamera(true);
+        }
+        if (
+          result[PERMISSIONS.IOS.CAMERA] === RESULTS.GRANTED ||
+          result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.GRANTED
+        ) {
+          setVisibleImagePicker(true);
+          setVisiblePermissionCamera(false);
+        }
+      },
+    );
+  };
+
+  const handleSetting = () => {
+    setVisiblePermissionCamera(false);
+    openSettings().catch(() => console.warn('cannot open settings'));
   };
 
   return (
     <Background bout>
+      <PopupConfirm
+        labelBtnLeft="Cài đặt"
+        labelBtnRight="Huỷ"
+        visible={visiblePermissionCamera}
+        content={
+          'SafeZone muốn truy cập máy ảnh của bạn để chụp ảnh đại diện, vui lòng cho phép truy cập máy ảnh của bạn \n Settings > SafeZone > Camera'
+        }
+        onPressCancel={() => {
+          setVisiblePermissionCamera(false);
+        }}
+        onPressAgree={handleSetting}
+      />
       <ModalBottomSheet
         onPressOne={() => {
           setVisibleImagePicker(false);

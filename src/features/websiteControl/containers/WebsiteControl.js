@@ -59,6 +59,7 @@ const WebsiteControl = ({route}) => {
   const [type, setType] = useState(null);
 
   const [errors, setErrors] = useState({});
+  const [activeItem, setActiveItem] = useState({});
 
   //website list
   const {data, isLoading, isSuccess, refetch} = useQuery(
@@ -96,9 +97,8 @@ const WebsiteControl = ({route}) => {
   );
 
   //website update
-  const mutationUpdate = useMutation(
-    ({data_web_id, data_status, data_time_remaining}) =>
-      webUpdateApi(data_web_id, data_status, data_time_remaining),
+  const mutationUpdate = useMutation(({data_web_id, data_status, data_url}) =>
+    webUpdateApi(data_web_id, data_status, data_url),
   );
 
   const onRefresh = async () => {
@@ -109,57 +109,6 @@ const WebsiteControl = ({route}) => {
       },
     );
     await refetch();
-  };
-
-  const handleWebCreate = () => {
-    // eslint-disable-next-line radix
-    let tmpMinutes = parseInt(hours) * MINUTE_60 + parseInt(minutes);
-    let validation = new Validator(
-      {
-        url: url,
-      },
-      {
-        url: 'required|domain',
-      },
-      {
-        'required.url': 'url không được bỏ trống',
-      },
-    );
-    if (validation.fails()) {
-      setErrors({...errors, url: validation.errors.first('url')});
-      return;
-    }
-
-    if (validation.passes()) {
-      setErrors({...errors, url: validation.errors.first('url')});
-      setVisibleModal(false);
-    }
-
-    mutationCreate
-      .mutateAsync({
-        data_url: url,
-        data_status: activeRadio ? ONE : ZERO,
-        data_time_remaining: activeRadio ? tmpMinutes : ZERO,
-        data_device_id: params?.device_id,
-      })
-      .then(resp => {
-        if (resp?.status) {
-          refetch();
-          resetState();
-          Toast(resp?.msg);
-        } else {
-          Toast(resp?.msg);
-        }
-        mutationCreate.reset();
-      })
-      .catch(err => {
-        Toast(err?.msg);
-        mutationCreate.reset();
-      });
-  };
-
-  const handleWebUpdate = () => {
-    setVisibleModal(false);
   };
 
   const websiteList = useMemo(() => {
@@ -191,6 +140,96 @@ const WebsiteControl = ({route}) => {
     }, 300);
   };
 
+  const handleWebCreate = () => {
+    let validation = new Validator(
+      {
+        url: url,
+      },
+      {
+        url: 'required|domain',
+      },
+      {
+        'required.url': 'url không được bỏ trống',
+      },
+    );
+    if (validation.fails()) {
+      setErrors({...errors, url: validation.errors.first('url')});
+      return;
+    }
+
+    if (validation.passes()) {
+      setErrors({...errors, url: validation.errors.first('url')});
+      setVisibleModal(false);
+    }
+
+    mutationCreate
+      .mutateAsync({
+        data_url: url,
+        data_status: activeRadio ? ONE : ZERO,
+        data_time_remaining: ZERO,
+        data_device_id: params?.device_id,
+      })
+      .then(resp => {
+        if (resp?.status) {
+          refetch();
+          resetState();
+          Toast(resp?.msg);
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationCreate.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationCreate.reset();
+      });
+  };
+
+  const handleWebUpdate = () => {
+    let validation = new Validator(
+      {
+        url: url,
+      },
+      {
+        url: 'required|domain',
+      },
+      {
+        'required.url': 'url không được bỏ trống',
+      },
+    );
+    if (validation.fails()) {
+      setErrors({...errors, url: validation.errors.first('url')});
+      return;
+    }
+
+    if (validation.passes()) {
+      setErrors({...errors, url: validation.errors.first('url')});
+      setVisibleModal(false);
+    }
+
+    mutationUpdate
+      .mutateAsync({
+        data_url: url,
+        data_status: activeRadio ? ONE : ZERO,
+        data_web_id: activeItem.id,
+      })
+      .then(resp => {
+        console.log(resp, 'resp==');
+        if (resp?.status) {
+          refetch();
+          resetState();
+          Toast(resp?.msg);
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationCreate.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationCreate.reset();
+      });
+  };
+
   const resetState = () => {
     setActiveRadio(false);
     setErrors({});
@@ -198,29 +237,17 @@ const WebsiteControl = ({route}) => {
     setHours(HOURS_DEFAULT);
     setMinutes(MINUTE_DEFAULT);
     setItemBlockAccess({});
+    setActiveItem({});
   };
 
-  const showModalDetail = item => {
+  const showModalDetail = (item, t) => {
+    setType(t);
+    console.log(item, 'item==');
+    setActiveItem(item);
+    setUrl(item.url);
+    setActiveRadio(item.status);
+
     setVisibleModal(true);
-    // const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
-    //   moment(),
-    //   'minutes',
-    // );
-    // let tmpTime = '00:00';
-    // if (timeUse && timeUse > 0) {
-    //   if (timeUse > 60) {
-    //     tmpTime = moment.duration(timeUse, 'minutes').format('HH:mm');
-    //   } else {
-    //     tmpTime = moment.duration(timeUse, 'minutes').format('00:mm');
-    //   }
-    // }
-
-    // setHours(tmpTime.split(':').length > 0 ? tmpTime.split(':')[0] : '00');
-    // setMinutes(tmpTime.split(':').length > 0 ? tmpTime.split(':')[1] : '00');
-
-    // setItemBlockAccess(item);
-    // setActiveRadio(item.status ? true : false);
-    // setVisibleTimeBlockAccessModal(true);
   };
 
   const handleTimeBlockAccess = () => {
@@ -360,7 +387,7 @@ const WebsiteControl = ({route}) => {
         </Text>
         <View style={styles.wrapTableHeader}>
           <Text style={styles.headerTableTitleOne}>Trang website</Text>
-          {/* <Text style={styles.headerTableTitleTwo}>Sử dụng</Text> */}
+          <Text style={styles.headerTableTitleTwo}>Sử dụng</Text>
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (

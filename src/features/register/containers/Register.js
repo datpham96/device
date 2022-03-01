@@ -5,13 +5,13 @@ import {View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
 import styles from './styles';
-import {commonStyles} from 'styles';
+import {commonStyles, sizes} from 'styles';
 import Validator from 'validatorjs';
 import {useDispatch, useSelector} from 'react-redux';
 import {registerRequest, registerReset} from 'actions/loginActions';
 import {Toast} from 'customs';
 import * as RootNavigation from 'RootNavigation';
-import navigationTypes from 'navigationTypes';
+import {checkVar} from 'src/helpers/funcs';
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -75,6 +75,17 @@ const Register = () => {
         password: validation.errors.first('password'),
         rePassword: validation.errors.first('rePassword'),
       });
+      if (
+        !validation.errors.first('password') &&
+        !checkVar.isPassword(password)
+      ) {
+        setErrors({
+          ...errors,
+          password:
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+        });
+        return;
+      }
       return;
     }
 
@@ -132,6 +143,9 @@ const Register = () => {
             onChangeValue={val => setPhone(val.replace(/[^0-9]/g, ''))}
             placeholder="Nhập số điện thoại"
             icon={images.icons.phone}
+            props={{
+              maxLength: sizes.SIZE_10,
+            }}
           />
           {errors?.phone && <TextError message={errors?.phone} />}
         </View>

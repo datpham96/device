@@ -4,7 +4,7 @@ import {Text, Button, Background, ButtonBack, Input} from 'base';
 import {View} from 'react-native';
 import images from 'images';
 import styles from './styles';
-import {commonStyles, fonts} from 'styles';
+import {commonStyles, fonts, sizes} from 'styles';
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
 import {useDispatch, useSelector} from 'react-redux';
@@ -75,6 +75,17 @@ const OtpNewPassword = () => {
         rePassword: validation.errors.first('rePassword'),
         otp: validation.errors.first('otp'),
       });
+      if (
+        !validation.errors.first('password') &&
+        !checkVar.isPassword(password)
+      ) {
+        setErrors({
+          ...errors,
+          password:
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+        });
+        return;
+      }
       return;
     }
 
@@ -90,7 +101,7 @@ const OtpNewPassword = () => {
     if (password !== rePassword) {
       setErrors({
         ...errors,
-        rePassword: 'Nhập lại mật khẩu mới không được bỏ trống',
+        rePassword: 'Nhập lại mật khẩu mới không khớp',
       });
       return;
     }
@@ -120,6 +131,7 @@ const OtpNewPassword = () => {
             icon={images.icons.otp_outline}
             props={{
               textContentType: 'oneTimeCode',
+              maxLength: sizes.SIZE_6,
             }}
           />
           {errors?.otp && <TextError message={errors?.otp} />}

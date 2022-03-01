@@ -66,6 +66,7 @@ const ModalBottomSheetComponent: React.FC<Props> = ({
   );
 };
 
+const SIZE_250 = 250;
 const styles = StyleSheet.create({
   container: {},
   wrapPress: {
@@ -74,11 +75,11 @@ const styles = StyleSheet.create({
   },
   wrapBox: {
     width: metrics.screenWidth - sizes.SIZE_30,
-    height: Platform.OS === 'ios' ? 'auto' : 280,
+    height: Platform.OS === 'ios' ? 'auto' : SIZE_250,
     backgroundColor: 'transparent',
     position: 'absolute',
     alignSelf: 'center',
-    bottom: getBottomSpace(),
+    bottom: getBottomSpace() + sizes.SIZE_5,
   },
   contentContainer: {
     backgroundColor: colors.COLOR_WHITE,

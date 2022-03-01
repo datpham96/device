@@ -83,6 +83,10 @@ const types = {
     screen: 'report',
     name: 'Thống kê',
   },
+  activated: {
+    screen: 'activated',
+    name: 'Kích hoạt License',
+  },
 };
 
 export default types;

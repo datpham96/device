@@ -4,10 +4,8 @@ import {
   View,
   TouchableOpacity,
   TouchableHighlight,
-  Image,
-  Alert,
-  Platform,
   AppState,
+  Alert,
 } from 'react-native';
 import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
@@ -22,12 +20,10 @@ import {
 } from 'components';
 import keyTypes from 'keyTypes';
 import {deviceListApi, deviceUpdateApi} from 'methods/device';
-import {useQuery, useMutation} from 'react-query';
-import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {useQuery, useMutation, useQueryClient} from 'react-query';
 import {Toast} from 'customs';
 import lodash from 'lodash';
 import {checkVar} from 'src/helpers/funcs';
-// import DropDownPicker from 'react-native-dropdown-picker';
 import {
   requestMultiple,
   PERMISSIONS,
@@ -37,8 +33,8 @@ import {
 import navigationTypes from 'navigationTypes';
 import Geocoder from 'react-native-geocoder';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ScrollView} from 'react-native-gesture-handler';
 import {MapMarker} from '../components';
+
 // simply add your google key
 Geocoder.fallbackToGoogle(
   // Platform.OS === 'ios'
@@ -48,6 +44,7 @@ Geocoder.fallbackToGoogle(
 );
 
 const Location = ({navigation}) => {
+  const queryClient = useQueryClient();
   const [selectedDevice, setSelectedDevice] = useState({});
   const [refresh, setRefresh] = useState(false);
   const [markers, serMarkers] = useState({
@@ -61,13 +58,11 @@ const Location = ({navigation}) => {
   const [visiblePermissionLocation, setVisiblePermissionLocation] =
     useState(false);
   const [toggleDropDownSelected, setToggleDropDownSelected] = useState(false);
+  const [visibleDeviceUnLock, setVisibleDeviceUnLock] = useState(false);
 
-  const {data, isSuccess, isLoading} = useQuery(
+  const {data, isSuccess, isLoading, refetch} = useQuery(
     keyTypes.DEVICE_LIST,
     () => deviceListApi(),
-    {
-      keepPreviousData: true,
-    },
   );
 
   useEffect(() => {
@@ -182,7 +177,14 @@ const Location = ({navigation}) => {
             }
           })
           .catch(err => {
-            console.log(err, 'err');
+            // Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
+            //   {
+            //     text: 'Đóng',
+            //     onPress: () => console.log('Cancel Pressed'),
+            //     style: 'cancel',
+            //   },
+            // ]);
+            console.log(err, 'err1111');
           });
       } else {
         // Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
@@ -226,6 +228,7 @@ const Location = ({navigation}) => {
         tmpSelectList.push({
           label: item.full_name,
           value: item.id,
+          is_block: item.is_block,
         });
       });
       setSelectedDevice(tmpSelectList?.[0]);
@@ -233,11 +236,11 @@ const Location = ({navigation}) => {
     return tmpSelectList;
   }, [data, isSuccess]);
 
-  const handleMaker = () => {
-    // serMarkers({
-    //   coordinate: e.nativeEvent.coordinate,
-    //   key: 1,
-    // });
+  const onRefresh = async () => {
+    await queryClient.removeQueries(keyTypes.DEVICE_LIST, {
+      exact: true,
+    });
+    await refetch();
   };
 
   const handleSetting = () => {
@@ -263,6 +266,7 @@ const Location = ({navigation}) => {
       .then(resp => {
         if (resp?.status) {
           Toast('Khoá thiết bị thành công');
+          onRefresh();
         } else {
           Toast(resp?.msg);
         }
@@ -279,15 +283,35 @@ const Location = ({navigation}) => {
     setToggleDropDownSelected(false);
   };
 
+  const handleDeviceUnLock = () => {
+    setVisibleDeviceUnLock(false);
+  };
+
   return (
     <Background bottomTab bout>
       <Loading isLoading={mutationDeviceLock.isLoading} />
-      {/* <PopupAlertDeviceLock
-        visible={true}
-        content="Bạn có chắc chắn muốn khoá thiết bị này không"
+      <PopupConfirm
+        labelBtnLeft="Xác nhận"
+        labelBtnRight="Huỷ"
+        notiLabel="Khoá thiết bị"
+        content={
+          'Thiết bị của trẻ sẽ bị khóa toàn bộ. \n Bạn có muốn thực hiện điều này!'
+        }
+        visible={visibleConfirmDeviceBlock}
         onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
+        srcImage={images.logos.activated_lock}
         onPressAgree={handleDeviceLock}
-      /> */}
+      />
+      <PopupConfirm
+        labelBtnLeft="Có"
+        labelBtnRight="Không"
+        visible={visibleDeviceUnLock}
+        content="Bạn có chắc chắn muốn mở khoá thiết bị này không"
+        onPressCancel={() => {
+          setVisibleDeviceUnLock(false);
+        }}
+        onPressAgree={handleDeviceUnLock}
+      />
       <PopupConfirm
         labelBtnLeft="Cài đặt"
         labelBtnRight="Huỷ"
@@ -352,19 +376,36 @@ const Location = ({navigation}) => {
                 />
               )}
             </View>
-            <TouchableHighlight
-              underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
-              activeOpacity={0.9}
-              style={styles.btn}
-              onPress={() => {
-                if (selectedDevice) {
-                  setVisibleConfirmDeviceBlock(true);
-                } else {
-                  Toast('Vui lòng chọn thiết bị');
-                }
-              }}>
-              <Text style={styles.btnLabel}>Khoá thiết bị</Text>
-            </TouchableHighlight>
+            {selectedDevice &&
+              (selectedDevice?.is_block ? (
+                <TouchableHighlight
+                  underlayColor={colors.COLOR_UNDERLAY_BLUE}
+                  activeOpacity={0.9}
+                  style={[styles.btn, {backgroundColor: colors.COLOR_BLUE}]}
+                  onPress={() => {
+                    if (selectedDevice) {
+                      setVisibleDeviceUnLock(true);
+                    } else {
+                      Toast('Vui lòng chọn thiết bị');
+                    }
+                  }}>
+                  <Text style={styles.btnLabel}>Mở khoá</Text>
+                </TouchableHighlight>
+              ) : (
+                <TouchableHighlight
+                  underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
+                  activeOpacity={0.9}
+                  style={styles.btn}
+                  onPress={() => {
+                    if (selectedDevice) {
+                      setVisibleConfirmDeviceBlock(true);
+                    } else {
+                      Toast('Vui lòng chọn thiết bị');
+                    }
+                  }}>
+                  <Text style={styles.btnLabel}>Khoá thiết bị</Text>
+                </TouchableHighlight>
+              ))}
           </View>
         )}
         {isLoading ? (

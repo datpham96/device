@@ -9,6 +9,7 @@ import {
   InputSelectComponent,
   TextError,
   ModalBottomSheet,
+  PopupConfirm,
 } from 'components';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import * as RootNavigation from 'RootNavigation';
@@ -19,6 +20,12 @@ import images from 'images';
 import {useMutation} from 'react-query';
 import {deviceActivationApi} from 'src/api/methods/device';
 import {Toast} from 'customs';
+import {
+  checkMultiple,
+  PERMISSIONS,
+  openSettings,
+  RESULTS,
+} from 'react-native-permissions';
 
 const options = {
   mediaType: 'photo',
@@ -45,6 +52,7 @@ const DeviceInfo = ({route}) => {
   const [gender, setGender] = useState('');
   const [errors, setErrors] = useState({});
   const [visibleImagePicker, setVisibleImagePicker] = useState(false);
+  const [visiblePermissionCamera, setVisiblePermissionCamera] = useState(false);
 
   const mutationActivatedDevice = useMutation(
     ({
@@ -96,7 +104,26 @@ const DeviceInfo = ({route}) => {
   };
 
   const handleOpenBottomSheetImagePicker = () => {
-    setVisibleImagePicker(true);
+    //check permission camera
+    checkMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
+      result => {
+        if (
+          result[PERMISSIONS.IOS.CAMERA] === RESULTS.BLOCKED ||
+          result[PERMISSIONS.IOS.CAMERA] === RESULTS.DENIED ||
+          result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.BLOCKED ||
+          result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.DENIED
+        ) {
+          setVisiblePermissionCamera(true);
+        }
+        if (
+          result[PERMISSIONS.IOS.CAMERA] === RESULTS.GRANTED ||
+          result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.GRANTED
+        ) {
+          setVisibleImagePicker(true);
+          setVisiblePermissionCamera(false);
+        }
+      },
+    );
   };
 
   const handleSaveInfo = () => {
@@ -170,8 +197,25 @@ const DeviceInfo = ({route}) => {
     //   deviceInfo: deviceInfo,
     // });
   };
+
+  const handleSetting = () => {
+    setVisiblePermissionCamera(false);
+    openSettings().catch(() => console.warn('cannot open settings'));
+  };
   return (
     <Background isKeyboard bout>
+      <PopupConfirm
+        labelBtnLeft="Cài đặt"
+        labelBtnRight="Huỷ"
+        visible={visiblePermissionCamera}
+        content={
+          'SafeZone muốn truy cập máy ảnh của bạn để chụp ảnh, vui lòng cho phép truy cập máy ảnh của bạn \n Settings > SafeZone > Camera'
+        }
+        onPressCancel={() => {
+          setVisiblePermissionCamera(false);
+        }}
+        onPressAgree={handleSetting}
+      />
       <ButtonBack />
       <ModalBottomSheet
         onPressOne={handleOpenCamera}

@@ -8,12 +8,12 @@ export function webListApi(device_id) {
   return apiToken(ApiConstants.WEB_LIST, 'post', bodyFormData, null);
 }
 
-export function webUpdateApi(web_id, status, time_remaining) {
+export function webUpdateApi(web_id, status, url) {
   //Cập nhật web
   let bodyFormData = new FormData();
   bodyFormData.append('web_id', web_id);
   bodyFormData.append('status', status);
-  bodyFormData.append('time_remaining', time_remaining);
+  bodyFormData.append('url', url);
   return apiToken(ApiConstants.WEB_UPDATE, 'post', bodyFormData, null);
 }
 

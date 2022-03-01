@@ -51,3 +51,6 @@ export {default as ReportScreen} from './report/containers/Report';
 
 //application
 export {default as ApplicationControlScreen} from './applicationControl/containers/ApplicationControl';
+
+//activated
+export {default as ActivatedScreen} from './activated/containers/Activated';

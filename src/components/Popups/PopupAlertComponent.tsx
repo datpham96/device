@@ -37,12 +37,7 @@ const PopupAlertComponent: React.FC<Props> = ({
             <Button
               customStyle={styles.btn}
               onPress={() => onPressCancel()}
-              label="Có"
-            />
-            <Button
-              customStyle={styles.btn}
-              onPress={() => onPressAgree()}
-              label="Không"
+              label="Đóng"
             />
           </View>
         </View>
@@ -87,12 +82,11 @@ const styles = StyleSheet.create({
     marginTop: sizes.SIZE_20,
   },
   wrapBtn: {
-    ...commonStyles.flexRowCenter,
-    justifyContent: 'space-between',
+    ...commonStyles.center,
     marginTop: sizes.SIZE_30,
   },
   btn: {
-    width: '45%',
+    alignSelf: 'center',
   },
 });
 

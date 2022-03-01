@@ -5,7 +5,7 @@ import {View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
 import styles from './styles';
-import {commonStyles} from 'styles';
+import {commonStyles, sizes} from 'styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginRequest, loginReset} from 'actions/loginActions';
 import Validator from 'validatorjs';
@@ -100,6 +100,7 @@ const Login = ({navigation}) => {
             icon={images.icons.phone}
             props={{
               keyboardType: 'number-pad',
+              maxLength: sizes.SIZE_10,
             }}
           />
           {errors?.phone && <TextError message={errors?.phone} />}

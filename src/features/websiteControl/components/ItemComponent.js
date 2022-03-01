@@ -116,12 +116,12 @@ const ItemComponent = ({item, onPressDetail}) => {
           </Text>
         </View>
       </TouchableOpacity>
-      {/* <TouchableOpacity
+      <TouchableOpacity
         activeOpacity={0.9}
         style={styles.wrapUse}
         onPress={() => onPressDetail({...item, status: enableSwitch})}>
         <Text>Xem chi tiết</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       <View style={styles.wrapRadio}>
         <Switch
           value={enableSwitch}

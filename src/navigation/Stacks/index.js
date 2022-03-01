@@ -17,6 +17,7 @@ import {
   Error401Screen,
   ApplicationControlScreen,
   AccountScreen,
+  ActivatedScreen,
 } from '../../features';
 import navigationTypes from '../types';
 import BottomTabs from '../BottomTabs';
@@ -74,6 +75,11 @@ const RootStack = () => {
           <RootNavStack.Screen
             name={navigationTypes.error401.screen}
             component={Error401Screen}
+            options={screenOptions}
+          />
+          <RootNavStack.Screen
+            name={navigationTypes.activated.screen}
+            component={ActivatedScreen}
             options={screenOptions}
           />
         </>

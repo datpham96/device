@@ -3,7 +3,7 @@ import {Text, Button, Background, ButtonBack, Input} from 'base';
 import {View} from 'react-native';
 import images from 'images';
 import styles from './styles';
-import {commonStyles} from 'styles';
+import {commonStyles, sizes} from 'styles';
 import Validator from 'validatorjs';
 import {TextError, Loading} from 'components';
 import {useDispatch, useSelector} from 'react-redux';
@@ -83,6 +83,7 @@ const FogotPassword = () => {
           <Input
             props={{
               keyboardType: 'number-pad',
+              maxLength: sizes.SIZE_10,
             }}
             value={phone}
             onChangeValue={val => setPhone(val.replace(/[^0-9]/g, ''))}

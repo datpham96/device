@@ -1,5 +1,3 @@
-/* App config for images
- */
 const images = {
   icons: {
     otp_outline: require('../../assets/images/icons/otp-outline.png'),
@@ -50,6 +48,7 @@ const images = {
     success: require('../../assets/images/logos/success.png'),
     error: require('../../assets/images/logos/error.png'),
     lock: require('../../assets/images/logos/lock.png'),
+    activated_lock: require('../../assets/images/logos/activated_lock.png'),
   },
 };
 

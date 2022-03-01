@@ -10,6 +10,7 @@ import {changePasswordRequest, changePasswordReset} from 'actions/userActions';
 import {Toast} from 'customs';
 import {Loading} from 'components';
 import * as RootNavigation from 'RootNavigation';
+import {checkVar} from 'src/helpers/funcs';
 
 const NewPassword = () => {
   const dispatch = useDispatch();
@@ -69,6 +70,17 @@ const NewPassword = () => {
         newPassword: validation.errors.first('newPassword'),
         reNewPassword: validation.errors.first('reNewPassword'),
       });
+      if (
+        !validation.errors.first('newPassword') &&
+        !checkVar.isPassword(newPassword)
+      ) {
+        setErrors({
+          ...errors,
+          password:
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+        });
+        return;
+      }
       return;
     }
 

@@ -2,23 +2,18 @@ import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {Text, Avatar} from 'base';
 import {commonStyles, sizes} from 'styles';
-import * as RootNavigation from 'RootNavigation';
-import navigationTypes from 'navigationTypes';
 
 export type Props = {
   item?: any;
+  onPress?: any;
 };
 
-const ItemChildrenComponent: React.FC<Props> = ({item}) => {
+const ItemChildrenComponent: React.FC<Props> = ({item, onPress}) => {
   return (
     <TouchableOpacity
       style={styles.container}
       activeOpacity={0.9}
-      onPress={() =>
-        RootNavigation.navigate(navigationTypes.childrenInfo.screen, {
-          device_id: item.id,
-        })
-      }>
+      onPress={onPress}>
       <Avatar uriImage={item.avatar} />
       <View style={styles.wrapInfo}>
         <Text style={styles.singleInfo}>{item.full_name}</Text>

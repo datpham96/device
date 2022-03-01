@@ -13,6 +13,8 @@ export type Props = {
   content?: any;
   labelBtnLeft?: any;
   labelBtnRight?: any;
+  srcImage?: any;
+  notiLabel?: any;
 };
 
 const PopupConfirmComponent: React.FC<Props> = ({
@@ -22,6 +24,8 @@ const PopupConfirmComponent: React.FC<Props> = ({
   content,
   labelBtnLeft = 'Có',
   labelBtnRight = 'Không',
+  srcImage = images.logos.success,
+  notiLabel = 'Thông báo',
 }) => {
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
@@ -31,10 +35,10 @@ const PopupConfirmComponent: React.FC<Props> = ({
           <FastImage
             resizeMode={FastImage.resizeMode.contain}
             style={styles.logoSuccess}
-            source={images.logos.success}
+            source={srcImage}
           />
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            Thông báo
+            {notiLabel}
           </Text>
           <Text style={styles.content}>{content}</Text>
           <View style={styles.wrapBtn}>
