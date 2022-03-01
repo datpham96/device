@@ -15,10 +15,10 @@ import keyTypes from 'keyTypes';
 import {deviceListApi} from 'methods/device';
 import {ItemChildrenPlaceholder} from '../placeholders';
 import {
-  checkMultiple,
   PERMISSIONS,
   openSettings,
   RESULTS,
+  requestMultiple,
 } from 'react-native-permissions';
 
 export type Props = {
@@ -56,7 +56,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
 
   const handleRedirectQrCode = () => {
     //check permission camera
-    checkMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
+    requestMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
       result => {
         if (
           result[PERMISSIONS.IOS.CAMERA] === RESULTS.BLOCKED ||

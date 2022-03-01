@@ -27,7 +27,7 @@ import {Toast} from 'customs';
 import {buildAvatar} from 'src/helpers/funcs';
 import VersionInfo from 'react-native-version-info';
 import {
-  checkMultiple,
+  requestMultiple,
   PERMISSIONS,
   openSettings,
   RESULTS,
@@ -154,7 +154,7 @@ const Account = () => {
 
   const handleOpenBottomSheetImagePicker = () => {
     //check permission camera
-    checkMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
+    requestMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
       result => {
         if (
           result[PERMISSIONS.IOS.CAMERA] === RESULTS.BLOCKED ||

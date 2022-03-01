@@ -21,7 +21,7 @@ import {useMutation} from 'react-query';
 import {deviceActivationApi} from 'src/api/methods/device';
 import {Toast} from 'customs';
 import {
-  checkMultiple,
+  requestMultiple,
   PERMISSIONS,
   openSettings,
   RESULTS,
@@ -104,8 +104,8 @@ const DeviceInfo = ({route}) => {
   };
 
   const handleOpenBottomSheetImagePicker = () => {
-    //check permission camera
-    checkMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
+    //request permission camera
+    requestMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
       result => {
         if (
           result[PERMISSIONS.IOS.CAMERA] === RESULTS.BLOCKED ||
