@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--View Controller-->
         <scene sceneID="EHf-IW-A2E">
@@ -17,29 +22,47 @@
                         <viewControllerLayoutGuide type="bottom" id="rTP-gI-geG"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="GY7-yX-AbZ" userLabel="launch">
-                                <rect key="frame" x="0.0" y="-8" width="375" height="683"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg" translatesAutoresizingMaskIntoConstraints="NO" id="GY7-yX-AbZ" userLabel="launch">
+                                <rect key="frame" x="0.0" y="-8" width="428" height="942"/>
                             </imageView>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Exd-tz-4OV" userLabel="computer">
+                                <rect key="frame" x="20" y="348" width="388" height="494"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="494" id="MBV-x2-gJW"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright by Masscom Vietnam" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y8d-vP-zzr">
+                                <rect key="frame" x="109.66666666666669" y="856" width="209" height="16"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="y8d-vP-zzr" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="8UM-Tm-5jT"/>
                             <constraint firstItem="GY7-yX-AbZ" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="9sP-5y-5zI"/>
+                            <constraint firstItem="Exd-tz-4OV" firstAttribute="centerX" secondItem="GY7-yX-AbZ" secondAttribute="centerX" id="9yW-Hh-6Dk"/>
+                            <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="y8d-vP-zzr" secondAttribute="bottom" constant="20" id="H3G-MQ-YiY"/>
+                            <constraint firstItem="Exd-tz-4OV" firstAttribute="top" secondItem="nPs-R3-jxP" secondAttribute="bottom" constant="304" id="JCQ-Em-QNi"/>
                             <constraint firstAttribute="trailing" secondItem="GY7-yX-AbZ" secondAttribute="trailing" id="ag7-H4-PID"/>
+                            <constraint firstItem="Exd-tz-4OV" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="eRj-ld-Gan"/>
                             <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="GY7-yX-AbZ" secondAttribute="bottomMargin" id="f57-lg-pn6"/>
                             <constraint firstItem="GY7-yX-AbZ" firstAttribute="topMargin" secondItem="nPs-R3-jxP" secondAttribute="bottom" id="nBK-qs-22F"/>
+                            <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="Exd-tz-4OV" secondAttribute="bottom" constant="50" id="sSF-Qd-v89"/>
                         </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="52.173913043478265" y="375"/>
+            <point key="canvasLocation" x="50.724637681159422" y="374.18478260869568"/>
         </scene>
     </scenes>
     <resources>
-        <image name="launch" width="187.5" height="406"/>
+        <image name="bg" width="125" height="270.66665649414062"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

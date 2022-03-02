@@ -8,6 +8,7 @@ export function deviceActivationApi(
   birthday,
   gender,
   avatar,
+  license_key,
 ) {
   //Kích hoạt thiết bị
   let bodyFormData = new FormData();
@@ -17,6 +18,10 @@ export function deviceActivationApi(
   bodyFormData.append('birthday', birthday);
   bodyFormData.append('gender', gender);
   bodyFormData.append('avatar', avatar);
+  if (license_key) {
+    bodyFormData.append('license_key', license_key);
+  }
+
   return apiToken(ApiConstants.DEVICE_ACTIVATION, 'post', bodyFormData);
 }
 

@@ -18,6 +18,7 @@ import {
   ApplicationControlScreen,
   AccountScreen,
   ActivatedScreen,
+  ImeiScreen,
 } from '../../features';
 import navigationTypes from '../types';
 import BottomTabs from '../BottomTabs';
@@ -80,6 +81,11 @@ const RootStack = () => {
           <RootNavStack.Screen
             name={navigationTypes.activated.screen}
             component={ActivatedScreen}
+            options={screenOptions}
+          />
+          <RootNavStack.Screen
+            name={navigationTypes.imei.screen}
+            component={ImeiScreen}
             options={screenOptions}
           />
         </>

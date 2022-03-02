@@ -54,3 +54,6 @@ export {default as ApplicationControlScreen} from './applicationControl/containe
 
 //activated
 export {default as ActivatedScreen} from './activated/containers/Activated';
+
+//imei
+export {default as ImeiScreen} from './imei/containers/Imei';

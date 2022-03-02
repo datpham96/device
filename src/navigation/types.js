@@ -87,6 +87,10 @@ const types = {
     screen: 'activated',
     name: 'Kích hoạt License',
   },
+  imei: {
+    screen: 'imei',
+    name: 'Kích hoạt Imei',
+  },
 };
 
 export default types;

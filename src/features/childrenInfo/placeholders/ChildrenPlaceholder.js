@@ -14,6 +14,7 @@ const ChildrenPlaceholder = () => {
           <View style={styles.name} />
           <View style={styles.device} />
           <View style={styles.status} />
+          <View style={styles.date} />
         </View>
       </View>
     </SkeletonPlaceholder>
@@ -46,6 +47,12 @@ const styles = StyleSheet.create({
   },
   status: {
     width: '50%',
+    height: sizes.SIZE_15,
+    borderRadius: sizes.SIZE_4,
+    marginTop: sizes.SIZE_8,
+  },
+  date: {
+    width: '60%',
     height: sizes.SIZE_15,
     borderRadius: sizes.SIZE_4,
     marginTop: sizes.SIZE_8,

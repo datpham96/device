@@ -10,6 +10,7 @@ import {
   TextError,
   ModalBottomSheet,
   PopupConfirm,
+  Loading,
 } from 'components';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import * as RootNavigation from 'RootNavigation';
@@ -179,7 +180,17 @@ const DeviceInfo = ({route}) => {
           Toast(resp?.msg);
           RootNavigation.navigate(navigationTypes.childrenManager.screen);
         } else {
-          Toast(resp?.msg);
+          if (!resp?.imei_invalid) {
+            RootNavigation.navigate(navigationTypes.imei.screen, {
+              imei: deviceSN,
+              name: name,
+              deviceName: deviceName,
+              birthday: birthday,
+              gender: gender,
+              dataRequestAvatar: dataRequestAvatar,
+              deviceInfo: deviceInfo,
+            });
+          }
         }
         mutationActivatedDevice.reset();
       })
@@ -187,15 +198,6 @@ const DeviceInfo = ({route}) => {
         Toast(err?.msg);
         mutationActivatedDevice.reset();
       });
-
-    // RootNavigation.navigate(navigationTypes.imeiManager.screen, {
-    //   name: name,
-    //   deviceName: deviceName,
-    //   birthday: birthday,
-    //   gender: gender,
-    //   dataRequestAvatar: dataRequestAvatar,
-    //   deviceInfo: deviceInfo,
-    // });
   };
 
   const handleSetting = () => {
@@ -204,6 +206,7 @@ const DeviceInfo = ({route}) => {
   };
   return (
     <Background isKeyboard bout>
+      <Loading isLoading={mutationActivatedDevice.isLoading} />
       <PopupConfirm
         labelBtnLeft="Cài đặt"
         labelBtnRight="Huỷ"

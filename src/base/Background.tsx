@@ -15,7 +15,6 @@ import {
 } from 'react-native-iphone-x-helper';
 import images from '../config/images';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import metrics from 'metrics';
 
 export type Props = {
   bin?: boolean;

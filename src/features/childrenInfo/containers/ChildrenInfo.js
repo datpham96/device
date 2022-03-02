@@ -31,6 +31,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {checkVar} from 'src/helpers/funcs';
 import Validator from 'validatorjs';
 import {ChildrenPlaceholder} from '../placeholders';
+import moment from 'moment';
 
 const ChildrenInfo = ({route}) => {
   const params = route?.params;
@@ -218,7 +219,7 @@ const ChildrenInfo = ({route}) => {
         } else {
           params.data_device_id = device_id;
           params.data_name = types.safe_web.code;
-          params.data_status = 1;
+          params.data_status = 0;
         }
         break;
       case types.safe_search.code:
@@ -230,7 +231,7 @@ const ChildrenInfo = ({route}) => {
         } else {
           params.data_device_id = device_id;
           params.data_name = types.safe_search.code;
-          params.data_status = 1;
+          params.data_status = 0;
         }
         break;
     }
@@ -336,6 +337,25 @@ const ChildrenInfo = ({route}) => {
       });
   };
 
+  const handleRedirectLicense = () => {
+    RootNavigation.navigate(navigationTypes.activated.screen);
+  };
+
+  const formatExpiredDate = date => {
+    let obj = {
+      expired: false,
+      date: '',
+    };
+    if (moment().isAfter(moment(date, 'YYYY-MM-DD HH:mm:ss'), 'days')) {
+      obj.date = 'Đã hết hạn';
+      obj.expired = true;
+    } else {
+      obj.date = moment(date, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
+      obj.expired = false;
+    }
+    return obj;
+  };
+
   return (
     <Background bin>
       <ModalUpdateInfo
@@ -384,6 +404,7 @@ const ChildrenInfo = ({route}) => {
           Quản lý thông tin
         </Text>
         <ScrollView
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -391,7 +412,7 @@ const ChildrenInfo = ({route}) => {
               tintColor={colors.COLOR_WHITE}
             />
           }
-          style={commonStyles.flex1}>
+          style={styles.scrollContainer}>
           {isLoading ? (
             <ChildrenPlaceholder />
           ) : (
@@ -412,6 +433,22 @@ const ChildrenInfo = ({route}) => {
                 <Text style={styles.textInfo}>
                   {data?.data?.status ? 'Đã kết nối' : 'Chưa kết nối'}
                 </Text>
+                {!checkVar.isEmpty(data?.data?.expire_time) ? (
+                  <Text style={styles.textInfo}>
+                    Ngày hết hạn:{' '}
+                    <Text
+                      style={{
+                        color: formatExpiredDate(data?.data?.expire_time)
+                          ?.expired
+                          ? colors.COLOR_ERROR
+                          : colors.COLOR_WHITE,
+                      }}>
+                      {formatExpiredDate(data?.data?.expire_time)?.date}
+                    </Text>
+                  </Text>
+                ) : (
+                  'Không giới hạn'
+                )}
               </View>
             </TouchableOpacity>
           )}
@@ -422,6 +459,12 @@ const ChildrenInfo = ({route}) => {
               style={styles.btnCancel}>
               <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
             </TouchableHighlight>
+            {/* <TouchableHighlight
+              onPress={handleRedirectLicense}
+              underlayColor={colors.COLOR_UNDERLAY_BLUE}
+              style={styles.btnSetup}>
+              <Text style={styles.labelBtnSetup}>Bản quyền sử dụng</Text>
+            </TouchableHighlight> */}
           </View>
           <ButtonRedirect
             onPress={handleRedirectWebsiteControl}
