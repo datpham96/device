@@ -447,7 +447,7 @@ const ChildrenInfo = ({route}) => {
                     </Text>
                   </Text>
                 ) : (
-                  'Không giới hạn'
+                  <Text style={styles.textInfo}>Không giới hạn</Text>
                 )}
               </View>
             </TouchableOpacity>
