@@ -274,7 +274,7 @@ const ModalCreateUpdateWebComponent = ({
             <TouchableOpacity activeOpacity={0.9} onPress={onPressActive}>
               <Radio
                 active={!isActive ? true : false}
-                label={'Chặn ' + (isWebsite ? 'website' : 'ứng dụng')}
+                label={'Chặn ứng dụng'}
                 containerStyle={styles.radioTwo}
               />
             </TouchableOpacity>

@@ -278,13 +278,39 @@ const Location = ({navigation}) => {
       });
   };
 
+  const handleDeviceUnLock = () => {
+    if (!selectedDevice) {
+      Toast('Vui lòng chọn thiết bị');
+      return;
+    }
+    setVisibleDeviceUnLock(false);
+
+    mutationDeviceLock
+      .mutateAsync({
+        data_device_id: selectedDevice?.value,
+        data_is_block: 0,
+        data_full_name: null,
+        data_birthday: null,
+        data_gender: null,
+      })
+      .then(resp => {
+        if (resp?.status) {
+          Toast('Mở khoá thiết bị thành công');
+          onRefresh();
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationDeviceLock.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationDeviceLock.reset();
+      });
+  };
+
   const handleSelectedDevice = item => {
     setSelectedDevice(item);
     setToggleDropDownSelected(false);
-  };
-
-  const handleDeviceUnLock = () => {
-    setVisibleDeviceUnLock(false);
   };
 
   let isCheckMarker = isSuccess && deviceList?.length > 0;
