@@ -15,7 +15,11 @@ import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
 import {TextError} from 'components';
-import {getBottomSpace, getStatusBarHeight} from 'react-native-iphone-x-helper';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+  isIphoneX,
+} from 'react-native-iphone-x-helper';
 import {ModalSetTimeBlockAccess} from 'components';
 import lodash from 'lodash';
 
@@ -28,34 +32,7 @@ const MINUTE_60 = 60;
 const ZERO = 0;
 const ONE = 1;
 
-export type Props = {
-  visible?: any,
-  onPressClose?: any,
-  isActive?: any,
-  onPressActive?: any,
-  value?: any,
-  onChangeValue?: any,
-  onPressSubmit?: any,
-  onChangeTextHours?: any,
-  valueHours?: any,
-  onChangeTextMinutes?: any,
-  valueMinutes?: any,
-  errors?: any,
-  title?: any,
-  isWebsite?: any,
-  onFocusHour?: any,
-  onFocusMinute?: any,
-};
-
-export type PropsItem = {
-  startTime?: any,
-  endTime?: any,
-  day?: any,
-  containerStyle?: any,
-  onPress?: any,
-};
-
-const ItemTime: React.FC<PropsItem> = ({
+const ItemTime = ({
   day,
   startTime = '../..',
   endTime = '../..',
@@ -81,9 +58,58 @@ const ItemTime: React.FC<PropsItem> = ({
   );
 };
 
+const DATA_TIME_LIST = [
+  {
+    id: 1,
+    day: 2,
+    dayName: 'Thứ 2',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 2,
+    day: 3,
+    dayName: 'Thứ 3',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 3,
+    day: 4,
+    dayName: 'Thứ 4',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 4,
+    day: 5,
+    dayName: 'Thứ 5',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 5,
+    day: 6,
+    dayName: 'Thứ 6',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 6,
+    day: 7,
+    dayName: 'Thứ 7',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 7,
+    day: 8,
+    dayName: 'CN',
+    startTime: '',
+    endTime: '',
+  },
+];
 const ModalCreateUpdateWebComponent = ({
-  title = 'Chặn truy cập website',
-  isWebsite = true,
   visible = false,
   onPressClose,
   isActive,
@@ -92,6 +118,7 @@ const ModalCreateUpdateWebComponent = ({
   onChangeValue,
   onPressSubmit,
   errors,
+  activeItemList,
 }) => {
   const [visibleSetupTimeModal, setVisibleSetupTimeModal] = useState(false);
   const [hoursStart, setHoursStart] = useState(HOURS_DEFAULT);
@@ -100,50 +127,39 @@ const ModalCreateUpdateWebComponent = ({
   const [minutesEnd, setMinutesEnd] = useState(MINUTE_DEFAULT);
   const [activeItem, setActiveItem] = useState({});
   const [timeError, setTimeError] = useState('');
-  const [timeList, setTimeList] = useState([
-    {
-      id: 1,
-      day: 'Thứ 2',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 2,
-      day: 'Thứ 3',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 3,
-      day: 'Thứ 4',
-      startTime: '',
-      endTime: '',
-    },
-    {
-      id: 4,
-      day: 'Thứ 5',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 5,
-      day: 'Thứ 6',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 6,
-      day: 'Thứ 7',
-      startTime: '',
-      endTime: '',
-    },
-    {
-      id: 7,
-      day: 'CN',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-  ]);
+  const [timeList, setTimeList] = useState(DATA_TIME_LIST);
+
+  //set time list by active item list
+  useEffect(() => {
+    if (activeItemList && activeItemList?.timer?.length > 0) {
+      let tmpTimeList = activeItemList?.timer?.map((item, key) => {
+        let tmpStartTime = item.start_time;
+        let tmpEndTime = item.end_time;
+        if (tmpStartTime && tmpEndTime) {
+          let tmpHoursStartTime = tmpStartTime?.split(':')[0];
+          let tmpHoursEndTime = tmpEndTime?.split(':')[0];
+          let tmpMinuteStartTime = tmpStartTime?.split(':')[1];
+          let tmpMinuteEndTime = tmpEndTime?.split(':')[1];
+          return {
+            ...item,
+            day: key + 2,
+            dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
+            startTime: tmpHoursStartTime + ':' + tmpMinuteStartTime,
+            endTime: tmpHoursEndTime + ':' + tmpMinuteEndTime,
+          };
+        } else {
+          return {
+            ...item,
+            day: key + 2,
+            dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
+            startTime: '',
+            endTime: '',
+          };
+        }
+      });
+      setTimeList(tmpTimeList);
+    }
+  }, [activeItemList]);
 
   //set hours start
   useEffect(() => {
@@ -194,6 +210,22 @@ const ModalCreateUpdateWebComponent = ({
 
   const handleShowPopupSetupTime = item => {
     resetState();
+    let startTime = item.startTime;
+    let endTime = item.endTime;
+    let splitStartTime = startTime?.split(':');
+    let splitEndTime = endTime?.split(':');
+    if (parseFloat(startTime) > 0 && parseFloat(endTime)) {
+      let tmpHoursStart = splitStartTime.length > 0 ? splitStartTime[0] : '00';
+      let tmpMinutesStart =
+        splitStartTime.length > 0 ? splitStartTime[1] : '00';
+      let tmpHoursEnd = splitEndTime.length > 0 ? splitEndTime[0] : '00';
+      let tmpMinutesEnd = splitEndTime.length > 0 ? splitEndTime[1] : '00';
+      setHoursStart(tmpHoursStart);
+      setHoursEnd(tmpHoursEnd);
+      setMinutesStart(tmpMinutesStart);
+      setMinutesEnd(tmpMinutesEnd);
+    }
+
     setVisibleSetupTimeModal(true);
     setActiveItem(item);
   };
@@ -222,8 +254,12 @@ const ModalCreateUpdateWebComponent = ({
       return;
     }
     setTimeError('');
-    let startTime = hoursStart + ':' + minutesStart;
-    let endTime = hoursEnd + ':' + minutesEnd;
+    let startTime =
+      (hoursStart ? hoursStart : '00') +
+      ':' +
+      (minutesStart ? minutesStart : '00');
+    let endTime =
+      (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
     let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
     if (itemIndex !== -1) {
       timeList[itemIndex] = {
@@ -289,11 +325,14 @@ const ModalCreateUpdateWebComponent = ({
           <TouchableOpacity
             style={styles.wrapIconClose}
             activeOpacity={0.8}
-            onPress={onPressClose}>
+            onPress={() => {
+              onPressClose();
+              setTimeList(DATA_TIME_LIST);
+            }}>
             <FastImage style={styles.iconClose} source={images.icons.close} />
           </TouchableOpacity>
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            {title}
+            Chặn truy cập website
           </Text>
           <View style={styles.wrapInput}>
             <Input
@@ -320,7 +359,7 @@ const ModalCreateUpdateWebComponent = ({
             <TouchableOpacity activeOpacity={0.9} onPress={onPressActive}>
               <Radio
                 active={!isActive ? true : false}
-                label={'Chặn ' + (isWebsite ? 'website' : 'ứng dụng')}
+                label={'Chặn website'}
                 containerStyle={styles.radioTwo}
               />
             </TouchableOpacity>
@@ -329,12 +368,27 @@ const ModalCreateUpdateWebComponent = ({
             underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
             activeOpacity={0.9}
             style={styles.btn}
-            onPress={onPressSubmit}>
+            onPress={() => {
+              let arrItem = [];
+              timeList?.map(item => {
+                if (
+                  parseFloat(item.startTime) > 0 &&
+                  parseFloat(item.endTime) > 0
+                ) {
+                  arrItem.push({
+                    day: item.day,
+                    start_time: item.startTime + ':00',
+                    end_time: item.endTime + ':00',
+                  });
+                }
+              });
+              onPressSubmit(arrItem);
+            }}>
             <Text style={styles.btnLabel}>Lưu lại</Text>
           </TouchableHighlight>
-          {/* <Text style={styles.timeUse}>Thời gian sử dụng</Text>
+          <Text style={styles.timeUse}>Thời gian sử dụng</Text>
           {isActive &&
-            timeList.map((item, key) => {
+            timeList?.map((item, key) => {
               return (
                 <View key={key}>
                   <ItemTime
@@ -344,13 +398,13 @@ const ModalCreateUpdateWebComponent = ({
                         ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
                         : {}
                     }
-                    day={item.day}
+                    day={item.dayName}
                     startTime={item.startTime}
                     endTime={item.endTime}
                   />
                 </View>
               );
-            })} */}
+            })}
         </ScrollView>
       </View>
       {/* </KeyboardAwareScrollView> */}
@@ -390,12 +444,14 @@ const styles = StyleSheet.create({
     paddingBottom: getBottomSpace(),
     paddingTop:
       Platform.OS === 'ios'
-        ? getStatusBarHeight() + sizes.SIZE_15
+        ? isIphoneX()
+          ? getStatusBarHeight() + sizes.SIZE_15
+          : getStatusBarHeight() + sizes.SIZE_5
         : sizes.SIZE_15,
     height: metrics.screenHeight,
   },
   contentContainer: {
-    paddingBottom: sizes.SIZE_15,
+    paddingBottom: sizes.SIZE_25,
   },
   mainTitle: {},
   wrapInput: {

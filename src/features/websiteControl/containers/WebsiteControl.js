@@ -6,14 +6,7 @@ import {colors, commonStyles} from 'styles';
 import images from 'images';
 import {ItemComponent} from '../components';
 import FastImage from 'react-native-fast-image';
-import {
-  EmptyData,
-  LoadingData,
-  ModalBlockAccess,
-  Loading,
-  ModalTimeBlockAccess,
-  PopupConfirm,
-} from 'components';
+import {EmptyData, Loading} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import {useQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
@@ -44,18 +37,12 @@ const WebsiteControl = ({route}) => {
   const typingTimoutRef = useRef(null);
   const queryClient = useQueryClient();
   const [visibleModal, setVisibleModal] = useState(false);
-  const [visibleTimeBlockAccessModal, setVisibleTimeBlockAccessModal] =
-    useState(false);
   const [activeRadio, setActiveRadio] = useState(false);
   const [url, setUrl] = useState('');
   const [textSearch, setTextSearch] = useState('');
   const [debounceTextSearch, setDebounceTextSearch] = useState(false);
   const [hours, setHours] = useState(HOURS_DEFAULT);
   const [minutes, setMinutes] = useState(MINUTE_DEFAULT);
-  const [itemBlockAccess, setItemBlockAccess] = useState({});
-  const [itemRemoveTime, setItemRemoveTime] = useState({});
-  const [visiblePopupConfirmRemoveTime, setVisiblePopupConfirmRemoveTime] =
-    useState(false);
   const [type, setType] = useState(null);
 
   const [errors, setErrors] = useState({});
@@ -92,13 +79,14 @@ const WebsiteControl = ({route}) => {
 
   //website create
   const mutationCreate = useMutation(
-    ({data_url, data_status, data_time_remaining, data_device_id}) =>
-      webCreateApi(data_url, data_status, data_time_remaining, data_device_id),
+    ({data_url, data_status, data_device_id, data_timer}) =>
+      webCreateApi(data_url, data_status, data_device_id, data_timer),
   );
 
   //website update
-  const mutationUpdate = useMutation(({data_web_id, data_status, data_url}) =>
-    webUpdateApi(data_web_id, data_status, data_url),
+  const mutationUpdate = useMutation(
+    ({data_web_id, data_status, data_url, data_timer}) =>
+      webUpdateApi(data_web_id, data_status, data_url, data_timer),
   );
 
   const onRefresh = async () => {
@@ -137,7 +125,7 @@ const WebsiteControl = ({route}) => {
     }, 300);
   };
 
-  const handleWebCreate = () => {
+  const handleWebCreate = timeList => {
     let validation = new Validator(
       {
         url: url,
@@ -158,13 +146,12 @@ const WebsiteControl = ({route}) => {
       setErrors({...errors, url: validation.errors.first('url')});
       setVisibleModal(false);
     }
-
     mutationCreate
       .mutateAsync({
         data_url: url,
         data_status: activeRadio ? ONE : ZERO,
-        data_time_remaining: ZERO,
         data_device_id: params?.device_id,
+        data_timer: activeRadio ? timeList : null,
       })
       .then(resp => {
         if (resp?.status) {
@@ -182,7 +169,7 @@ const WebsiteControl = ({route}) => {
       });
   };
 
-  const handleWebUpdate = () => {
+  const handleWebUpdate = timeList => {
     let validation = new Validator(
       {
         url: url,
@@ -209,6 +196,7 @@ const WebsiteControl = ({route}) => {
         data_url: url,
         data_status: activeRadio ? ONE : ZERO,
         data_web_id: activeItem.id,
+        data_timer: activeRadio ? timeList : null,
       })
       .then(resp => {
         if (resp?.status) {
@@ -232,96 +220,22 @@ const WebsiteControl = ({route}) => {
     setUrl('');
     setHours(HOURS_DEFAULT);
     setMinutes(MINUTE_DEFAULT);
-    setItemBlockAccess({});
     setActiveItem({});
   };
 
   const showModalDetail = (item, t) => {
     setType(t);
-    console.log(item, 'item==');
     setActiveItem(item);
     setUrl(item.url);
     setActiveRadio(item.status);
-
     setVisibleModal(true);
   };
-
-  const handleTimeBlockAccess = () => {
-    setVisibleTimeBlockAccessModal(false);
-    // eslint-disable-next-line radix
-    let tmpMinutes = parseInt(hours) * MINUTE_60 + parseInt(minutes);
-    mutationUpdate
-      .mutateAsync({
-        data_web_id: itemBlockAccess?.id,
-        data_status: activeRadio ? ONE : ZERO,
-        data_time_remaining: activeRadio ? tmpMinutes : ZERO,
-      })
-      .then(resp => {
-        if (resp?.status) {
-          refetch();
-          resetState();
-          Toast(resp?.msg);
-        } else {
-          Toast(resp?.msg);
-        }
-        mutationUpdate.reset();
-      })
-      .catch(err => {
-        Toast(err?.msg);
-        mutationUpdate.reset();
-      });
-  };
-
-  const handleRemoveTimeBlockAccess = () => {
-    setVisiblePopupConfirmRemoveTime(false);
-    mutationUpdate
-      .mutateAsync({
-        data_web_id: itemRemoveTime?.id,
-        data_status: ONE,
-        data_time_remaining: ZERO,
-      })
-      .then(resp => {
-        if (resp?.status) {
-          refetch();
-          Toast(resp?.msg);
-        } else {
-          Toast(resp?.msg);
-        }
-        mutationUpdate.reset();
-      })
-      .catch(err => {
-        Toast(err?.msg);
-        mutationUpdate.reset();
-      });
-  };
-
   return (
     <Background bin>
       <Loading
         isLoading={mutationCreate.isLoading || mutationUpdate.isLoading}
       />
-      <PopupConfirm
-        content="Bạn có muốn gỡ thời gian chặn này không?"
-        visible={visiblePopupConfirmRemoveTime}
-        onPressAgree={() => handleRemoveTimeBlockAccess()}
-        onPressCancel={() => {
-          setVisiblePopupConfirmRemoveTime(false);
-          setItemRemoveTime({});
-        }}
-      />
       <ModalCreateUpdateWebComponent
-        onFocusHour={() => {
-          // eslint-disable-next-line radix
-          if (hours.length === 2 && parseInt(hours) === 0) {
-            setHours('');
-          }
-        }}
-        onFocusMinute={() => {
-          // eslint-disable-next-line radix
-          if (minutes.length === 2 && parseInt(minutes) === 0) {
-            setMinutes('');
-          }
-        }}
         onPressClose={() => {
           setVisibleModal(false);
           resetState();
@@ -330,22 +244,17 @@ const WebsiteControl = ({route}) => {
         isActive={activeRadio}
         onPressActive={() => {
           setActiveRadio(!activeRadio);
-          setHours(HOURS_DEFAULT);
-          setMinutes(MINUTE_DEFAULT);
         }}
         value={url}
         onChangeValue={text => setUrl(text)}
-        onPressSubmit={() => {
+        activeItemList={activeItem}
+        onPressSubmit={list => {
           if (type === types.create.code) {
-            handleWebCreate();
+            handleWebCreate(list);
           } else {
-            handleWebUpdate();
+            handleWebUpdate(list);
           }
         }}
-        valueHours={hours}
-        valueMinutes={minutes}
-        onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
-        onChangeTextMinutes={val => setMinutes(val.replace(/[^0-9]/g, ZERO))}
         errors={errors}
       />
       <View style={styles.container}>

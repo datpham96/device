@@ -8,22 +8,36 @@ export function webListApi(device_id) {
   return apiToken(ApiConstants.WEB_LIST, 'post', bodyFormData, null);
 }
 
-export function webUpdateApi(web_id, status, url) {
+export function webUpdateApi(web_id, status, url, timeList) {
   //Cập nhật web
   let bodyFormData = new FormData();
   bodyFormData.append('web_id', web_id);
   bodyFormData.append('status', status);
   bodyFormData.append('url', url);
+  if (timeList) {
+    timeList.map((item, key) => {
+      bodyFormData.append('timer[' + key + '][day]', item.day);
+      bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
+      bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+    });
+  }
   return apiToken(ApiConstants.WEB_UPDATE, 'post', bodyFormData, null);
 }
 
-export function webCreateApi(url, status, time_remaining, device_id) {
+export function webCreateApi(url, status, device_id, timeList) {
   //Thêm web
   let bodyFormData = new FormData();
   bodyFormData.append('url', url);
   bodyFormData.append('status', status);
-  bodyFormData.append('time_remaining', time_remaining);
   bodyFormData.append('device_id', device_id);
+  if (timeList) {
+    timeList.map((item, key) => {
+      bodyFormData.append('timer[' + key + '][day]', item.day);
+      bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
+      bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+    });
+  }
+
   return apiToken(ApiConstants.WEB_ADD, 'post', bodyFormData, null);
 }
 
