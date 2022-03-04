@@ -39,6 +39,8 @@ const styles = StyleSheet.create({
     width: metrics.screenWidth / sizes.SIZE_10,
     height: metrics.screenWidth / sizes.SIZE_10,
     borderRadius: metrics.screenWidth / sizes.SIZE_10 / sizes.SIZE_2,
+    borderWidth: sizes.SIZE_1,
+    borderColor: colors.COLOR_WHITE,
   },
   wrapAvatarDevice: {
     position: 'relative',
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
     // width: sizes.SIZE_80,
   },
   scrollItemDeviceSelect: {
-    top: metrics.screenWidth / sizes.SIZE_10 + sizes.SIZE_5,
+    // top: metrics.screenWidth / sizes.SIZE_10 + sizes.SIZE_5,
     width: '95%',
   },
   contentItemDeviceSelect: {

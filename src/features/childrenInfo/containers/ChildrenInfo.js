@@ -7,7 +7,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import styles from './styles';
-import {commonStyles, colors} from 'styles';
+import {commonStyles, colors, sizes} from 'styles';
 import {ButtonRedirect, PopupConfirm, Loading, LoadingData} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
@@ -54,9 +54,12 @@ const ChildrenInfo = ({route}) => {
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
   const [avatarUri, setAvatarUri] = useState('');
   const [errors, setErrors] = useState({});
+  const [heightSectionOne, setHeightSectionOne] = useState(0);
+  const [heightSectionTwo, setHeightSectionTwo] = useState(0);
+  const [heightContainer, setHeightContainer] = useState(0);
 
   const {data, refetch, isLoading} = useQuery(
-    keyTypes.DEVICE_INFO + '_' + device_id,
+    [keyTypes.DEVICE_INFO, device_id],
     () => deviceInfoApi(device_id),
     // {
     //   keepPreviousData: true,
@@ -65,7 +68,7 @@ const ChildrenInfo = ({route}) => {
 
   const {data: dataDeviceSettingList, refetch: refetchDeviceSettingList} =
     useQuery(
-      keyTypes.DEVICE_SETTING_LIST + '_' + device_id,
+      [keyTypes.DEVICE_SETTING_LIST, device_id],
       () => deviceSettingListApi(device_id),
       {
         keepPreviousData: true,
@@ -74,12 +77,12 @@ const ChildrenInfo = ({route}) => {
 
   useEffect(() => {
     if (!checkVar.isEmpty(data?.data)) {
-      let detail = data.data;
-      setFullname(detail.full_name);
-      setDeviceName(detail.device_name);
-      setGender(detail.gender ? detail.gender : '');
-      setBirthday(detail.birthday);
-      setAvatarUri({uri: detail.avatar});
+      let detail = data?.data;
+      setFullname(detail?.full_name);
+      setDeviceName(detail?.device_name);
+      setGender(detail?.gender ? detail?.gender : '');
+      setBirthday(detail?.birthday);
+      setAvatarUri({uri: detail?.avatar});
     }
   }, [data]);
 
@@ -165,15 +168,12 @@ const ChildrenInfo = ({route}) => {
   };
 
   const onRefresh = async () => {
-    await queryClient.removeQueries(keyTypes.DEVICE_INFO + '_' + device_id, {
+    await queryClient.removeQueries([keyTypes.DEVICE_INFO, device_id], {
       exact: true,
     });
-    await queryClient.removeQueries(
-      keyTypes.DEVICE_SETTING_LIST + '_' + device_id,
-      {
-        exact: true,
-      },
-    );
+    await queryClient.removeQueries([keyTypes.DEVICE_SETTING_LIST, device_id], {
+      exact: true,
+    });
     await refetch();
     await refetchDeviceSettingList();
   };
@@ -269,7 +269,6 @@ const ChildrenInfo = ({route}) => {
     setErrors({});
   };
   const handleUpdateInfo = () => {
-    setVisibleUpdateInfoModal(false);
     let validation = new Validator(
       {
         fullName: fullName,
@@ -298,6 +297,7 @@ const ChildrenInfo = ({route}) => {
     }
 
     if (validation.passes()) {
+      setVisibleUpdateInfoModal(false);
       setErrors({
         ...errors,
         fullName: validation.errors.first('fullName'),
@@ -354,6 +354,24 @@ const ChildrenInfo = ({route}) => {
       obj.expired = false;
     }
     return obj;
+  };
+
+  const handleLayoutContainer = event => {
+    const {height} = event.nativeEvent.layout;
+    setHeightContainer(height);
+    console.log(height, 'height==');
+  };
+
+  const handleLayoutSectionOne = event => {
+    const {height} = event.nativeEvent.layout;
+    setHeightSectionOne(height);
+    console.log(height, 'height-section-one==');
+  };
+
+  const handleLayoutSectionTwo = event => {
+    const {height} = event.nativeEvent.layout;
+    setHeightSectionTwo(height);
+    console.log(height, 'height-section-two==');
   };
 
   return (
@@ -413,74 +431,84 @@ const ChildrenInfo = ({route}) => {
             />
           }
           style={styles.scrollContainer}>
-          {isLoading ? (
-            <ChildrenPlaceholder />
-          ) : (
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => setVisibleUpdateInfoModal(true)}
-              style={styles.wrapAvatar}>
-              <Avatar
-                containerStyle={styles.avatar}
-                imageStyle={styles.avatar}
-                uriImage={avatarLink}
-              />
-              <View style={styles.wrapInfo}>
-                <Text style={[styles.textInfo, styles.infoName]}>
-                  {data?.data?.full_name}
-                </Text>
-                <Text style={styles.textInfo}>{data?.data?.device_name}</Text>
-                <Text style={styles.textInfo}>
-                  {data?.data?.status ? 'Đã kết nối' : 'Chưa kết nối'}
-                </Text>
-                {!checkVar.isEmpty(data?.data?.expire_time) ? (
-                  <Text style={styles.textInfo}>
-                    Ngày hết hạn:{' '}
-                    <Text
-                      style={{
-                        color: formatExpiredDate(data?.data?.expire_time)
-                          ?.expired
-                          ? colors.COLOR_ERROR
-                          : colors.COLOR_WHITE,
-                      }}>
-                      {formatExpiredDate(data?.data?.expire_time)?.date}
-                    </Text>
+          <View
+          // style={{
+          //   height: heightContainer - heightSectionTwo - sizes.SIZE_10,
+          // }}
+          // onLayout={handleLayoutSectionOne}
+          >
+            {isLoading ? (
+              <ChildrenPlaceholder />
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() => setVisibleUpdateInfoModal(true)}
+                style={styles.wrapAvatar}>
+                <Avatar
+                  containerStyle={styles.avatar}
+                  imageStyle={styles.avatar}
+                  uriImage={avatarLink}
+                />
+                <View style={styles.wrapInfo}>
+                  <Text style={[styles.textInfo, styles.infoName]}>
+                    {data?.data?.full_name}
                   </Text>
-                ) : (
-                  <Text style={styles.textInfo}>Không giới hạn</Text>
-                )}
-              </View>
-            </TouchableOpacity>
-          )}
-          <View style={styles.wrapBtn}>
-            <TouchableHighlight
-              onPress={() => setVisibleRemoveDevice(true)}
-              underlayColor={colors.COLOR_UNDERLAY_BUTTON_PINK}
-              style={styles.btnCancel}>
-              <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
-            </TouchableHighlight>
-            {/* <TouchableHighlight
+                  <Text style={styles.textInfo}>{data?.data?.device_name}</Text>
+                  <Text style={styles.textInfo}>
+                    {data?.data?.status ? 'Đã kết nối' : 'Chưa kết nối'}
+                  </Text>
+                  {!checkVar.isEmpty(data?.data?.expire_time) ? (
+                    <Text style={styles.textInfo}>
+                      Ngày hết hạn:{' '}
+                      <Text
+                        style={{
+                          color: formatExpiredDate(data?.data?.expire_time)
+                            ?.expired
+                            ? colors.COLOR_ERROR
+                            : colors.COLOR_WHITE,
+                          fontSize: sizes.SIZE_13,
+                        }}>
+                        {formatExpiredDate(data?.data?.expire_time)?.date}
+                      </Text>
+                    </Text>
+                  ) : (
+                    <Text style={styles.textInfo}>Không giới hạn</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            )}
+            <View style={styles.wrapBtn}>
+              <TouchableHighlight
+                onPress={() => setVisibleRemoveDevice(true)}
+                underlayColor={colors.COLOR_UNDERLAY_BUTTON_PINK}
+                style={styles.btnCancel}>
+                <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
+              </TouchableHighlight>
+              {/* <TouchableHighlight
               onPress={handleRedirectLicense}
               underlayColor={colors.COLOR_UNDERLAY_BLUE}
               style={styles.btnSetup}>
               <Text style={styles.labelBtnSetup}>Bản quyền sử dụng</Text>
             </TouchableHighlight> */}
+            </View>
+            <ButtonRedirect
+              onPress={handleRedirectWebsiteControl}
+              label="Kiểm soát website"
+            />
+            <ButtonRedirect
+              containerStyle={styles.btnRedirect}
+              onPress={handleRedirectApplicationControl}
+              label="Kiếm soát ứng dụng"
+            />
+            <ButtonRedirect
+              containerStyle={styles.btnRedirect}
+              onPress={handleRedirectReport}
+              label="Lịch sử truy cập"
+            />
           </View>
-          <ButtonRedirect
-            onPress={handleRedirectWebsiteControl}
-            label="Kiểm soát website"
-          />
-          <ButtonRedirect
-            containerStyle={styles.btnRedirect}
-            onPress={handleRedirectApplicationControl}
-            label="Kiếm soát ứng dụng"
-          />
-          <ButtonRedirect
-            containerStyle={styles.btnRedirect}
-            onPress={handleRedirectReport}
-            label="Lịch sử truy cập"
-          />
-          <View style={styles.settingContainer}>
+          <View
+            // onLayout={handleLayoutSectionTwo}
+            style={styles.settingContainer}>
             <View style={styles.wrapSafeWeb}>
               <View style={styles.headerSafeWeb}>
                 <FastImage

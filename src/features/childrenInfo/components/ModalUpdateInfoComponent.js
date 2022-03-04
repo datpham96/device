@@ -1,19 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {Text, Input, Background, Button, ButtonBack} from 'base';
-import {View, StyleSheet, TouchableOpacity, Modal, Alert} from 'react-native';
+import React, {useState} from 'react';
+import {Text, Input, Button} from 'base';
+import {View, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import images from 'images';
 import FastImage from 'react-native-fast-image';
-import {colors, commonStyles, fonts, sizes} from 'styles';
+import {colors, commonStyles, sizes} from 'styles';
 import metrics from 'metrics';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {TextError, InputDateComponent, InputSelectComponent} from 'components';
-import SwitchComponent from './SwitchComponent';
 import {ModalBottomSheet} from 'components';
-import types from '../types';
-import {useQuery, useMutation} from 'react-query';
-import keyTypes from '../../../api/keyTypes';
-import {deviceSettingListApi, deviceSettingUpdateApi} from 'methods/device';
-import lodash from 'lodash';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 const options = {

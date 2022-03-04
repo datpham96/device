@@ -17,10 +17,13 @@ export default StyleSheet.create({
   },
   wrapAvatar: {
     alignSelf: 'center',
-    width: SIZE_AVATAR,
-    height: SIZE_AVATAR,
+    width: SIZE_AVATAR + sizes.SIZE_4,
+    height: SIZE_AVATAR + sizes.SIZE_4,
     marginTop: sizes.SIZE_30,
     marginBottom: sizes.SIZE_15,
+    borderWidth: sizes.SIZE_2,
+    borderRadius: (SIZE_AVATAR + sizes.SIZE_4) / sizes.SIZE_2,
+    borderColor: colors.COLOR_WHITE,
   },
   avatar: {
     width: SIZE_AVATAR,

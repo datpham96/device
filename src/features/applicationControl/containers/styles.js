@@ -52,7 +52,7 @@ export default StyleSheet.create({
   },
   contentContainerFlatlist: {
     paddingHorizontal: sizes.SIZE_10,
-    paddingVertical: sizes.SIZE_15,
+    paddingVertical: sizes.SIZE_10,
     flexGrow: 1,
   },
   flatList: {

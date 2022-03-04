@@ -26,7 +26,7 @@ export default StyleSheet.create({
   },
   containerDropdownSelected: {
     width: '100%',
-    top: sizes.SIZE_48,
+    // top: sizes.SIZE_48,
   },
   wrapBtnSelect: {
     width: '100%',

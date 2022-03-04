@@ -1,7 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
 // import {PersistGate} from 'redux-persist/es/integration/react';
-import {BackHandler, Alert, Linking, Text, TextInput} from 'react-native';
+import {
+  BackHandler,
+  Alert,
+  Linking,
+  Text,
+  TextInput,
+  LogBox,
+} from 'react-native';
 // import SplashScreen from 'react-native-splash-screen';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
@@ -23,7 +30,14 @@ TextInput.defaultProps = Text.defaultProps || {};
 TextInput.defaultProps.allowFontScaling = false;
 
 const App = () => {
-  React.useEffect(() => {
+  useEffect(() => {
+    //remove warning
+    LogBox.ignoreLogs([
+      'DatePickerIOS has been merged with DatePickerAndroid and will be removed in a future release.',
+      'StatusBarIOS has been merged with StatusBar and will be removed in a future release.',
+      'DatePickerAndroid has been merged with DatePickerIOS and will be removed in a future release.',
+      'No info about this app.',
+    ]);
     checkVersion();
   }, []);
   //check version update app

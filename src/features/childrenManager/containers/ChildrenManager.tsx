@@ -34,9 +34,15 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
   const {data, isLoading, refetch} = useQuery(
     keyTypes.DEVICE_LIST,
     () => deviceListApi(),
-    // {
-    //   keepPreviousData: true,
-    // },
+    {
+      enabled: false,
+      // keepPreviousData: true,
+      // onSuccess: lists => {
+      //   lists?.data.forEach((item: any) => {
+      //     queryClient.setQueryData([keyTypes.DEVICE_INFO, item.id], item);
+      //   });
+      // },
+    },
   );
 
   React.useEffect(() => {
@@ -164,7 +170,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
             ListEmptyComponent={<EmptyData />}
             contentContainerStyle={styles.contentContainerFlatlist}
             style={[commonStyles.flex1, styles.flatListStyle]}
-            data={data.data}
+            data={data?.data}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => (
               <ItemChildrenComponent

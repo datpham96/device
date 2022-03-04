@@ -12,7 +12,7 @@ import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
 import {TextInput} from 'react-native-gesture-handler';
-import {TextError} from 'components';
+import TextError from '../TextErrorComponent';
 
 export type Props = {
   visible?: any;

@@ -6,14 +6,13 @@ import images from 'images';
 import {Text} from 'base';
 import FastImage from 'react-native-fast-image';
 
-const MapMarker = ({markers, handleMaker}) => {
+const MapMarker = ({markers}) => {
   return (
     <MapView
       provider={PROVIDER_GOOGLE}
       style={styles.map}
       region={markers}
-      tracksViewChanges={false}
-      onPress={handleMaker}>
+      tracksViewChanges={false}>
       <Marker
         pinColor={colors.COLOR_RED_ORANGE}
         coordinate={markers}

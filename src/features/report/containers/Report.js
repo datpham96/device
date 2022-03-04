@@ -14,7 +14,7 @@ import {checkVar} from 'src/helpers/funcs';
 import {deviceHistoryApi} from 'src/api/methods/device';
 import moment from 'moment';
 import {TouchableHighlight} from 'react-native-gesture-handler';
-import DatePicker from 'react-native-datepicker';
+import DatePicker from 'react-native-date-picker-select';
 import lodash from 'lodash';
 import {ItemListPlaceholder} from '../placeholders';
 import metrics from 'metrics';
@@ -38,7 +38,7 @@ const Report = ({route}) => {
     refetch,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    keyTypes.DEVICE_HISTORY_LIST + '_' + params?.device_id + '_' + date,
+    [keyTypes.DEVICE_HISTORY_LIST, {deviceId: params?.device_id, date}],
     ({pageParam = 1}) =>
       deviceHistoryApi(
         pageParam,
@@ -84,7 +84,7 @@ const Report = ({route}) => {
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
-      keyTypes.DEVICE_HISTORY_LIST + '_' + params?.device_id + '_' + date,
+      [keyTypes.DEVICE_HISTORY_LIST, {deviceId: params?.device_id, date}],
       {
         exact: true,
       },
@@ -180,8 +180,6 @@ const Report = ({route}) => {
               />
             }
             refreshing={false}
-            onRefresh={onRefresh}
-            onEndReached={getMore}
             onEndReachedThreshold={0.05}
             onScrollBeginDrag={() => {
               stopLoadMore = false;

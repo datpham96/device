@@ -56,7 +56,7 @@ const ApplicationControl = ({route}) => {
 
   //application list
   const {data, isLoading, isSuccess, refetch} = useQuery(
-    keyTypes.APPLICATION_LIST + '_' + params?.device_id,
+    [keyTypes.APPLICATION_LIST, params?.device_id],
     () => applicationListApi(params?.device_id),
     {
       keepPreviousData: true,
@@ -95,7 +95,7 @@ const ApplicationControl = ({route}) => {
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
-      keyTypes.APPLICATION_LIST + '_' + params?.device_id,
+      [keyTypes.APPLICATION_LIST, params?.device_id],
       {
         exact: true,
       },
@@ -214,9 +214,31 @@ const ApplicationControl = ({route}) => {
   const showModalDetail = item => {
     setVisibleDetailModal(true);
     setActiveItem(item);
+    setActiveRadio(item.status ? true : false);
   };
 
-  const handleWebUpdate = () => {};
+  const handlebUpdate = () => {
+    setVisibleDetailModal(false);
+    mutationUpdate
+      .mutateAsync({
+        data_application_id: activeItem?.id,
+        data_status: activeRadio ? ONE : ZERO,
+        data_time_remaining: 0,
+      })
+      .then(resp => {
+        if (resp?.status) {
+          refetch();
+          Toast(resp?.msg);
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationUpdate.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationUpdate.reset();
+      });
+  };
   return (
     <Background bin>
       <Loading isLoading={mutationUpdate.isLoading} />
@@ -232,18 +254,6 @@ const ApplicationControl = ({route}) => {
       <ModalUpdateApplicationComponent
         iconApp={activeItem?.icon}
         nameApp={activeItem?.name}
-        onFocusHour={() => {
-          // eslint-disable-next-line radix
-          if (hours.length === 2 && parseInt(hours) === 0) {
-            setHours('');
-          }
-        }}
-        onFocusMinute={() => {
-          // eslint-disable-next-line radix
-          if (minutes.length === 2 && parseInt(minutes) === 0) {
-            setMinutes('');
-          }
-        }}
         onPressClose={() => {
           setVisibleDetailModal(false);
           resetState();
@@ -255,7 +265,7 @@ const ApplicationControl = ({route}) => {
           setHours(HOURS_DEFAULT);
           setMinutes(MINUTE_DEFAULT);
         }}
-        onPressSubmit={handleWebUpdate}
+        onPressSubmit={handlebUpdate}
         valueHours={hours}
         valueMinutes={minutes}
         onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
@@ -293,7 +303,7 @@ const ApplicationControl = ({route}) => {
         </Text>
         <View style={styles.wrapTableHeader}>
           <Text style={styles.headerTableTitleOne}>Ứng dụng</Text>
-          {/* <Text style={styles.headerTableTitleTwo}>Sử dụng</Text> */}
+          <Text style={styles.headerTableTitleTwo}>Sử dụng</Text>
           <Text style={styles.headerTableTitleThree}>Trạng thái</Text>
         </View>
         {isLoading ? (

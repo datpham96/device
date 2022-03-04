@@ -7,43 +7,107 @@ import {commonStyles, sizes, colors} from 'styles';
 
 const ItemListPlaceholder = () => {
   return (
-    <SkeletonPlaceholder backgroundColor={colors.COLOR_LOADING_PLACEHOLDER}>
-      <View style={[commonStyles.flexRowCenter, styles.container]}>
-        <View style={styles.avatar} />
-        <View style={styles.wrapInfo}>
-          <View style={styles.name} />
-          <View style={styles.time} />
+    <View style={[commonStyles.flexRowCenter, styles.container]}>
+      <SkeletonPlaceholder backgroundColor={colors.COLOR_LOADING_PLACEHOLDER}>
+        <View style={styles.sectionOne}>
+          <View style={styles.avatar} />
+          <View style={styles.wrapInfo}>
+            <View>
+              <View style={styles.name} />
+              {/* <View style={styles.domain} /> */}
+            </View>
+          </View>
+        </View>
+      </SkeletonPlaceholder>
+      <SkeletonPlaceholder backgroundColor={colors.COLOR_LOADING_PLACEHOLDER}>
+        <View style={styles.wrapDetail}>
+          <View style={styles.detail} />
+        </View>
+      </SkeletonPlaceholder>
+      <View style={styles.wrapSwitch}>
+        <SkeletonPlaceholder backgroundColor={colors.COLOR_LOADING_PLACEHOLDER}>
+          <View style={styles.borderSwitch} />
+        </SkeletonPlaceholder>
+        <View style={styles.wrapInsideSwitch}>
+          <View style={styles.backgroundSwitch} />
+          <View style={styles.circleSwitch} />
         </View>
       </View>
-    </SkeletonPlaceholder>
+    </View>
   );
 };
+
+const SIZE_WIDTH_SECTION_ONE =
+  metrics.screenWidth - sizes.SIZE_20 - sizes.SIZE_100 * 2;
+const SIZE_AVATAR = metrics.screenWidth / sizes.SIZE_8;
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: sizes.SIZE_10,
   },
+  sectionOne: {
+    flexDirection: 'row',
+    width: SIZE_WIDTH_SECTION_ONE,
+  },
   avatar: {
-    width: metrics.screenWidth / sizes.SIZE_8,
-    height: metrics.screenWidth / sizes.SIZE_8,
+    width: SIZE_AVATAR,
+    height: SIZE_AVATAR,
     borderRadius: metrics.screenWidth / sizes.SIZE_16,
   },
   wrapInfo: {
-    marginLeft: sizes.SIZE_15,
+    marginLeft: sizes.SIZE_10,
     ...commonStyles.flex1,
     ...commonStyles.flexRowCenter,
     justifyContent: 'space-between',
   },
   name: {
-    width: metrics.screenWidth / sizes.SIZE_2,
-    height: sizes.SIZE_15,
+    width: SIZE_WIDTH_SECTION_ONE - SIZE_AVATAR - sizes.SIZE_20,
+    height: sizes.SIZE_14,
     borderRadius: sizes.SIZE_4,
   },
-
-  time: {
-    width: metrics.screenWidth / sizes.SIZE_8,
-    height: sizes.SIZE_15,
+  domain: {
+    width: (SIZE_WIDTH_SECTION_ONE - SIZE_AVATAR - sizes.SIZE_20) * 0.8,
+    height: sizes.SIZE_12,
     borderRadius: sizes.SIZE_4,
+    marginTop: sizes.SIZE_5,
+  },
+  wrapDetail: {
+    width: sizes.SIZE_100,
+  },
+  detail: {
+    width: sizes.SIZE_100 * 0.8,
+    height: sizes.SIZE_14,
+    borderRadius: sizes.SIZE_4,
+  },
+  wrapSwitch: {
+    width: sizes.SIZE_100,
+    alignItems: 'flex-end',
+  },
+  borderSwitch: {
+    width: sizes.SIZE_100 * 0.4,
+    height: sizes.SIZE_22,
+    borderRadius: sizes.SIZE_12,
+  },
+  wrapInsideSwitch: {
+    position: 'absolute',
+  },
+  backgroundSwitch: {
+    width: sizes.SIZE_100 * 0.34,
+    height: sizes.SIZE_16,
+    borderRadius: sizes.SIZE_12,
+    backgroundColor: colors.COLOR_UNDERLAY_BUTTON_BLACK,
+
+    top: sizes.SIZE_3,
+    right: sizes.SIZE_3,
+  },
+  circleSwitch: {
+    width: sizes.SIZE_14,
+    height: sizes.SIZE_14,
+    borderRadius: sizes.SIZE_7,
+    backgroundColor: colors.COLOR_DARK_SEPERATOR,
+    position: 'absolute',
+    right: sizes.SIZE_5,
+    top: sizes.SIZE_4,
   },
 });
 

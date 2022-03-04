@@ -4,7 +4,7 @@ import metrics from 'metrics';
 
 export default StyleSheet.create({
   container: {
-    marginTop: sizes.SIZE_30,
+    marginTop: sizes.SIZE_23,
     ...commonStyles.flex1,
   },
   scrollContainer: {
@@ -16,7 +16,7 @@ export default StyleSheet.create({
   },
   wrapAvatar: {
     ...commonStyles.flexRowCenter,
-    marginTop: sizes.SIZE_30,
+    marginTop: sizes.SIZE_15,
   },
   avatar: {
     width: metrics.screenWidth / sizes.SIZE_5,
@@ -26,7 +26,8 @@ export default StyleSheet.create({
     marginLeft: sizes.SIZE_15,
   },
   textInfo: {
-    marginTop: sizes.SIZE_5,
+    marginTop: sizes.SIZE_2,
+    fontSize: sizes.SIZE_13,
   },
   expiredLabel: {
     color: colors.COLOR_ERROR,
@@ -62,7 +63,8 @@ export default StyleSheet.create({
   },
   //setting
   settingContainer: {
-    marginTop: sizes.SIZE_20,
+    marginTop: sizes.SIZE_10,
+    paddingVertical: sizes.SIZE_10,
   },
   wrapSafeWeb: {
     // ...commonStyles.flexRowCenter,
@@ -75,7 +77,7 @@ export default StyleSheet.create({
     alignSelf: 'center',
   },
   contentSafeWeb: {
-    marginTop: sizes.SIZE_15,
+    marginTop: sizes.SIZE_5,
     textAlign: 'justify',
     fontSize: sizes.SIZE_12,
     fontFamily: fonts.lexendDeca.FONT_LIGHT,

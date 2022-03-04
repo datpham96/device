@@ -200,88 +200,47 @@ const ModalCreateUpdateWebComponent = ({
     setActiveItem(item);
   };
 
-  const handleSubmitSetupTime = () => {
-    if (!activeItem) {
-      return;
-    }
-    // eslint-disable-next-line radix
-    if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
-      setTimeError('Thời gian bắt đầu không được bỏ trống');
-      return;
-    }
-    // eslint-disable-next-line radix
-    if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
-      setTimeError('Thời gian kết thúc không được bỏ trống');
-      return;
-    }
-    if (
-      // eslint-disable-next-line radix
-      parseInt(hoursEnd) * 60 + parseInt(minutesEnd) <=
-      // eslint-disable-next-line radix
-      parseInt(hoursStart) * 60 + parseInt(minutesStart)
-    ) {
-      setTimeError('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
-      return;
-    }
-    setTimeError('');
-    let startTime = hoursStart + ':' + minutesStart;
-    let endTime = hoursEnd + ':' + minutesEnd;
-    let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
-    if (itemIndex !== -1) {
-      timeList[itemIndex] = {
-        ...timeList[itemIndex],
-        startTime: startTime,
-        endTime: endTime,
-      };
-      setTimeList([...timeList]);
-    }
+  const handleUpdate = () => {
+    //   if (!activeItem) {
+    //     return;
+    //   }
+    //   // eslint-disable-next-line radix
+    //   if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
+    //     setTimeError('Thời gian bắt đầu không được bỏ trống');
+    //     return;
+    //   }
+    //   // eslint-disable-next-line radix
+    //   if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
+    //     setTimeError('Thời gian kết thúc không được bỏ trống');
+    //     return;
+    //   }
+    //   if (
+    //     // eslint-disable-next-line radix
+    //     parseInt(hoursEnd) * 60 + parseInt(minutesEnd) <=
+    //     // eslint-disable-next-line radix
+    //     parseInt(hoursStart) * 60 + parseInt(minutesStart)
+    //   ) {
+    //     setTimeError('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
+    //     return;
+    //   }
+    //   setTimeError('');
+    //   let startTime = hoursStart + ':' + minutesStart;
+    //   let endTime = hoursEnd + ':' + minutesEnd;
+    //   let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
+    //   if (itemIndex !== -1) {
+    //     timeList[itemIndex] = {
+    //       ...timeList[itemIndex],
+    //       startTime: startTime,
+    //       endTime: endTime,
+    //     };
+    //     setTimeList([...timeList]);
+    //   }
 
     setVisibleSetupTimeModal(false);
   };
 
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
-      <ModalSetTimeBlockAccess
-        timeError={timeError}
-        onPressClose={() => {
-          setVisibleSetupTimeModal(false);
-          resetState();
-        }}
-        visible={visibleSetupTimeModal}
-        onChangeTextHoursStart={text => setHoursStart(text)}
-        valueHoursStart={hoursStart}
-        onFocusHourStart={() => {
-          // eslint-disable-next-line radix
-          if (hoursStart.length === 2 && parseInt(hoursStart) === 0) {
-            setHoursStart('');
-          }
-        }}
-        onChangeTextMinutesStart={text => setMinutesStart(text)}
-        valueMinutesStart={minutesStart}
-        onFocusMinuteStart={() => {
-          // eslint-disable-next-line radix
-          if (minutesStart.length === 2 && parseInt(minutesStart) === 0) {
-            setMinutesStart('');
-          }
-        }}
-        onChangeTextHoursEnd={text => setHoursEnd(text)}
-        valueHoursEnd={hoursEnd}
-        onFocusHourEnd={() => {
-          // eslint-disable-next-line radix
-          if (hoursEnd.length === 2 && parseInt(hoursEnd) === 0) {
-            setHoursEnd('');
-          }
-        }}
-        onChangeTextMinutesEnd={text => setMinutesEnd(text)}
-        valueMinutesEnd={minutesEnd}
-        onFocusMinuteEnd={() => {
-          // eslint-disable-next-line radix
-          if (minutesEnd.length === 2 && parseInt(minutesEnd) === 0) {
-            setMinutesEnd('');
-          }
-        }}
-        onPressSubmit={handleSubmitSetupTime}
-      />
       <View style={styles.backgroundModal} />
       {/* <KeyboardAwareScrollView style={commonStyles.flex1}> */}
       <View style={styles.container}>
@@ -327,7 +286,7 @@ const ModalCreateUpdateWebComponent = ({
             onPress={onPressSubmit}>
             <Text style={styles.btnLabel}>Lưu lại</Text>
           </TouchableHighlight>
-          <Text style={styles.timeUse}>Thời gian sử dụng</Text>
+          {/* <Text style={styles.timeUse}>Thời gian sử dụng</Text>
           {isActive &&
             timeList.map((item, key) => {
               return (
@@ -345,7 +304,7 @@ const ModalCreateUpdateWebComponent = ({
                   />
                 </View>
               );
-            })}
+            })} */}
         </ScrollView>
       </View>
       {/* </KeyboardAwareScrollView> */}

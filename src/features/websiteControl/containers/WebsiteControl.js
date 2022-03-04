@@ -63,7 +63,7 @@ const WebsiteControl = ({route}) => {
 
   //website list
   const {data, isLoading, isSuccess, refetch} = useQuery(
-    keyTypes.WEB_LIST + '_' + params?.device_id,
+    [keyTypes.WEB_LIST, params?.device_id],
     () => webListApi(params?.device_id),
     {
       keepPreviousData: true,
@@ -102,12 +102,9 @@ const WebsiteControl = ({route}) => {
   );
 
   const onRefresh = async () => {
-    await queryClient.removeQueries(
-      keyTypes.WEB_LIST + '_' + params?.device_id,
-      {
-        exact: true,
-      },
-    );
+    await queryClient.removeQueries([keyTypes.WEB_LIST, params?.device_id], {
+      exact: true,
+    });
     await refetch();
   };
 
@@ -214,7 +211,6 @@ const WebsiteControl = ({route}) => {
         data_web_id: activeItem.id,
       })
       .then(resp => {
-        console.log(resp, 'resp==');
         if (resp?.status) {
           refetch();
           resetState();

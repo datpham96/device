@@ -287,6 +287,11 @@ const Location = ({navigation}) => {
     setVisibleDeviceUnLock(false);
   };
 
+  let isCheckMarker = isSuccess && deviceList?.length > 0;
+  // &&
+  // markers?.latitude > 0 &&
+  // markers?.longitude > 0;
+
   return (
     <Background bottomTab bout>
       <Loading isLoading={mutationDeviceLock.isLoading} />
@@ -410,7 +415,7 @@ const Location = ({navigation}) => {
         )}
         {isLoading ? (
           <LoadingData />
-        ) : isSuccess && deviceList?.length > 0 ? (
+        ) : isCheckMarker ? (
           <View style={styles.contentContainer}>
             <MapMarker markers={markers} />
           </View>

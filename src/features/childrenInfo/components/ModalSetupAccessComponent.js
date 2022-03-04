@@ -25,7 +25,7 @@ const ModalSetupAccessComponent = ({
   const [enableSafeWeb, setEnableSafeWeb] = useState(false);
   const [settingType, setSettingType] = useState('');
   const {data: dataDeviceSettingList, refetch: refetch} = useQuery(
-    keyTypes.DEVICE_SETTING_LIST + '_' + deviceId,
+    [keyTypes.DEVICE_SETTING_LIST, deviceId],
     () => deviceSettingListApi(deviceId),
     {
       keepPreviousData: true,

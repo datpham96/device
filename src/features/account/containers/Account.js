@@ -26,6 +26,7 @@ import Validator from 'validatorjs';
 import {Toast} from 'customs';
 import {buildAvatar} from 'src/helpers/funcs';
 import VersionInfo from 'react-native-version-info';
+
 import {
   requestMultiple,
   PERMISSIONS,

@@ -14,7 +14,7 @@ import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, sizes, fonts, commonStyles} from 'styles';
 import {BlockFilterSearch, BlockTotal} from '../components';
-import DatePicker from 'react-native-datepicker';
+import DatePicker from 'react-native-date-picker-select';
 import moment from 'moment';
 import types from '../types';
 import {useQueryClient, useQuery} from 'react-query';
@@ -31,6 +31,11 @@ import {
 } from '../placeholders';
 import {DropdownSelected} from 'components';
 import metrics from 'metrics';
+const wait = timeout => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+};
 
 const Home = ({navigation}) => {
   const queryClient = useQueryClient();
@@ -42,6 +47,7 @@ const Home = ({navigation}) => {
   const [pieChartActive, setPieChartActive] = useState(0);
   const [toggleDeviceSelected, setToggleDeviceSelected] = useState(false);
   const [heightSectionTwo, setHeightSectionTwo] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
 
   //request report
   const {
@@ -49,11 +55,8 @@ const Home = ({navigation}) => {
     refetch: refetchReportAccess,
     isLoading: isLoadingReportAccess,
     isSuccess: isSuccessReportAccess,
-    isFetching: isFetchingReportAccess,
-    // isRefetching: isRefetchingReportAccess,
-    isFetched: isFetchedReportAccess,
   } = useQuery(
-    keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id + '_' + date,
+    [keyTypes.WEB_REPORT_ACCESS, {id: selectedDevice?.id, date}],
     () =>
       webReportAccessApi(
         selectedDevice?.id,
@@ -81,7 +84,11 @@ const Home = ({navigation}) => {
       onDay(moment(date, 'DD/MM/YYYY').format('DD'));
       onMonth(moment(date, 'DD/MM/YYYY').format('MM'));
     }
-  }, [date]);
+
+    return () => {
+      queryClient.clear();
+    };
+  }, [date, queryClient]);
 
   //get device list when focus screen
   React.useEffect(() => {
@@ -142,7 +149,7 @@ const Home = ({navigation}) => {
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
-      keyTypes.WEB_REPORT_ACCESS + '_' + selectedDevice?.id + '_' + date,
+      [keyTypes.WEB_REPORT_ACCESS, {id: selectedDevice?.id, date}],
       {
         exact: true,
       },
@@ -235,6 +242,12 @@ const Home = ({navigation}) => {
     return arrChart;
   };
 
+  const onRefreshing = useCallback(() => {
+    setRefreshing(true);
+
+    wait(500).then(() => setRefreshing(false));
+  }, []);
+
   let checkDeviceData =
     isSuccessDeviceList &&
     dataDeviceList?.data &&
@@ -246,7 +259,7 @@ const Home = ({navigation}) => {
         <LoadingData />
       ) : checkDeviceData ? (
         <View style={styles.container}>
-          <Loading isLoading={isLoadingReportAccess} />
+          {/* <Loading isLoading={isLoadingReportAccess} /> */}
           <TouchableWithoutFeedback
             onPress={() => {
               setToggleDeviceSelected(false);
@@ -442,8 +455,11 @@ const Home = ({navigation}) => {
           <ScrollView
             refreshControl={
               <RefreshControl
-                refreshing={false}
-                onRefresh={onRefresh}
+                refreshing={refreshing}
+                onRefresh={() => {
+                  onRefresh();
+                  onRefreshing();
+                }}
                 tintColor={colors.COLOR_WHITE}
               />
             }

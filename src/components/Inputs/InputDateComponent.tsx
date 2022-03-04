@@ -1,7 +1,8 @@
 import metrics from 'metrics';
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import DatePicker from 'react-native-datepicker';
+// @ts-ignore
+import DatePicker from 'react-native-date-picker-select';
 import {colors, sizes} from 'styles';
 import moment from 'moment';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';

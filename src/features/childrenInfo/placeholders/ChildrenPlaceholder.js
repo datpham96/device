@@ -23,7 +23,7 @@ const ChildrenPlaceholder = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: sizes.SIZE_30,
+    marginTop: sizes.SIZE_15,
   },
   avatar: {
     width: metrics.screenWidth / sizes.SIZE_5,
@@ -36,24 +36,24 @@ const styles = StyleSheet.create({
   },
   name: {
     width: '100%',
-    height: sizes.SIZE_15,
+    height: sizes.SIZE_10,
     borderRadius: sizes.SIZE_4,
   },
   device: {
     width: '80%',
-    height: sizes.SIZE_15,
+    height: sizes.SIZE_10,
     borderRadius: sizes.SIZE_4,
     marginTop: sizes.SIZE_8,
   },
   status: {
     width: '50%',
-    height: sizes.SIZE_15,
+    height: sizes.SIZE_10,
     borderRadius: sizes.SIZE_4,
     marginTop: sizes.SIZE_8,
   },
   date: {
     width: '60%',
-    height: sizes.SIZE_15,
+    height: sizes.SIZE_10,
     borderRadius: sizes.SIZE_4,
     marginTop: sizes.SIZE_8,
   },

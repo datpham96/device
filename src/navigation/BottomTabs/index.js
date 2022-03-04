@@ -115,7 +115,6 @@ const MyTabBar = ({state, descriptors, navigation}) => {
 const BottomTabs = () => {
   return (
     <Tab.Navigator
-      lazy={true}
       shifting={false}
       sceneAnimationEnabled={true}
       tabBar={props => <MyTabBar {...props} />}>
