@@ -158,7 +158,7 @@ const Home = ({navigation}) => {
     //   exact: true,
     // });
     await refetchReportAccess();
-    // await refetchDeviceList();
+    await refetchDeviceList();
   };
 
   const formatHeightBlock = useMemo(() => {

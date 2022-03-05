@@ -24,6 +24,7 @@ const colors = {
   COLOR_ERROR: '#FF655B',
   COLOR_DISABLE: '#AAAAAA',
   COLOR_LOADING_PLACEHOLDER: '#bdbdbd',
+  COLOR_LOCATION_LOCK: '#D1731D',
 
   //chart
   COLOR_CHART_BLUE: '#2CE3DD',

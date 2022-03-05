@@ -443,7 +443,7 @@ const Location = ({navigation}) => {
           <LoadingData />
         ) : isCheckMarker ? (
           <View style={styles.contentContainer}>
-            <MapMarker markers={markers} />
+            <MapMarker is_block={selectedDevice?.is_block} markers={markers} />
           </View>
         ) : (
           <EmptyData />

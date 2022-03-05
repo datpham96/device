@@ -6,7 +6,7 @@ import images from 'images';
 import {Text} from 'base';
 import FastImage from 'react-native-fast-image';
 
-const MapMarker = ({markers}) => {
+const MapMarker = ({markers, is_block}) => {
   return (
     <MapView
       provider={PROVIDER_GOOGLE}
@@ -28,11 +28,19 @@ const MapMarker = ({markers}) => {
               <FastImage
                 style={styles.imageMarker}
                 source={
-                  markers?.avatar
+                  is_block
+                    ? images.icons.lock_location
+                    : markers?.avatar
                     ? {uri: markers.avatar, priority: FastImage.priority.low}
                     : images.avatars.default
                 }
               />
+              {/* <View style={styles.wrapLockLocation}>
+                <FastImage
+                  style={styles.imageLock}
+                  source={images.icons.lock_location}
+                />
+              </View> */}
               <View style={styles.triangleMarker} />
             </View>
           </>
@@ -42,6 +50,7 @@ const MapMarker = ({markers}) => {
   );
 };
 
+const COLOR_BORDER_LOCK_LOCATION = '#F0A432';
 const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -64,11 +73,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   imageMarker: {
+    width: sizes.SIZE_30,
+    height: sizes.SIZE_30,
+    borderRadius: sizes.SIZE_30 / sizes.SIZE_2,
+    borderColor: COLOR_BORDER_LOCK_LOCATION,
+    borderWidth: sizes.SIZE_3,
+    zIndex: sizes.SIZE_1,
+  },
+  imageLock: {
     width: sizes.SIZE_25,
     height: sizes.SIZE_25,
-    borderRadius: sizes.SIZE_25 / sizes.SIZE_2,
-    borderColor: colors.COLOR_RED_ORANGE,
-    borderWidth: sizes.SIZE_1,
     zIndex: sizes.SIZE_1,
   },
   triangleMarker: {
@@ -77,15 +91,26 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderStyle: 'solid',
     borderTopWidth: sizes.SIZE_20,
-    borderRightWidth: sizes.SIZE_25 / sizes.SIZE_2,
+    borderRightWidth: sizes.SIZE_28 / sizes.SIZE_2,
     borderBottomWidth: sizes.ZERO,
-    borderLeftWidth: sizes.SIZE_25 / sizes.SIZE_2,
-    borderTopColor: colors.COLOR_RED_ORANGE,
+    // borderBottomLeftRadius: sizes.SIZE_5,
+    // borderBottomRightRadius: sizes.SIZE_5,
+    borderLeftWidth: sizes.SIZE_28 / sizes.SIZE_2,
+    borderTopColor: COLOR_BORDER_LOCK_LOCATION,
     borderRightColor: 'transparent',
     borderBottomColor: 'transparent',
     borderLeftColor: 'transparent',
     marginTop: -sizes.SIZE_9,
     zIndex: 0,
+    marginLeft: sizes.SIZE_1,
+  },
+  wrapLockLocation: {
+    backgroundColor: COLOR_BORDER_LOCK_LOCATION,
+    width: sizes.SIZE_30,
+    height: sizes.SIZE_30,
+    borderRadius: sizes.SIZE_30 / sizes.SIZE_2,
+    ...commonStyles.center,
+    zIndex: sizes.SIZE_1,
   },
 });
 
