@@ -104,11 +104,10 @@ const WebsiteControl = ({route}) => {
     if (isSuccess) {
       let listWebsite = data?.data;
       const regex = new RegExp(`${textSearch.trim()}`, 'i');
-      tmpList = listWebsite
-        .filter(
-          obj => obj.name.search(regex) >= 0 || obj.url.search(regex) >= 0,
-        )
-        .slice(0, 20);
+      tmpList = listWebsite.filter(
+        obj => obj.name.search(regex) >= 0 || obj.url.search(regex) >= 0,
+      );
+      // .slice(0, 200);
     }
     return tmpList;
     // eslint-disable-next-line react-hooks/exhaustive-deps
