@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
-import {ButtonRedirect, PopupConfirm, Loading, LoadingData} from 'components';
+import {ButtonRedirect, PopupConfirm, Loading} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
 import {useQueryClient, useQuery, useMutation} from 'react-query';
@@ -54,9 +54,6 @@ const ChildrenInfo = ({route}) => {
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
   const [avatarUri, setAvatarUri] = useState('');
   const [errors, setErrors] = useState({});
-  const [heightSectionOne, setHeightSectionOne] = useState(0);
-  const [heightSectionTwo, setHeightSectionTwo] = useState(0);
-  const [heightContainer, setHeightContainer] = useState(0);
 
   const {data, refetch, isLoading} = useQuery(
     [keyTypes.DEVICE_INFO, device_id],
@@ -333,12 +330,18 @@ const ChildrenInfo = ({route}) => {
       .catch(err => {
         mutationDeviceAvatarUpdate.reset();
         mutationDeviceUpdate.reset();
-        console.log(err, 'err==');
+        Toast(err?.msg);
       });
   };
 
   const handleRedirectLicense = () => {
-    RootNavigation.navigate(navigationTypes.activated.screen);
+    let licenseKey = data?.data?.license_key;
+    let licenseExpired = data?.data?.expire_time;
+    RootNavigation.navigate(navigationTypes.activated.screen, {
+      license_key: licenseKey,
+      license_key_expired: licenseExpired,
+      device_id: device_id,
+    });
   };
 
   const formatExpiredDate = date => {
@@ -354,24 +357,6 @@ const ChildrenInfo = ({route}) => {
       obj.expired = false;
     }
     return obj;
-  };
-
-  const handleLayoutContainer = event => {
-    const {height} = event.nativeEvent.layout;
-    setHeightContainer(height);
-    console.log(height, 'height==');
-  };
-
-  const handleLayoutSectionOne = event => {
-    const {height} = event.nativeEvent.layout;
-    setHeightSectionOne(height);
-    console.log(height, 'height-section-one==');
-  };
-
-  const handleLayoutSectionTwo = event => {
-    const {height} = event.nativeEvent.layout;
-    setHeightSectionTwo(height);
-    console.log(height, 'height-section-two==');
   };
 
   return (
@@ -484,12 +469,14 @@ const ChildrenInfo = ({route}) => {
                 style={styles.btnCancel}>
                 <Text style={styles.labelBtnCancel}>Huỷ kết nối</Text>
               </TouchableHighlight>
-              {/* <TouchableHighlight
-              onPress={handleRedirectLicense}
-              underlayColor={colors.COLOR_UNDERLAY_BLUE}
-              style={styles.btnSetup}>
-              <Text style={styles.labelBtnSetup}>Bản quyền sử dụng</Text>
-            </TouchableHighlight> */}
+              {data?.data?.license_key && (
+                <TouchableHighlight
+                  onPress={handleRedirectLicense}
+                  underlayColor={colors.COLOR_UNDERLAY_BLUE}
+                  style={styles.btnSetup}>
+                  <Text style={styles.labelBtnSetup}>Bản quyền sử dụng</Text>
+                </TouchableHighlight>
+              )}
             </View>
             <ButtonRedirect
               onPress={handleRedirectWebsiteControl}

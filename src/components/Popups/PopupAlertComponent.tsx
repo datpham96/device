@@ -9,14 +9,12 @@ import metrics from 'metrics';
 export type Props = {
   visible?: any;
   onPressCancel?: any;
-  onPressAgree?: any;
   content?: any;
 };
 
 const PopupAlertComponent: React.FC<Props> = ({
   visible = false,
   onPressCancel,
-  onPressAgree,
   content,
 }) => {
   return (

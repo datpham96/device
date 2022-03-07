@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Input, Radio, Text} from 'base';
+import {Radio, Text} from 'base';
 import {
   View,
   StyleSheet,
@@ -14,7 +14,6 @@ import images from 'images';
 import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {TextError} from 'components';
 import {getBottomSpace, getStatusBarHeight} from 'react-native-iphone-x-helper';
 import {ModalSetTimeBlockAccess} from 'components';
 import lodash from 'lodash';
@@ -28,36 +27,59 @@ const MINUTE_60 = 60;
 const ZERO = 0;
 const ONE = 1;
 
-export type Props = {
-  visible?: any,
-  onPressClose?: any,
-  isActive?: any,
-  onPressActive?: any,
-  value?: any,
-  onChangeValue?: any,
-  onPressSubmit?: any,
-  onChangeTextHours?: any,
-  valueHours?: any,
-  onChangeTextMinutes?: any,
-  valueMinutes?: any,
-  errors?: any,
-  title?: any,
-  isWebsite?: any,
-  onFocusHour?: any,
-  onFocusMinute?: any,
-};
+const DATA_TIME_LIST = [
+  {
+    id: 1,
+    day: 2,
+    dayName: 'Thứ 2',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 2,
+    day: 3,
+    dayName: 'Thứ 3',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 3,
+    day: 4,
+    dayName: 'Thứ 4',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 4,
+    day: 5,
+    dayName: 'Thứ 5',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 5,
+    day: 6,
+    dayName: 'Thứ 6',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 6,
+    day: 7,
+    dayName: 'Thứ 7',
+    startTime: '',
+    endTime: '',
+  },
+  {
+    id: 7,
+    day: 8,
+    dayName: 'CN',
+    startTime: '',
+    endTime: '',
+  },
+];
 
-export type PropsItem = {
-  startTime?: any,
-  endTime?: any,
-  day?: any,
-  containerStyle?: any,
-  onPress?: any,
-  nameApp?: any,
-  iconApp?: any,
-};
-
-const ItemTime: React.FC<PropsItem> = ({
+const ItemTime = ({
   day,
   startTime = '../..',
   endTime = '../..',
@@ -84,8 +106,6 @@ const ItemTime: React.FC<PropsItem> = ({
 };
 
 const ModalCreateUpdateWebComponent = ({
-  title = 'Chặn truy cập ứng dụng',
-  isWebsite = true,
   visible = false,
   onPressClose,
   isActive,
@@ -93,7 +113,7 @@ const ModalCreateUpdateWebComponent = ({
   nameApp,
   iconApp,
   onPressSubmit,
-  errors,
+  activeItemList,
 }) => {
   const [visibleSetupTimeModal, setVisibleSetupTimeModal] = useState(false);
   const [hoursStart, setHoursStart] = useState(HOURS_DEFAULT);
@@ -102,50 +122,55 @@ const ModalCreateUpdateWebComponent = ({
   const [minutesEnd, setMinutesEnd] = useState(MINUTE_DEFAULT);
   const [activeItem, setActiveItem] = useState({});
   const [timeError, setTimeError] = useState('');
-  const [timeList, setTimeList] = useState([
-    {
-      id: 1,
-      day: 'Thứ 2',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 2,
-      day: 'Thứ 3',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 3,
-      day: 'Thứ 4',
-      startTime: '',
-      endTime: '',
-    },
-    {
-      id: 4,
-      day: 'Thứ 5',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 5,
-      day: 'Thứ 6',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-    {
-      id: 6,
-      day: 'Thứ 7',
-      startTime: '',
-      endTime: '',
-    },
-    {
-      id: 7,
-      day: 'CN',
-      startTime: '08:00',
-      endTime: '17:00',
-    },
-  ]);
+  const [timeList, setTimeList] = useState(DATA_TIME_LIST);
+
+  //set time list by active item list
+  useEffect(() => {
+    if (activeItemList && activeItemList?.timer?.length > 0) {
+      let tmpTimeList = activeItemList?.timer?.map((item, key) => {
+        let tmpStartTime = item.start_time;
+        let tmpEndTime = item.end_time;
+        if (tmpStartTime || tmpEndTime) {
+          let tmpHoursStartTime =
+            parseFloat(tmpStartTime) > 0
+              ? tmpStartTime?.split(':')[0]
+              : HOURS_DEFAULT;
+          let tmpHoursEndTime =
+            parseFloat(tmpEndTime) > 0
+              ? tmpEndTime?.split(':')[0]
+              : HOURS_DEFAULT;
+          let tmpMinuteStartTime = parseFloat(tmpStartTime)
+            ? tmpStartTime?.split(':')[1]
+            : MINUTE_DEFAULT;
+          let tmpMinuteEndTime = parseFloat(tmpEndTime)
+            ? tmpEndTime?.split(':')[1]
+            : MINUTE_DEFAULT;
+          return {
+            ...item,
+            day: key + 2,
+            dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
+            startTime:
+              parseFloat(tmpStartTime) > 0
+                ? tmpHoursStartTime + ':' + tmpMinuteStartTime
+                : '../..',
+            endTime:
+              parseFloat(tmpEndTime) > 0
+                ? tmpHoursEndTime + ':' + tmpMinuteEndTime
+                : '../..',
+          };
+        } else {
+          return {
+            ...item,
+            day: key + 2,
+            dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
+            startTime: '',
+            endTime: '',
+          };
+        }
+      });
+      setTimeList(tmpTimeList);
+    }
+  }, [activeItemList]);
 
   //set hours start
   useEffect(() => {
@@ -195,52 +220,136 @@ const ModalCreateUpdateWebComponent = ({
   };
 
   const handleShowPopupSetupTime = item => {
-    resetState();
+    let startTime = item.startTime;
+    let endTime = item.endTime;
+    let splitStartTime = startTime?.split(':');
+    let splitEndTime = endTime?.split(':');
+    if (parseFloat(startTime) > 0) {
+      let tmpHoursStart = splitStartTime.length > 0 ? splitStartTime[0] : '00';
+      let tmpMinutesStart =
+        splitStartTime.length > 0 ? splitStartTime[1] : '00';
+      setHoursStart(tmpHoursStart);
+      setMinutesStart(tmpMinutesStart);
+    } else {
+      setHoursStart(HOURS_DEFAULT);
+      setMinutesStart(MINUTE_DEFAULT);
+    }
+
+    if (parseFloat(endTime) > 0) {
+      let tmpHoursEnd = splitEndTime.length > 0 ? splitEndTime[0] : '00';
+      let tmpMinutesEnd = splitEndTime.length > 0 ? splitEndTime[1] : '00';
+      setHoursEnd(tmpHoursEnd);
+      setMinutesEnd(tmpMinutesEnd);
+    } else {
+      setHoursEnd(HOURS_DEFAULT);
+      setMinutesEnd(MINUTE_DEFAULT);
+    }
+
     setVisibleSetupTimeModal(true);
     setActiveItem(item);
   };
 
-  const handleUpdate = () => {
-    //   if (!activeItem) {
-    //     return;
-    //   }
-    //   // eslint-disable-next-line radix
-    //   if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
-    //     setTimeError('Thời gian bắt đầu không được bỏ trống');
-    //     return;
-    //   }
-    //   // eslint-disable-next-line radix
-    //   if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
-    //     setTimeError('Thời gian kết thúc không được bỏ trống');
-    //     return;
-    //   }
-    //   if (
-    //     // eslint-disable-next-line radix
-    //     parseInt(hoursEnd) * 60 + parseInt(minutesEnd) <=
-    //     // eslint-disable-next-line radix
-    //     parseInt(hoursStart) * 60 + parseInt(minutesStart)
-    //   ) {
-    //     setTimeError('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
-    //     return;
-    //   }
-    //   setTimeError('');
-    //   let startTime = hoursStart + ':' + minutesStart;
-    //   let endTime = hoursEnd + ':' + minutesEnd;
-    //   let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
-    //   if (itemIndex !== -1) {
-    //     timeList[itemIndex] = {
-    //       ...timeList[itemIndex],
-    //       startTime: startTime,
-    //       endTime: endTime,
-    //     };
-    //     setTimeList([...timeList]);
-    //   }
+  const handleSubmitSetupTime = () => {
+    if (!activeItem) {
+      return;
+    }
+    // // eslint-disable-next-line radix
+    // if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
+    //   setTimeError('Thời gian bắt đầu không được bỏ trống');
+    //   return;
+    // }
+    // // eslint-disable-next-line radix
+    // if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
+    //   setTimeError('Thời gian kết thúc không được bỏ trống');
+    //   return;
+    // }
+    if (
+      // eslint-disable-next-line radix
+      parseInt(hoursEnd) * 60 + parseInt(minutesEnd) > 0 &&
+      // eslint-disable-next-line radix
+      parseInt(hoursStart) * 60 + parseInt(minutesStart) > 0
+    ) {
+      if (
+        // eslint-disable-next-line radix
+        parseInt(hoursEnd) * 60 + parseInt(minutesEnd) <=
+        // eslint-disable-next-line radix
+        parseInt(hoursStart) * 60 + parseInt(minutesStart)
+      ) {
+        setTimeError('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
+        return;
+      }
+    }
+
+    setTimeError('');
+    let startTime = '';
+    let endTime = '';
+    if (parseFloat(hoursStart) > 0 || parseFloat(minutesStart) > 0) {
+      startTime =
+        (hoursStart ? hoursStart : '00') +
+        ':' +
+        (minutesStart ? minutesStart : '00');
+    }
+    if (parseFloat(hoursEnd) > 0 || parseFloat(minutesEnd) > 0) {
+      endTime =
+        (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
+    }
+
+    let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
+    if (itemIndex !== -1) {
+      timeList[itemIndex] = {
+        ...timeList[itemIndex],
+        startTime: startTime,
+        endTime: endTime,
+      };
+      setTimeList([...timeList]);
+    }
 
     setVisibleSetupTimeModal(false);
   };
 
   return (
     <Modal animationType="none" transparent={true} visible={visible}>
+      <ModalSetTimeBlockAccess
+        timeError={timeError}
+        onPressClose={() => {
+          setVisibleSetupTimeModal(false);
+          resetState();
+        }}
+        visible={visibleSetupTimeModal}
+        onChangeTextHoursStart={text => setHoursStart(text)}
+        valueHoursStart={hoursStart}
+        onFocusHourStart={() => {
+          // eslint-disable-next-line radix
+          if (hoursStart.length === 2 && parseInt(hoursStart) === 0) {
+            setHoursStart('');
+          }
+        }}
+        onChangeTextMinutesStart={text => setMinutesStart(text)}
+        valueMinutesStart={minutesStart}
+        onFocusMinuteStart={() => {
+          // eslint-disable-next-line radix
+          if (minutesStart.length === 2 && parseInt(minutesStart) === 0) {
+            setMinutesStart('');
+          }
+        }}
+        onChangeTextHoursEnd={text => setHoursEnd(text)}
+        valueHoursEnd={hoursEnd}
+        onFocusHourEnd={() => {
+          // eslint-disable-next-line radix
+          if (hoursEnd.length === 2 && parseInt(hoursEnd) === 0) {
+            setHoursEnd('');
+          }
+        }}
+        onChangeTextMinutesEnd={text => setMinutesEnd(text)}
+        valueMinutesEnd={minutesEnd}
+        onFocusMinuteEnd={() => {
+          // eslint-disable-next-line radix
+          if (minutesEnd.length === 2 && parseInt(minutesEnd) === 0) {
+            setMinutesEnd('');
+          }
+        }}
+        onPressSubmit={handleSubmitSetupTime}
+      />
       <View style={styles.backgroundModal} />
       {/* <KeyboardAwareScrollView style={commonStyles.flex1}> */}
       <View style={styles.container}>
@@ -250,11 +359,14 @@ const ModalCreateUpdateWebComponent = ({
           <TouchableOpacity
             style={styles.wrapIconClose}
             activeOpacity={0.8}
-            onPress={onPressClose}>
+            onPress={() => {
+              onPressClose();
+              setTimeList([...DATA_TIME_LIST]);
+            }}>
             <FastImage style={styles.iconClose} source={images.icons.close} />
           </TouchableOpacity>
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            {title}
+            Chặn truy cập ứng dụng
           </Text>
           <View style={styles.wrapIcon}>
             <FastImage
@@ -283,10 +395,25 @@ const ModalCreateUpdateWebComponent = ({
             underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
             activeOpacity={0.9}
             style={styles.btn}
-            onPress={onPressSubmit}>
+            onPress={() => {
+              let arrItem = [];
+              timeList?.map(item => {
+                arrItem.push({
+                  day: item.day,
+                  start_time:
+                    parseFloat(item.startTime) > 0
+                      ? item.startTime + ':00'
+                      : '',
+                  end_time: parseFloat(item.endTime)
+                    ? item.endTime + ':00'
+                    : '',
+                });
+              });
+              onPressSubmit(arrItem);
+            }}>
             <Text style={styles.btnLabel}>Lưu lại</Text>
           </TouchableHighlight>
-          {/* <Text style={styles.timeUse}>Thời gian sử dụng</Text>
+          <Text style={styles.timeUse}>Thời gian sử dụng</Text>
           {isActive &&
             timeList.map((item, key) => {
               return (
@@ -298,13 +425,13 @@ const ModalCreateUpdateWebComponent = ({
                         ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
                         : {}
                     }
-                    day={item.day}
+                    day={item.dayName}
                     startTime={item.startTime}
                     endTime={item.endTime}
                   />
                 </View>
               );
-            })} */}
+            })}
         </ScrollView>
       </View>
       {/* </KeyboardAwareScrollView> */}

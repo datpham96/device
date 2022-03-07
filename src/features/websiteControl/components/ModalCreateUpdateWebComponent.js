@@ -30,7 +30,6 @@ const HOURS_23 = 23;
 const MINUTE_59 = 59;
 const MINUTE_60 = 60;
 const ZERO = 0;
-const ONE = 1;
 
 const ItemTime = ({
   day,
@@ -135,17 +134,33 @@ const ModalCreateUpdateWebComponent = ({
       let tmpTimeList = activeItemList?.timer?.map((item, key) => {
         let tmpStartTime = item.start_time;
         let tmpEndTime = item.end_time;
-        if (tmpStartTime && tmpEndTime) {
-          let tmpHoursStartTime = tmpStartTime?.split(':')[0];
-          let tmpHoursEndTime = tmpEndTime?.split(':')[0];
-          let tmpMinuteStartTime = tmpStartTime?.split(':')[1];
-          let tmpMinuteEndTime = tmpEndTime?.split(':')[1];
+        if (tmpStartTime || tmpEndTime) {
+          let tmpHoursStartTime =
+            parseFloat(tmpStartTime) > 0
+              ? tmpStartTime?.split(':')[0]
+              : HOURS_DEFAULT;
+          let tmpHoursEndTime =
+            parseFloat(tmpEndTime) > 0
+              ? tmpEndTime?.split(':')[0]
+              : HOURS_DEFAULT;
+          let tmpMinuteStartTime = parseFloat(tmpStartTime)
+            ? tmpStartTime?.split(':')[1]
+            : MINUTE_DEFAULT;
+          let tmpMinuteEndTime = parseFloat(tmpEndTime)
+            ? tmpEndTime?.split(':')[1]
+            : MINUTE_DEFAULT;
           return {
             ...item,
             day: key + 2,
             dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
-            startTime: tmpHoursStartTime + ':' + tmpMinuteStartTime,
-            endTime: tmpHoursEndTime + ':' + tmpMinuteEndTime,
+            startTime:
+              parseFloat(tmpStartTime) > 0
+                ? tmpHoursStartTime + ':' + tmpMinuteStartTime
+                : '../..',
+            endTime:
+              parseFloat(tmpEndTime) > 0
+                ? tmpHoursEndTime + ':' + tmpMinuteEndTime
+                : '../..',
           };
         } else {
           return {
@@ -209,21 +224,29 @@ const ModalCreateUpdateWebComponent = ({
   };
 
   const handleShowPopupSetupTime = item => {
-    resetState();
     let startTime = item.startTime;
     let endTime = item.endTime;
     let splitStartTime = startTime?.split(':');
     let splitEndTime = endTime?.split(':');
-    if (parseFloat(startTime) > 0 && parseFloat(endTime)) {
+    if (parseFloat(startTime) > 0) {
       let tmpHoursStart = splitStartTime.length > 0 ? splitStartTime[0] : '00';
       let tmpMinutesStart =
         splitStartTime.length > 0 ? splitStartTime[1] : '00';
+      setHoursStart(tmpHoursStart);
+      setMinutesStart(tmpMinutesStart);
+    } else {
+      setHoursStart(HOURS_DEFAULT);
+      setMinutesStart(MINUTE_DEFAULT);
+    }
+
+    if (parseFloat(endTime) > 0) {
       let tmpHoursEnd = splitEndTime.length > 0 ? splitEndTime[0] : '00';
       let tmpMinutesEnd = splitEndTime.length > 0 ? splitEndTime[1] : '00';
-      setHoursStart(tmpHoursStart);
       setHoursEnd(tmpHoursEnd);
-      setMinutesStart(tmpMinutesStart);
       setMinutesEnd(tmpMinutesEnd);
+    } else {
+      setHoursEnd(HOURS_DEFAULT);
+      setMinutesEnd(MINUTE_DEFAULT);
     }
 
     setVisibleSetupTimeModal(true);
@@ -234,32 +257,47 @@ const ModalCreateUpdateWebComponent = ({
     if (!activeItem) {
       return;
     }
-    // eslint-disable-next-line radix
-    if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
-      setTimeError('Thời gian bắt đầu không được bỏ trống');
-      return;
-    }
-    // eslint-disable-next-line radix
-    if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
-      setTimeError('Thời gian kết thúc không được bỏ trống');
-      return;
-    }
+    // // eslint-disable-next-line radix
+    // if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
+    //   setTimeError('Thời gian bắt đầu không được bỏ trống');
+    //   return;
+    // }
+    // // eslint-disable-next-line radix
+    // if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
+    //   setTimeError('Thời gian kết thúc không được bỏ trống');
+    //   return;
+    // }
     if (
       // eslint-disable-next-line radix
-      parseInt(hoursEnd) * 60 + parseInt(minutesEnd) <=
+      parseInt(hoursEnd) * 60 + parseInt(minutesEnd) > 0 &&
       // eslint-disable-next-line radix
-      parseInt(hoursStart) * 60 + parseInt(minutesStart)
+      parseInt(hoursStart) * 60 + parseInt(minutesStart) > 0
     ) {
-      setTimeError('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
-      return;
+      if (
+        // eslint-disable-next-line radix
+        parseInt(hoursEnd) * 60 + parseInt(minutesEnd) <=
+        // eslint-disable-next-line radix
+        parseInt(hoursStart) * 60 + parseInt(minutesStart)
+      ) {
+        setTimeError('Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
+        return;
+      }
     }
+
     setTimeError('');
-    let startTime =
-      (hoursStart ? hoursStart : '00') +
-      ':' +
-      (minutesStart ? minutesStart : '00');
-    let endTime =
-      (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
+    let startTime = '';
+    let endTime = '';
+    if (parseFloat(hoursStart) > 0 || parseFloat(minutesStart) > 0) {
+      startTime =
+        (hoursStart ? hoursStart : '00') +
+        ':' +
+        (minutesStart ? minutesStart : '00');
+    }
+    if (parseFloat(hoursEnd) > 0 || parseFloat(minutesEnd) > 0) {
+      endTime =
+        (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
+    }
+
     let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
     if (itemIndex !== -1) {
       timeList[itemIndex] = {
@@ -327,7 +365,7 @@ const ModalCreateUpdateWebComponent = ({
             activeOpacity={0.8}
             onPress={() => {
               onPressClose();
-              setTimeList(DATA_TIME_LIST);
+              setTimeList([...DATA_TIME_LIST]);
             }}>
             <FastImage style={styles.iconClose} source={images.icons.close} />
           </TouchableOpacity>
@@ -371,16 +409,16 @@ const ModalCreateUpdateWebComponent = ({
             onPress={() => {
               let arrItem = [];
               timeList?.map(item => {
-                if (
-                  parseFloat(item.startTime) > 0 &&
-                  parseFloat(item.endTime) > 0
-                ) {
-                  arrItem.push({
-                    day: item.day,
-                    start_time: item.startTime + ':00',
-                    end_time: item.endTime + ':00',
-                  });
-                }
+                arrItem.push({
+                  day: item.day,
+                  start_time:
+                    parseFloat(item.startTime) > 0
+                      ? item.startTime + ':00'
+                      : '',
+                  end_time: parseFloat(item.endTime)
+                    ? item.endTime + ':00'
+                    : '',
+                });
               });
               onPressSubmit(arrItem);
             }}>

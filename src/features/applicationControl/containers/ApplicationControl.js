@@ -2,17 +2,11 @@ import React, {useState, useMemo, useRef, useEffect} from 'react';
 import {Text, Background, Input} from 'base';
 import {View, FlatList, TouchableOpacity, RefreshControl} from 'react-native';
 import styles from './styles';
-import {colors, commonStyles} from 'styles';
+import {colors, commonStyles, sizes} from 'styles';
 import images from 'images';
 import {ItemComponent, ModalUpdateApplicationComponent} from '../components';
 import FastImage from 'react-native-fast-image';
-import {
-  EmptyData,
-  LoadingData,
-  Loading,
-  ModalTimeBlockAccess,
-  PopupConfirm,
-} from 'components';
+import {EmptyData, Loading} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import {useQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
@@ -36,22 +30,18 @@ const MINUTE_59 = 59;
 const MINUTE_60 = 60;
 const ZERO = 0;
 const ONE = 1;
+const DATA_PLACEHOLDER_LIST = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const ApplicationControl = ({route}) => {
   const params = route?.params;
   const typingTimoutRef = useRef(null);
   const queryClient = useQueryClient();
-  const [visibleTimeBlockAccessModal, setVisibleTimeBlockAccessModal] =
-    useState(false);
   const [activeRadio, setActiveRadio] = useState(false);
   const [textSearch, setTextSearch] = useState('');
   const [debounceTextSearch, setDebounceTextSearch] = useState(false);
   const [hours, setHours] = useState(HOURS_DEFAULT);
   const [minutes, setMinutes] = useState(MINUTE_DEFAULT);
   const [activeItem, setActiveItem] = useState({});
-  const [itemRemoveTime, setItemRemoveTime] = useState({});
-  const [visiblePopupConfirmRemoveTime, setVisiblePopupConfirmRemoveTime] =
-    useState(false);
   const [visibleDetailModal, setVisibleDetailModal] = useState(false);
 
   //application list
@@ -85,12 +75,8 @@ const ApplicationControl = ({route}) => {
 
   //application update
   const mutationUpdate = useMutation(
-    ({data_application_id, data_status, data_time_remaining}) =>
-      applicationUpdateApi(
-        data_application_id,
-        data_status,
-        data_time_remaining,
-      ),
+    ({data_application_id, data_status, data_time_list}) =>
+      applicationUpdateApi(data_application_id, data_status, data_time_list),
   );
 
   const onRefresh = async () => {
@@ -134,81 +120,7 @@ const ApplicationControl = ({route}) => {
     setActiveRadio(false);
     setHours(HOURS_DEFAULT);
     setMinutes(MINUTE_DEFAULT);
-  };
-
-  const showModalTimeBlockAccess = item => {
-    const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
-      moment(),
-      'minutes',
-    );
-    let tmpTime = '00:00';
-    if (timeUse && timeUse > 0) {
-      if (timeUse > 60) {
-        tmpTime = moment.duration(timeUse, 'minutes').format('HH:mm');
-      } else {
-        tmpTime = moment.duration(timeUse, 'minutes').format('00:mm');
-      }
-    }
-
-    setHours(tmpTime.split(':').length > 0 ? tmpTime.split(':')[0] : '00');
-    setMinutes(tmpTime.split(':').length > 0 ? tmpTime.split(':')[1] : '00');
-
-    setActiveRadio(item.status ? true : false);
-    setVisibleTimeBlockAccessModal(true);
-  };
-
-  const showPopupConfirmRemoveTime = item => {
-    setItemRemoveTime(item);
-    setVisiblePopupConfirmRemoveTime(true);
-  };
-
-  const handleTimeBlockAccess = () => {
-    // eslint-disable-next-line radix
-    setVisibleTimeBlockAccessModal(false);
-    let tmpMinutes = parseInt(hours) * MINUTE_60 + parseInt(minutes);
-    mutationUpdate
-      .mutateAsync({
-        data_application_id: itemBlockAccess?.id,
-        data_status: activeRadio ? ONE : ZERO,
-        data_time_remaining: activeRadio ? tmpMinutes : ZERO,
-      })
-      .then(resp => {
-        if (resp?.status) {
-          refetch();
-          resetState();
-          Toast(resp?.msg);
-        } else {
-          Toast(resp?.msg);
-        }
-        mutationUpdate.reset();
-      })
-      .catch(err => {
-        Toast(err?.msg);
-        mutationUpdate.reset();
-      });
-  };
-
-  const handleRemoveTimeBlockAccess = () => {
-    setVisiblePopupConfirmRemoveTime(false);
-    mutationUpdate
-      .mutateAsync({
-        data_application_id: itemRemoveTime?.id,
-        data_status: ONE,
-        data_time_remaining: ZERO,
-      })
-      .then(resp => {
-        if (resp?.status) {
-          refetch();
-          Toast(resp?.msg);
-        } else {
-          Toast(resp?.msg);
-        }
-        mutationUpdate.reset();
-      })
-      .catch(err => {
-        Toast(err?.msg);
-        mutationUpdate.reset();
-      });
+    setActiveItem({});
   };
 
   const showModalDetail = item => {
@@ -217,13 +129,13 @@ const ApplicationControl = ({route}) => {
     setActiveRadio(item.status ? true : false);
   };
 
-  const handlebUpdate = () => {
+  const handlebUpdate = timeList => {
     setVisibleDetailModal(false);
     mutationUpdate
       .mutateAsync({
         data_application_id: activeItem?.id,
         data_status: activeRadio ? ONE : ZERO,
-        data_time_remaining: 0,
+        data_time_list: activeRadio ? timeList : null,
       })
       .then(resp => {
         if (resp?.status) {
@@ -232,6 +144,7 @@ const ApplicationControl = ({route}) => {
         } else {
           Toast(resp?.msg);
         }
+        resetState();
         mutationUpdate.reset();
       })
       .catch(err => {
@@ -242,15 +155,6 @@ const ApplicationControl = ({route}) => {
   return (
     <Background bin>
       <Loading isLoading={mutationUpdate.isLoading} />
-      <PopupConfirm
-        content="Bạn có muốn gỡ thời gian chặn này không?"
-        visible={visiblePopupConfirmRemoveTime}
-        onPressAgree={() => handleRemoveTimeBlockAccess()}
-        onPressCancel={() => {
-          setVisiblePopupConfirmRemoveTime(false);
-          setItemRemoveTime({});
-        }}
-      />
       <ModalUpdateApplicationComponent
         iconApp={activeItem?.icon}
         nameApp={activeItem?.name}
@@ -262,14 +166,9 @@ const ApplicationControl = ({route}) => {
         isActive={activeRadio}
         onPressActive={() => {
           setActiveRadio(!activeRadio);
-          setHours(HOURS_DEFAULT);
-          setMinutes(MINUTE_DEFAULT);
         }}
-        onPressSubmit={handlebUpdate}
-        valueHours={hours}
-        valueMinutes={minutes}
-        onChangeTextHours={val => setHours(val.replace(/[^0-9]/g, ZERO))}
-        onChangeTextMinutes={val => setMinutes(val.replace(/[^0-9]/g, ZERO))}
+        onPressSubmit={list => handlebUpdate(list)}
+        activeItemList={activeItem}
       />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -288,15 +187,6 @@ const ApplicationControl = ({route}) => {
               icon={images.icons.input_search}
             />
           </View>
-          {/* <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => setVisibleModal(!visibleModal)}>
-            <FastImage
-              style={styles.iconHeaderPlus}
-              source={images.icons.header_plus}
-              resizeMode={FastImage.resizeMode.contain}
-            />
-          </TouchableOpacity> */}
         </View>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
           Kiểm soát Ứng dụng
@@ -308,8 +198,8 @@ const ApplicationControl = ({route}) => {
         </View>
         {isLoading ? (
           <FlatList
-            initialNumToRender={10}
-            data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            initialNumToRender={sizes.SIZE_10}
+            data={DATA_PLACEHOLDER_LIST}
             removeClippedSubviews={true}
             renderItem={() => <ItemListPlaceholder />}
             contentContainerStyle={styles.loadingContainer}

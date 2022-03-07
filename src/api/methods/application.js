@@ -8,11 +8,17 @@ export function applicationListApi(device_id) {
   return apiToken(ApiConstants.APPLICATION_LIST, 'post', bodyFormData, null);
 }
 
-export function applicationUpdateApi(app_id, status, time_remaining) {
+export function applicationUpdateApi(app_id, status, timeList) {
   //Cập nhật ứng dụng
   let bodyFormData = new FormData();
   bodyFormData.append('app_id', app_id);
   bodyFormData.append('status', status);
-  bodyFormData.append('time_remaining', time_remaining);
+  if (timeList) {
+    timeList.map((item, key) => {
+      bodyFormData.append('timer[' + key + '][day]', item.day);
+      bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
+      bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+    });
+  }
   return apiToken(ApiConstants.APPLICATION_UPDATE, 'post', bodyFormData, null);
 }

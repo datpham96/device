@@ -134,3 +134,11 @@ export function deviceAvatarUpdateApi(device_id, imageBase64) {
   bodyFormData.append('avatar', imageBase64);
   return apiToken(ApiConstants.DEVICE_AVATAR_UPDATE, 'post', bodyFormData);
 }
+
+export function deviceLicenseKeyUpdateApi(device_id, lisence_key) {
+  //Cập nhật license
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  bodyFormData.append('lisence_key', lisence_key);
+  return apiToken(ApiConstants.DEVICE_LICENSE_KEY_UPDATE, 'post', bodyFormData);
+}

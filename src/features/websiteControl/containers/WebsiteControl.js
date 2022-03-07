@@ -201,11 +201,11 @@ const WebsiteControl = ({route}) => {
       .then(resp => {
         if (resp?.status) {
           refetch();
-          resetState();
           Toast(resp?.msg);
         } else {
           Toast(resp?.msg);
         }
+        resetState();
         mutationCreate.reset();
       })
       .catch(err => {
