@@ -31,6 +31,7 @@ const images = {
     area_filter: require('../../assets/images/icons/area_filter.png'),
     area_safe_search: require('../../assets/images/icons/area_safe_search.png'),
     lock_location: require('../../assets/images/icons/lock_location.png'),
+    question: require('../../assets/images/icons/question.png'),
   },
   avatars: {
     default: require('../../assets/images/avatars/default.jpeg'),

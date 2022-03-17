@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import styles from './styles';
 import {useDispatch, useSelector} from 'react-redux';
@@ -26,6 +27,8 @@ import Validator from 'validatorjs';
 import {Toast} from 'customs';
 import {buildAvatar} from 'src/helpers/funcs';
 import VersionInfo from 'react-native-version-info';
+import {useQueryClient} from 'react-query';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {
   requestMultiple,
@@ -42,6 +45,7 @@ const options = {
 
 const Account = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const isLoadingLogout = useSelector(state => state.auth.isLoadingLogout);
   const userInfo = useSelector(state => state.user.userInfo);
   const isLoadingUpdateUserAvatar = useSelector(
@@ -87,6 +91,7 @@ const Account = () => {
   }, [statusUpdateUserAvatar, statusUpdateUserInfo, dispatch]);
 
   const handleLogout = () => {
+    queryClient.clear();
     setVisibleConfirm(false);
     dispatch(logoutRequest());
   };
@@ -182,7 +187,7 @@ const Account = () => {
   };
 
   return (
-    <Background bout>
+    <Background bottomTab bout>
       <PopupConfirm
         labelBtnLeft="Cài đặt"
         labelBtnRight="Huỷ"
@@ -225,69 +230,73 @@ const Account = () => {
         onPressCancel={() => setVisibleConfirm(!visibleConfirm)}
         onPressAgree={handleLogout}
       />
-      <ScrollView style={styles.container}>
-        <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
-          Quản lý thông tin
-        </Text>
-        <TouchableOpacity
-          onPress={handleOpenBottomSheetImagePicker}
-          activeOpacity={0.9}
-          style={styles.wrapAvatar}>
-          {loadingAvatar && (
-            <View style={styles.wrapActivityIndicator}>
-              <ActivityIndicator color={colors.COLOR_WHITE} />
-            </View>
-          )}
-          <>
-            <FastImage
-              onLoadEnd={() => setLoadingAvatar(false)}
-              onLoadStart={() => setLoadingAvatar(true)}
-              onError={() => setLoadingAvatar(false)}
-              style={styles.avatar}
-              source={avatarUri}
+      <KeyboardAwareScrollView
+        enableOnAndroid={true}
+        enableAutomaticScroll={Platform.OS === 'ios'}>
+        <ScrollView style={styles.container}>
+          <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
+            Quản lý thông tin
+          </Text>
+          <TouchableOpacity
+            onPress={handleOpenBottomSheetImagePicker}
+            activeOpacity={0.9}
+            style={styles.wrapAvatar}>
+            {loadingAvatar && (
+              <View style={styles.wrapActivityIndicator}>
+                <ActivityIndicator color={colors.COLOR_WHITE} />
+              </View>
+            )}
+            <>
+              <FastImage
+                onLoadEnd={() => setLoadingAvatar(false)}
+                onLoadStart={() => setLoadingAvatar(true)}
+                onError={() => setLoadingAvatar(false)}
+                style={styles.avatar}
+                source={avatarUri}
+              />
+              <FastImage
+                style={styles.iconCapturePlus}
+                source={images.icons.capture_white_plus}
+              />
+            </>
+          </TouchableOpacity>
+          <View style={styles.wrapInput}>
+            <Input
+              value={name}
+              onChangeValue={val => setName(val)}
+              placeholder="Họ và tên"
             />
-            <FastImage
-              style={styles.iconCapturePlus}
-              source={images.icons.capture_white_plus}
+            {errors?.name && <TextError message={errors?.name} />}
+          </View>
+          <View style={styles.wrapInput}>
+            <Input
+              containerInput={{backgroundColor: colors.COLOR_DISABLE}}
+              customerInput={{backgroundColor: colors.COLOR_DISABLE}}
+              props={{editable: false}}
+              placeholder="Số điện thoại"
+              value={userInfo.phone}
             />
-          </>
-        </TouchableOpacity>
-        <View style={styles.wrapInput}>
-          <Input
-            value={name}
-            onChangeValue={val => setName(val)}
-            placeholder="Họ và tên"
-          />
-          {errors?.name && <TextError message={errors?.name} />}
-        </View>
-        <View style={styles.wrapInput}>
-          <Input
-            containerInput={{backgroundColor: colors.COLOR_DISABLE}}
-            customerInput={{backgroundColor: colors.COLOR_DISABLE}}
-            props={{editable: false}}
-            placeholder="Số điện thoại"
-            value={userInfo.phone}
-          />
-        </View>
-        <Text
-          style={styles.btnChangePassword}
-          onPress={handleRedirectChangePassword}>
-          Đổi mật khẩu
-        </Text>
-        <View style={styles.wrapBtn}>
-          <Button
-            onPress={() => setVisibleConfirm(true)}
-            customStyle={styles.btn}
-            label="Đăng xuất"
-          />
-          <Button
-            customStyle={styles.btn}
-            onPress={handleUpdate}
-            label="Cập nhật"
-          />
-        </View>
-      </ScrollView>
-      <Text style={styles.version}>Ver {VersionInfo.appVersion}</Text>
+          </View>
+          <Text
+            style={styles.btnChangePassword}
+            onPress={handleRedirectChangePassword}>
+            Đổi mật khẩu
+          </Text>
+          <View style={styles.wrapBtn}>
+            <Button
+              onPress={() => setVisibleConfirm(true)}
+              customStyle={styles.btn}
+              label="Đăng xuất"
+            />
+            <Button
+              customStyle={styles.btn}
+              onPress={handleUpdate}
+              label="Cập nhật"
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAwareScrollView>
+      <Text style={styles.version}>Phiên bản {VersionInfo.appVersion}</Text>
     </Background>
   );
 };

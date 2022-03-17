@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina3_5" orientation="portrait" appearance="light"/>
+    <device id="retina5_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--View Controller-->
         <scene sceneID="EHf-IW-A2E">
@@ -17,29 +22,70 @@
                         <viewControllerLayoutGuide type="bottom" id="rTP-gI-geG"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="nvS-Wf-FUo">
+                                <rect key="frame" x="20" y="120" width="374" height="74.666666666666686"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="nvS-Wf-FUo" secondAttribute="height" multiplier="1:0.2" id="Sxd-fs-D26"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright by Masscom Vietnam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="awh-Y0-5hI">
+                                <rect key="frame" x="0.0" y="694" width="414" height="16"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                <color key="textColor" systemColor="secondarySystemBackgroundColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="computer" translatesAutoresizingMaskIntoConstraints="NO" id="ipU-Mr-9Z0" userLabel="computer">
+                                <rect key="frame" x="0.0" y="376.33333333333326" width="414" height="289.66666666666674"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="ipU-Mr-9Z0" secondAttribute="height" multiplier="1:0.7" id="kgH-Cx-gG6"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="label" translatesAutoresizingMaskIntoConstraints="NO" id="DiC-QS-9Pu" userLabel="label">
+                                <rect key="frame" x="144.66666666666666" y="160" width="124.99999999999997" height="128"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="da5-mH-OZ3"/>
+                                </constraints>
+                            </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="GY7-yX-AbZ" userLabel="launch">
-                                <rect key="frame" x="0.0" y="-8" width="320" height="496"/>
+                                <rect key="frame" x="0.0" y="-8" width="414" height="752"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ipU-Mr-9Z0" secondAttribute="trailing" id="1yZ-tG-uZZ"/>
+                            <constraint firstItem="ipU-Mr-9Z0" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="52O-Nc-tU1"/>
                             <constraint firstItem="GY7-yX-AbZ" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="9sP-5y-5zI"/>
+                            <constraint firstItem="nvS-Wf-FUo" firstAttribute="centerX" secondItem="ipU-Mr-9Z0" secondAttribute="centerX" id="ANF-J1-31G"/>
+                            <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="ipU-Mr-9Z0" secondAttribute="bottom" constant="70" id="Ayr-7v-Ie7"/>
+                            <constraint firstItem="awh-Y0-5hI" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="BFf-Uz-AtC"/>
+                            <constraint firstItem="DiC-QS-9Pu" firstAttribute="centerY" secondItem="GY7-yX-AbZ" secondAttribute="centerY" constant="-144" id="DFP-nq-Rv2"/>
+                            <constraint firstItem="DiC-QS-9Pu" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Pbt-ul-iWP"/>
                             <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="GY7-yX-AbZ" secondAttribute="bottomMargin" id="T2Y-Bd-19O"/>
                             <constraint firstItem="GY7-yX-AbZ" firstAttribute="topMargin" secondItem="nPs-R3-jxP" secondAttribute="bottom" id="aYp-aS-ezb"/>
                             <constraint firstAttribute="trailing" secondItem="GY7-yX-AbZ" secondAttribute="trailing" id="ag7-H4-PID"/>
+                            <constraint firstAttribute="trailing" secondItem="awh-Y0-5hI" secondAttribute="trailing" id="b4y-WI-yfi"/>
+                            <constraint firstItem="nvS-Wf-FUo" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="m1A-0G-sGp"/>
+                            <constraint firstItem="nvS-Wf-FUo" firstAttribute="top" secondItem="GY7-yX-AbZ" secondAttribute="topMargin" constant="120" identifier="1" id="xlu-jG-CC1"/>
+                            <constraint firstItem="GY7-yX-AbZ" firstAttribute="bottom" secondItem="awh-Y0-5hI" secondAttribute="top" constant="50" id="yCq-J9-T1k"/>
                         </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="49.230769230769226" y="373.93364928909949"/>
+            <point key="canvasLocation" x="46.261682242990652" y="372.57019438444928"/>
         </scene>
     </scenes>
     <resources>
-        <image name="launch" width="187.5" height="406"/>
+        <image name="computer" width="97" height="103.33333587646484"/>
+        <image name="label" width="125" height="21"/>
+        <image name="launch" width="125" height="270.66665649414062"/>
+        <image name="logo" width="100" height="100"/>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

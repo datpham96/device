@@ -28,7 +28,11 @@ const PopupConfirmComponent: React.FC<Props> = ({
   notiLabel = 'Thông báo',
 }) => {
   return (
-    <Modal animationType="none" transparent={true} visible={visible}>
+    <Modal
+      onRequestClose={onPressCancel}
+      animationType="none"
+      transparent={true}
+      visible={visible}>
       <View style={styles.backgroundModal} />
       <View style={styles.container}>
         <View style={styles.contentContainer}>

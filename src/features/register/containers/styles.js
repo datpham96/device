@@ -13,11 +13,11 @@ export default StyleSheet.create({
     marginTop: sizes.SIZE_20,
   },
   mainTitle: {
-    marginVertical: sizes.SIZE_40,
+    marginVertical: sizes.SIZE_25,
   },
   contentContainer: {
     paddingHorizontal: sizes.SIZE_30,
-    marginTop: sizes.SIZE_50,
+    marginTop: sizes.SIZE_30,
   },
   btn: {
     alignSelf: 'center',

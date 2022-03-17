@@ -94,6 +94,9 @@ export function deviceUpdateApi(
   let bodyFormData = new FormData();
   bodyFormData.append('device_id', device_id);
   bodyFormData.append('is_block', is_block);
+  bodyFormData.append('full_name', full_name);
+  bodyFormData.append('birthday', birthday);
+  bodyFormData.append('gender', gender);
   if (full_name) {
     bodyFormData.append('full_name', full_name);
   }
@@ -141,4 +144,22 @@ export function deviceLicenseKeyUpdateApi(device_id, lisence_key) {
   bodyFormData.append('device_id', device_id);
   bodyFormData.append('lisence_key', lisence_key);
   return apiToken(ApiConstants.DEVICE_LICENSE_KEY_UPDATE, 'post', bodyFormData);
+}
+
+export function deviceTimerAccessUpdateApi(device_id, time_list) {
+  //Cập nhật thời gian truy cập của thiết bị
+  let bodyFormData = new FormData();
+  bodyFormData.append('device_id', device_id);
+  if (time_list) {
+    time_list.map((item, key) => {
+      bodyFormData.append('timer[' + key + '][day]', item.day);
+      bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
+      bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+    });
+  }
+  return apiToken(
+    ApiConstants.DEVICE_TIMER_ACCESS_UPDATE,
+    'post',
+    bodyFormData,
+  );
 }

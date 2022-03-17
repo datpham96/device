@@ -97,14 +97,41 @@ const Register = () => {
         password: validation.errors.first('password'),
         rePassword: validation.errors.first('rePassword'),
       });
+      if (!checkVar.isPassword(password)) {
+        setErrors({
+          ...errors,
+          password:
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+          name: false,
+          phone: false,
+          rePassword: false,
+        });
+        return;
+      } else {
+        setErrors({
+          ...errors,
+          password: false,
+        });
+      }
     }
 
     if (password !== rePassword) {
       setErrors({
         ...errors,
         rePassword: 'Mật khẩu xác nhận không khớp',
+        password: false,
+        name: false,
+        phone: false,
       });
       return;
+    } else {
+      setErrors({
+        ...errors,
+        rePassword: false,
+        password: false,
+        name: false,
+        phone: false,
+      });
     }
 
     //handle register

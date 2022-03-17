@@ -22,7 +22,7 @@ import {
   deviceUpdateApi,
 } from 'methods/device';
 import {Toast} from 'customs';
-import {ModalSetupAccess, ModalUpdateInfo, Switch} from '../components';
+import {ModalLimitTimeUseDevice, ModalUpdateInfo, Switch} from '../components';
 import FastImage from 'react-native-fast-image';
 import images from 'images';
 import types from '../types';
@@ -40,7 +40,6 @@ const ChildrenInfo = ({route}) => {
   const queryClient = useQueryClient();
 
   const [visibleRemoveDevice, setVisibleRemoveDevice] = useState(false);
-  const [visibleSetup, setVisibleSetup] = useState(false);
   const [visibleConfirm, setVisibleConfirm] = useState(false);
   const [enableSafeSearch, setEnableSafeSearch] = useState(true);
   const [enableSafeWeb, setEnableSafeWeb] = useState(true);
@@ -54,6 +53,8 @@ const ChildrenInfo = ({route}) => {
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
   const [avatarUri, setAvatarUri] = useState('');
   const [errors, setErrors] = useState({});
+  const [visibleLimitTimeUseModal, setVisibleLimitTimeUseModal] =
+    useState(false);
 
   const {data, refetch, isLoading} = useQuery(
     [keyTypes.DEVICE_INFO, device_id],
@@ -78,8 +79,14 @@ const ChildrenInfo = ({route}) => {
       setFullname(detail?.full_name);
       setDeviceName(detail?.device_name);
       setGender(detail?.gender ? detail?.gender : '');
-      setBirthday(detail?.birthday);
       setAvatarUri({uri: detail?.avatar});
+      if (moment(detail?.birthday, 'YYYY-MM-DD').isValid()) {
+        setBirthday(
+          moment(detail?.birthday, 'YYYY-MM-DD').format('DD-MM-YYYY'),
+        );
+      } else {
+        setBirthday(moment());
+      }
     }
   }, [data]);
 
@@ -313,7 +320,7 @@ const ChildrenInfo = ({route}) => {
           data_device_id: device_id,
           data_is_block: data?.data?.is_block,
           data_full_name: fullName,
-          data_birthday: birthday,
+          data_birthday: moment(birthday, 'DD/MM/YYYY').format('YYYY-MM-DD'),
           data_gender: gender,
         });
       })
@@ -361,7 +368,20 @@ const ChildrenInfo = ({route}) => {
 
   return (
     <Background bin>
+      <ModalLimitTimeUseDevice
+        onRequestCloseModal={() => {
+          setVisibleLimitTimeUseModal(false);
+        }}
+        onSuccessTimer={() => refetch()}
+        deviceId={device_id}
+        onPressClose={() => {
+          setVisibleLimitTimeUseModal(false);
+        }}
+        visible={visibleLimitTimeUseModal}
+        itemList={data?.data}
+      />
       <ModalUpdateInfo
+        onRequestCloseModal={handleCloseUpdateInfo}
         avatarUri={avatarUri}
         setAvatarUri={val => setAvatarUri(val)}
         errors={errors}
@@ -374,8 +394,8 @@ const ChildrenInfo = ({route}) => {
         deviceNameValue={deviceName}
         genderValue={gender}
         onChangeGender={val => setGender(val)}
-        birthday={birthday}
         onChangeBirthday={val => setBirthday(val)}
+        birthdayValue={birthday}
       />
       <Loading
         isLoading={
@@ -384,11 +404,7 @@ const ChildrenInfo = ({route}) => {
           mutationDeviceUpdate.isLoading
         }
       />
-      <ModalSetupAccess
-        deviceId={device_id}
-        visible={visibleSetup}
-        onPressClose={() => setVisibleSetup(false)}
-      />
+
       <PopupConfirm
         content="Bạn có chắc chắn muốn ngắt kết nối không?"
         visible={visibleRemoveDevice}
@@ -479,6 +495,11 @@ const ChildrenInfo = ({route}) => {
               )}
             </View>
             <ButtonRedirect
+              onPress={() => setVisibleLimitTimeUseModal(true)}
+              label="Giới hạn thời gian"
+            />
+            <ButtonRedirect
+              containerStyle={styles.btnRedirect}
               onPress={handleRedirectWebsiteControl}
               label="Kiểm soát website"
             />

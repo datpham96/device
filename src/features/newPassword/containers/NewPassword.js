@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Validator from 'validatorjs';
 import {changePasswordRequest, changePasswordReset} from 'actions/userActions';
 import {Toast} from 'customs';
-import {Loading} from 'components';
+import {Loading, TextError} from 'components';
 import * as RootNavigation from 'RootNavigation';
 import {checkVar} from 'src/helpers/funcs';
 
@@ -59,7 +59,7 @@ const NewPassword = () => {
       {
         'required.oldPassword': 'Mật khẩu hiện tại không được bỏ trống',
         'required.newPassword': 'Mật khẩu mới không được bỏ trống',
-        'required.reNewPassword': 'Nhập lại mật khẩu mới không đúng định dạng',
+        'required.reNewPassword': 'Nhập lại mật khẩu mới không được bỏ trống',
       },
     );
 
@@ -76,7 +76,7 @@ const NewPassword = () => {
       ) {
         setErrors({
           ...errors,
-          password:
+          newPassword:
             'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
         });
         return;
@@ -91,14 +91,39 @@ const NewPassword = () => {
         newPassword: validation.errors.first('newPassword'),
         reNewPassword: validation.errors.first('reNewPassword'),
       });
+
+      if (!checkVar.isPassword(newPassword)) {
+        setErrors({
+          ...errors,
+          newPassword:
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+          oldPassword: false,
+          reNewPassword: false,
+        });
+        return;
+      } else {
+        setErrors({
+          ...errors,
+          newPassword: false,
+        });
+      }
     }
 
     if (newPassword !== reNewPassword) {
       setErrors({
         ...errors,
-        reNewPassword: 'Nhập lại mật khẩu mới không đúng định dạng',
+        reNewPassword: 'Mật khẩu xác nhận không khớp',
+        newPassword: false,
+        oldPassword: false,
       });
       return;
+    } else {
+      setErrors({
+        ...errors,
+        reNewPassword: false,
+        newPassword: false,
+        oldPassword: false,
+      });
     }
 
     dispatch(changePasswordRequest(oldPassword, newPassword, reNewPassword));
@@ -121,6 +146,7 @@ const NewPassword = () => {
             placeholder="Nhập mật khẩu hiện tại"
             icon={images.icons.key}
           />
+          {errors?.oldPassword && <TextError message={errors?.oldPassword} />}
         </View>
         <View style={styles.wrapInput}>
           <Input
@@ -132,6 +158,7 @@ const NewPassword = () => {
             placeholder="Nhập mật khẩu mới"
             icon={images.icons.key}
           />
+          {errors?.newPassword && <TextError message={errors?.newPassword} />}
         </View>
         <View style={styles.wrapInput}>
           <Input
@@ -143,6 +170,9 @@ const NewPassword = () => {
             placeholder="Nhập lại mật khẩu mới"
             icon={images.icons.key}
           />
+          {errors?.reNewPassword && (
+            <TextError message={errors?.reNewPassword} />
+          )}
         </View>
         <Button
           onPress={handleSave}

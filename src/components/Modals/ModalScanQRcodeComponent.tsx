@@ -25,7 +25,11 @@ const ModalScanQRcode: React.FC<Props> = ({
   const [toggleFlash, setToggleFlash] = useState(false);
   const [toggleCameraReverse, setToggleCameraReverse] = useState(false);
   return (
-    <Modal animationType="fade" style={styles.modalContainer} visible={visible}>
+    <Modal
+      onRequestClose={onPressClose}
+      animationType="fade"
+      style={styles.modalContainer}
+      visible={visible}>
       <Background bout>
         <View>
           <TouchableOpacity

@@ -39,6 +39,7 @@ const ModalUpdateInfoComponent = ({
   setDataRequestAvatar,
   setAvatarUri,
   avatarUri,
+  onRequestCloseModal,
 }) => {
   const [visibleImagePicker, setVisibleImagePicker] = useState(false);
   const handleOpenCamera = () => {
@@ -74,7 +75,11 @@ const ModalUpdateInfoComponent = ({
     setVisibleImagePicker(true);
   };
   return (
-    <Modal animationType="none" transparent={true} visible={visible}>
+    <Modal
+      onRequestClose={onRequestCloseModal}
+      animationType="none"
+      transparent={true}
+      visible={visible}>
       <ModalBottomSheet
         onPressOne={handleOpenCamera}
         onPressTwo={handleOpenLibrary}

@@ -176,6 +176,7 @@ const DeviceInfo = ({route}) => {
         data_avatar: dataRequestAvatar,
       })
       .then(resp => {
+        console.log(resp, 'resp----');
         if (resp.status) {
           Toast(resp?.msg);
           RootNavigation.navigate(navigationTypes.childrenManager.screen);

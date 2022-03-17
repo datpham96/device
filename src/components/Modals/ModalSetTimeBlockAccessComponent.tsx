@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 import React from 'react';
 import {Text} from 'base';
 import {
@@ -6,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   TouchableHighlight,
+  Platform,
 } from 'react-native';
 import images from 'images';
 import FastImage from 'react-native-fast-image';
@@ -13,6 +15,7 @@ import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
 import {TextInput} from 'react-native-gesture-handler';
 import TextError from '../TextErrorComponent';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 export type Props = {
   visible?: any;
@@ -31,6 +34,8 @@ export type Props = {
   valueMinutesEnd?: any;
   onFocusMinuteEnd?: any;
   timeError?: any;
+  onPressWithoutModal?: any;
+  onRequestCloseModal?: any;
 };
 
 const ModalSetTimeBlockAccessComponent: React.FC<Props> = ({
@@ -50,80 +55,94 @@ const ModalSetTimeBlockAccessComponent: React.FC<Props> = ({
   valueMinutesEnd,
   onFocusMinuteEnd,
   timeError,
+  onRequestCloseModal,
 }) => {
   return (
-    <Modal animationType="none" transparent={true} visible={visible}>
+    <Modal
+      onRequestClose={onRequestCloseModal}
+      animationType="none"
+      transparent={true}
+      visible={visible}>
       <View style={styles.backgroundModal} />
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <TouchableOpacity activeOpacity={0.8} onPress={onPressClose}>
-            <FastImage style={styles.iconClose} source={images.icons.close} />
-          </TouchableOpacity>
-          <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            Cấu hình thời gian
-          </Text>
-          <Text style={styles.timeError}>
-            {timeError && <TextError message={timeError} />}
-          </Text>
-          <View style={styles.wrapInputTimes}>
-            <View style={styles.contentInputTimes}>
-              <Text style={styles.labelInput}>Bắt đầu</Text>
-              <View style={styles.wrapInput}>
-                <TextInput
-                  onChangeText={onChangeTextHoursStart}
-                  value={valueHoursStart}
-                  style={styles.inputTime}
-                  maxLength={2}
-                  keyboardType="number-pad"
-                  onFocus={onFocusHourStart}
-                />
-                <Text style={[styles.spaceInput, {color: colors.COLOR_WHITE}]}>
-                  :
-                </Text>
-                <TextInput
-                  onChangeText={onChangeTextMinutesStart}
-                  value={valueMinutesStart}
-                  style={styles.inputTime}
-                  maxLength={2}
-                  keyboardType="number-pad"
-                  onFocus={onFocusMinuteStart}
-                />
+      <KeyboardAwareScrollView
+        enableAutomaticScroll={Platform.OS === 'ios'}
+        contentContainerStyle={styles.container}>
+        <View>
+          <View style={styles.contentContainer}>
+            <TouchableOpacity
+              style={styles.wrapIconClose}
+              activeOpacity={0.8}
+              onPress={onPressClose}>
+              <FastImage style={styles.iconClose} source={images.icons.close} />
+            </TouchableOpacity>
+            <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
+              Cấu hình thời gian
+            </Text>
+            <Text style={styles.timeError}>
+              {timeError && <TextError message={timeError} />}
+            </Text>
+            <View style={styles.wrapInputTimes}>
+              <View style={styles.contentInputTimes}>
+                <Text style={styles.labelInput}>Bắt đầu</Text>
+                <View style={styles.wrapInput}>
+                  <TextInput
+                    onChangeText={onChangeTextHoursStart}
+                    value={valueHoursStart}
+                    style={styles.inputTime}
+                    maxLength={2}
+                    keyboardType="number-pad"
+                    onFocus={onFocusHourStart}
+                  />
+                  <Text
+                    style={[styles.spaceInput, {color: colors.COLOR_WHITE}]}>
+                    :
+                  </Text>
+                  <TextInput
+                    onChangeText={onChangeTextMinutesStart}
+                    value={valueMinutesStart}
+                    style={styles.inputTime}
+                    maxLength={2}
+                    keyboardType="number-pad"
+                    onFocus={onFocusMinuteStart}
+                  />
+                </View>
+              </View>
+              <View style={styles.contentInputTimes}>
+                <Text style={styles.labelInput}>Kết thúc</Text>
+                <View style={styles.wrapInput}>
+                  <TextInput
+                    onChangeText={onChangeTextHoursEnd}
+                    value={valueHoursEnd}
+                    style={styles.inputTime}
+                    maxLength={2}
+                    keyboardType="number-pad"
+                    onFocus={onFocusHourEnd}
+                  />
+                  <Text
+                    style={[styles.spaceInput, {color: colors.COLOR_WHITE}]}>
+                    :
+                  </Text>
+                  <TextInput
+                    onChangeText={onChangeTextMinutesEnd}
+                    value={valueMinutesEnd}
+                    style={styles.inputTime}
+                    maxLength={2}
+                    keyboardType="number-pad"
+                    onFocus={onFocusMinuteEnd}
+                  />
+                </View>
               </View>
             </View>
-            <View style={styles.contentInputTimes}>
-              <Text style={styles.labelInput}>Kết thúc</Text>
-              <View style={styles.wrapInput}>
-                <TextInput
-                  onChangeText={onChangeTextHoursEnd}
-                  value={valueHoursEnd}
-                  style={styles.inputTime}
-                  maxLength={2}
-                  keyboardType="number-pad"
-                  onFocus={onFocusHourEnd}
-                />
-                <Text style={[styles.spaceInput, {color: colors.COLOR_WHITE}]}>
-                  :
-                </Text>
-                <TextInput
-                  onChangeText={onChangeTextMinutesEnd}
-                  value={valueMinutesEnd}
-                  style={styles.inputTime}
-                  maxLength={2}
-                  keyboardType="number-pad"
-                  onFocus={onFocusMinuteEnd}
-                />
-              </View>
-            </View>
+            <TouchableHighlight
+              underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
+              activeOpacity={0.9}
+              style={styles.btn}
+              onPress={onPressSubmit}>
+              <Text style={styles.btnLabel}>Lưu lại</Text>
+            </TouchableHighlight>
           </View>
-          <TouchableHighlight
-            underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
-            activeOpacity={0.9}
-            style={styles.btn}
-            onPress={onPressSubmit}>
-            <Text style={styles.btnLabel}>Lưu lại</Text>
-          </TouchableHighlight>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </Modal>
   );
 };
@@ -139,6 +158,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     opacity: 0.5,
     zIndex: 0,
+  },
+  wrapIconClose: {
+    alignSelf: 'flex-end',
   },
   iconClose: {
     width: sizes.SIZE_30,
@@ -182,6 +204,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: fonts.lexendDeca.FONT_REGULAR,
     fontSize: sizes.SIZE_18,
+    color: colors.COLOR_BLACK,
   },
   timeError: {
     marginTop: sizes.SIZE_10,

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Image, TouchableOpacity, BackHandler} from 'react-native';
 import {Text} from 'base';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
@@ -83,11 +83,11 @@ const MyTabBar = ({state, descriptors, navigation}) => {
             <Image
               style={[
                 styles.btIcon,
-                // {
-                //   tintColor: isFocused
-                //     ? colors.COLOR_RED_ORANGE
-                //     : colors.COLOR_WHITE,
-                // },
+                {
+                  tintColor: isFocused
+                    ? colors.COLOR_ACTIVED_BOTTOM_TAB
+                    : colors.COLOR_WHITE,
+                },
               ]}
               source={icon}
             />
@@ -95,9 +95,9 @@ const MyTabBar = ({state, descriptors, navigation}) => {
               style={[
                 styles.labelBottomTab,
                 {
-                  // color: isFocused
-                  //   ? colors.COLOR_RED_ORANGE
-                  //   : colors.COLOR_WHITE,
+                  color: isFocused
+                    ? colors.COLOR_ACTIVED_BOTTOM_TAB
+                    : colors.COLOR_WHITE,
                   fontFamily: isFocused
                     ? fonts.lexendDeca.FONT_BOLD
                     : fonts.lexendDeca.FONT_REGULAR,

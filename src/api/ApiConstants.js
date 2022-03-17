@@ -39,6 +39,7 @@ const ApiConstants = {
   DEVICE_SETTING_UPDATE: 'settingDevice/update', //Cập nhật cài đặt thiết bị
   DEVICE_AVATAR_UPDATE: 'device/changeAvatar', //Cập nhật cài đặt thiết bị
   DEVICE_LICENSE_KEY_UPDATE: 'device/updateLisenceKey', //Cập nhật license key
+  DEVICE_TIMER_ACCESS_UPDATE: 'device/updateTimer', //Cập nhật thời gian truy cấp cho thiết bị,
 
   //Path history
   DEVICE_HISTORY: 'history/listWebHistory', //Lịch sử truy cập web

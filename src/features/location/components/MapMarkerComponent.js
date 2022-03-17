@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
@@ -114,4 +115,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(MapMarker);
+function areEqual(prevProps, nextProps) {
+  return (
+    prevProps?.is_block === nextProps?.is_block &&
+    prevProps?.markers?.latitude === nextProps?.markers?.latitude &&
+    prevProps?.markers?.latitudeDelta === nextProps?.markers?.latitudeDelta &&
+    prevProps?.markers?.longitude === nextProps?.markers?.longitude &&
+    prevProps?.markers?.longitudeDelta === nextProps?.markers?.longitudeDelta
+  );
+}
+
+export default React.memo(MapMarker, areEqual);

@@ -48,7 +48,12 @@ const Background: React.FC<Props> = ({
             customerBackgroundImage,
           ]}>
           {isKeyboard ? (
-            <KeyboardAwareScrollView>{children}</KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+              enableOnAndroid={true}
+              extraScrollHeight={sizes.SIZE_20}
+              style={styles.keyboard}>
+              {children}
+            </KeyboardAwareScrollView>
           ) : (
             children
           )}
@@ -64,7 +69,12 @@ const Background: React.FC<Props> = ({
             customerBackgroundImage,
           ]}>
           {isKeyboard ? (
-            <KeyboardAwareScrollView>{children}</KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+              enableOnAndroid={true}
+              extraScrollHeight={sizes.SIZE_20}
+              style={styles.keyboard}>
+              {children}
+            </KeyboardAwareScrollView>
           ) : (
             children
           )}
@@ -95,6 +105,7 @@ const styles = StyleSheet.create({
     // paddingTop: sizes.ZERO,
     paddingBottom: sizes.ZERO,
   },
+  keyboard: {},
 });
 
 export default Background;

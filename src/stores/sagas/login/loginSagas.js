@@ -52,6 +52,8 @@ export function* registerRequest(action) {
     const {name, phone, password} = action.payload;
     let respRegister = yield call(registerApi, name, phone, password);
     if (respRegister?.data?.token) {
+      let respUserInfo = yield call(userInfoApi, respRegister.data?.token);
+      yield put(userInfoSuccess(respUserInfo?.data));
       yield setToken(respRegister?.data?.token);
       yield setExpiredToken();
       yield put(registerSuccess());

@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   },
   scrollItemDeviceSelect: {
     // top: metrics.screenWidth / sizes.SIZE_10 + sizes.SIZE_5,
-    width: '95%',
+    width: '120%',
   },
   contentItemDeviceSelect: {
     paddingBottom: sizes.SIZE_15,

@@ -83,6 +83,8 @@ const OtpNewPassword = () => {
           ...errors,
           password:
             'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+          rePassword: validation.errors.first('rePassword'),
+          otp: validation.errors.first('otp'),
         });
         return;
       }
@@ -96,14 +98,38 @@ const OtpNewPassword = () => {
         rePassword: validation.errors.first('rePassword'),
         otp: validation.errors.first('otp'),
       });
+      if (!checkVar.isPassword(password)) {
+        setErrors({
+          ...errors,
+          password:
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+          otp: false,
+          rePassword: false,
+        });
+        return;
+      } else {
+        setErrors({
+          ...errors,
+          password: false,
+        });
+      }
     }
 
     if (password !== rePassword) {
       setErrors({
         ...errors,
         rePassword: 'Nhập lại mật khẩu mới không khớp',
+        password: false,
+        otp: false,
       });
       return;
+    } else {
+      setErrors({
+        ...errors,
+        rePassword: false,
+        password: false,
+        otp: false,
+      });
     }
 
     dispatch(resetPasswordRequest(otp, phone, password, rePassword));

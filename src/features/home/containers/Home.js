@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {PieChart, LoadingData, Loading} from 'components';
+import {PieChart, LoadingData} from 'components';
 import {Text, Background, Button} from 'base';
 import images from 'images';
 import styles from './styles';
@@ -84,11 +84,7 @@ const Home = ({navigation}) => {
       onDay(moment(date, 'DD/MM/YYYY').format('DD'));
       onMonth(moment(date, 'DD/MM/YYYY').format('MM'));
     }
-
-    return () => {
-      queryClient.clear();
-    };
-  }, [date, queryClient]);
+  }, [date]);
 
   //get device list when focus screen
   React.useEffect(() => {
@@ -101,9 +97,16 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     if (isSuccessDeviceList && dataDeviceList?.data) {
-      onSelectedDevice(dataDeviceList?.data[0]);
+      if (checkVar.isEmpty(selectedDevice)) {
+        onSelectedDevice(dataDeviceList?.data[0]);
+      } else {
+        let infoSelected = lodash.find(dataDeviceList?.data, {
+          id: selectedDevice.id,
+        });
+        onSelectedDevice(infoSelected);
+      }
     }
-  }, [dataDeviceList, isSuccessDeviceList]);
+  }, [dataDeviceList, isSuccessDeviceList, selectedDevice]);
 
   //format device list
   const deviceList = useMemo(() => {
@@ -154,7 +157,7 @@ const Home = ({navigation}) => {
         exact: true,
       },
     );
-    // await queryClient.removeQueries(keyTypes.DEVICE_LIST, {
+    // await queryClient.removeQueries(keyTypes.DEVICE_LIST + '_HOME', {
     //   exact: true,
     // });
     await refetchReportAccess();

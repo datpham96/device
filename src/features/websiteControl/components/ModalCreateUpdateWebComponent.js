@@ -135,32 +135,28 @@ const ModalCreateUpdateWebComponent = ({
         let tmpStartTime = item.start_time;
         let tmpEndTime = item.end_time;
         if (tmpStartTime || tmpEndTime) {
-          let tmpHoursStartTime =
-            parseFloat(tmpStartTime) > 0
-              ? tmpStartTime?.split(':')[0]
-              : HOURS_DEFAULT;
-          let tmpHoursEndTime =
-            parseFloat(tmpEndTime) > 0
-              ? tmpEndTime?.split(':')[0]
-              : HOURS_DEFAULT;
-          let tmpMinuteStartTime = parseFloat(tmpStartTime)
+          let tmpHoursStartTime = tmpStartTime
+            ? tmpStartTime?.split(':')[0]
+            : HOURS_DEFAULT;
+          let tmpHoursEndTime = tmpEndTime
+            ? tmpEndTime?.split(':')[0]
+            : HOURS_DEFAULT;
+          let tmpMinuteStartTime = tmpStartTime
             ? tmpStartTime?.split(':')[1]
             : MINUTE_DEFAULT;
-          let tmpMinuteEndTime = parseFloat(tmpEndTime)
+          let tmpMinuteEndTime = tmpEndTime
             ? tmpEndTime?.split(':')[1]
             : MINUTE_DEFAULT;
           return {
             ...item,
             day: key + 2,
             dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
-            startTime:
-              parseFloat(tmpStartTime) > 0
-                ? tmpHoursStartTime + ':' + tmpMinuteStartTime
-                : '../..',
-            endTime:
-              parseFloat(tmpEndTime) > 0
-                ? tmpHoursEndTime + ':' + tmpMinuteEndTime
-                : '../..',
+            startTime: tmpStartTime
+              ? tmpHoursStartTime + ':' + tmpMinuteStartTime
+              : '../..',
+            endTime: tmpEndTime
+              ? tmpHoursEndTime + ':' + tmpMinuteEndTime
+              : '../..',
           };
         } else {
           return {
@@ -174,7 +170,7 @@ const ModalCreateUpdateWebComponent = ({
       });
       setTimeList(tmpTimeList);
     }
-  }, [activeItemList]);
+  }, [activeItemList, visible]);
 
   //set hours start
   useEffect(() => {
@@ -228,10 +224,10 @@ const ModalCreateUpdateWebComponent = ({
     let endTime = item.endTime;
     let splitStartTime = startTime?.split(':');
     let splitEndTime = endTime?.split(':');
-    if (parseFloat(startTime) > 0) {
-      let tmpHoursStart = splitStartTime.length > 0 ? splitStartTime[0] : '00';
+    if (startTime) {
+      let tmpHoursStart = splitStartTime.length > 1 ? splitStartTime[0] : '00';
       let tmpMinutesStart =
-        splitStartTime.length > 0 ? splitStartTime[1] : '00';
+        splitStartTime.length > 1 ? splitStartTime[1] : '00';
       setHoursStart(tmpHoursStart);
       setMinutesStart(tmpMinutesStart);
     } else {
@@ -239,9 +235,9 @@ const ModalCreateUpdateWebComponent = ({
       setMinutesStart(MINUTE_DEFAULT);
     }
 
-    if (parseFloat(endTime) > 0) {
-      let tmpHoursEnd = splitEndTime.length > 0 ? splitEndTime[0] : '00';
-      let tmpMinutesEnd = splitEndTime.length > 0 ? splitEndTime[1] : '00';
+    if (endTime) {
+      let tmpHoursEnd = splitEndTime.length > 1 ? splitEndTime[0] : '00';
+      let tmpMinutesEnd = splitEndTime.length > 1 ? splitEndTime[1] : '00';
       setHoursEnd(tmpHoursEnd);
       setMinutesEnd(tmpMinutesEnd);
     } else {
@@ -312,8 +308,16 @@ const ModalCreateUpdateWebComponent = ({
   };
 
   return (
-    <Modal animationType="none" transparent={true} visible={visible}>
+    <Modal
+      onRequestClose={onPressClose}
+      animationType="none"
+      transparent={true}
+      visible={visible}>
       <ModalSetTimeBlockAccess
+        onRequestCloseModal={() => {
+          setVisibleSetupTimeModal(false);
+          resetState();
+        }}
         timeError={timeError}
         onPressClose={() => {
           setVisibleSetupTimeModal(false);
@@ -411,13 +415,8 @@ const ModalCreateUpdateWebComponent = ({
               timeList?.map(item => {
                 arrItem.push({
                   day: item.day,
-                  start_time:
-                    parseFloat(item.startTime) > 0
-                      ? item.startTime + ':00'
-                      : '',
-                  end_time: parseFloat(item.endTime)
-                    ? item.endTime + ':00'
-                    : '',
+                  start_time: item.startTime ? item.startTime + ':00' : '',
+                  end_time: item.endTime ? item.endTime + ':00' : '',
                 });
               });
               onPressSubmit(arrItem);

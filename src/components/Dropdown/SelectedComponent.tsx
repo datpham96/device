@@ -82,10 +82,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     position: 'absolute',
     top: sizes.SIZE_8,
-    maxHeight: sizes.SIZE_90,
+    maxHeight: sizes.SIZE_100,
   },
   wrapItem: {
     ...commonStyles.flexRowCenter,
+    marginBottom: sizes.SIZE_3,
   },
   selectedItemCircle: {
     width: sizes.SIZE_10,

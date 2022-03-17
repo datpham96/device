@@ -15,11 +15,6 @@ const heightOutSideBottomTab =
 const HEIGHT_BLOCK =
   (heightOutSideBottomTab / sizes.SIZE_2 - sizes.SIZE_50) / sizes.SIZE_2;
 
-const DATA = [
-  24, 50, 13, 5, 20, 43, 35, 27, 44, 3, 10, 14, 29, 34, 30, 23, 32, 17, 48, 26,
-  12, 2, 30, 25,
-];
-
 const BlockTotalComponent = ({
   data = [],
   total,

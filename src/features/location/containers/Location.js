@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   AppState,
-  Alert,
 } from 'react-native';
 import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
@@ -34,18 +33,25 @@ import navigationTypes from 'navigationTypes';
 import Geocoder from 'react-native-geocoder';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {MapMarker} from '../components';
+import {useNavigation} from '@react-navigation/native';
+import env from '../../../environment';
 
 // simply add your google key
 Geocoder.fallbackToGoogle(
   // Platform.OS === 'ios'
   //   ? 'AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU'
   //   : 'AIzaSyB5yQcadhAvM58X9C-3YrzyKtJGo5YyOeo',
-  'AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU',
+  env.google_maps.key,
 );
 
-const Location = ({navigation}) => {
+const Location = () => {
+  const navigation = useNavigation();
   const queryClient = useQueryClient();
-  const [selectedDevice, setSelectedDevice] = useState({});
+  const [selectedDevice, setSelectedDevice] = useState({
+    label: '',
+    value: '',
+    is_block: 0,
+  });
   const [refresh, setRefresh] = useState(false);
   const [markers, serMarkers] = useState({
     latitude: 0,
@@ -61,12 +67,19 @@ const Location = ({navigation}) => {
   const [visibleDeviceUnLock, setVisibleDeviceUnLock] = useState(false);
 
   const {data, isSuccess, isLoading, refetch} = useQuery(
-    keyTypes.DEVICE_LIST,
+    keyTypes.DEVICE_LIST + '_LOCATION',
     () => deviceListApi(),
+    {
+      keepPreviousData: true,
+      enabled: false,
+      refetchOnWindowFocus: false,
+    },
   );
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      // get device list when focus screen
+      refetch();
       if (deviceList?.length > 0) {
         requestMultiple([
           PERMISSIONS.IOS.LOCATION_ALWAYS,
@@ -103,7 +116,7 @@ const Location = ({navigation}) => {
       }
     });
     return unsubscribe;
-  }, [navigation, refresh, deviceList]);
+  }, [navigation, refresh, deviceList, refetch]);
 
   useEffect(() => {
     const listener = AppState.addEventListener('change', status => {
@@ -204,6 +217,27 @@ const Location = ({navigation}) => {
     }
   }, [selectedDevice, data, refresh]);
 
+  useEffect(() => {
+    if (isSuccess && data?.data) {
+      let listDevice = [];
+      data.data.map(item => {
+        listDevice.push({
+          label: item.full_name,
+          value: item.id,
+          is_block: item.is_block,
+        });
+      });
+      if (
+        listDevice &&
+        checkVar.isEmpty(selectedDevice?.label) &&
+        checkVar.isEmpty(selectedDevice?.value)
+      ) {
+        setSelectedDevice(listDevice?.[0]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, isSuccess]);
+
   const mutationDeviceLock = useMutation(
     ({
       data_device_id,
@@ -220,7 +254,6 @@ const Location = ({navigation}) => {
         data_gender,
       ),
   );
-
   const deviceList = useMemo(() => {
     let tmpSelectList = [];
     if (isSuccess && data?.data) {
@@ -231,13 +264,12 @@ const Location = ({navigation}) => {
           is_block: item.is_block,
         });
       });
-      setSelectedDevice(tmpSelectList?.[0]);
     }
     return tmpSelectList;
   }, [data, isSuccess]);
 
   const onRefresh = async () => {
-    await queryClient.removeQueries(keyTypes.DEVICE_LIST, {
+    await queryClient.removeQueries(keyTypes.DEVICE_LIST + '_LOCATION', {
       exact: true,
     });
     await refetch();
@@ -266,7 +298,12 @@ const Location = ({navigation}) => {
       .then(resp => {
         if (resp?.status) {
           Toast('Khoá thiết bị thành công');
-          onRefresh();
+          refetch();
+          setSelectedDevice({
+            label: selectedDevice?.label,
+            value: selectedDevice?.value,
+            is_block: 1,
+          });
         } else {
           Toast(resp?.msg);
         }
@@ -296,7 +333,12 @@ const Location = ({navigation}) => {
       .then(resp => {
         if (resp?.status) {
           Toast('Mở khoá thiết bị thành công');
-          onRefresh();
+          refetch();
+          setSelectedDevice({
+            label: selectedDevice?.label,
+            value: selectedDevice?.value,
+            is_block: 0,
+          });
         } else {
           Toast(resp?.msg);
         }
@@ -453,4 +495,4 @@ const Location = ({navigation}) => {
   );
 };
 
-export default Location;
+export default React.memo(Location);

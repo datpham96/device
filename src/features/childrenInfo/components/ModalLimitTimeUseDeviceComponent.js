@@ -1,6 +1,7 @@
+/* eslint-disable radix */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Radio, Text} from 'base';
+import {Text} from 'base';
 import {
   View,
   StyleSheet,
@@ -14,9 +15,15 @@ import images from 'images';
 import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {getBottomSpace, getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {ModalSetTimeBlockAccess} from 'components';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+  isIphoneX,
+} from 'react-native-iphone-x-helper';
+import {ModalSetTimeBlockAccess, PopupAlert} from 'components';
 import lodash from 'lodash';
+import {deviceTimerAccessUpdateApi} from 'src/api/methods/device';
+import {useMutation} from 'react-query';
 
 const HOURS_DEFAULT = '00';
 const MINUTE_DEFAULT = '00';
@@ -25,7 +32,32 @@ const HOURS_23 = 23;
 const MINUTE_59 = 59;
 const MINUTE_60 = 60;
 const ZERO = 0;
-const ONE = 1;
+
+const ItemTime = ({
+  day,
+  startTime = '../..',
+  endTime = '../..',
+  containerStyle,
+  onPress,
+}) => {
+  return (
+    <TouchableHighlight
+      underlayColor="rgba(90, 142, 209, 0.5)"
+      onPress={onPress}
+      style={[styles.wrapItem, containerStyle]}>
+      <>
+        <View style={styles.wrapItemTime}>
+          <Text style={styles.itemStartTime}>
+            {startTime ? startTime : '../..'}
+          </Text>
+          <Text style={styles.itemEndTime}>{endTime ? endTime : '../..'}</Text>
+        </View>
+        <Text style={styles.itemDay}>{day}</Text>
+        <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
+      </>
+    </TouchableHighlight>
+  );
+};
 
 const DATA_TIME_LIST = [
   {
@@ -78,42 +110,13 @@ const DATA_TIME_LIST = [
     endTime: '',
   },
 ];
-
-const ItemTime = ({
-  day,
-  startTime = '../..',
-  endTime = '../..',
-  containerStyle,
-  onPress,
-}) => {
-  return (
-    <TouchableHighlight
-      underlayColor="rgba(90, 142, 209, 0.5)"
-      onPress={onPress}
-      style={[styles.wrapItem, containerStyle]}>
-      <>
-        <View style={styles.wrapItemTime}>
-          <Text style={styles.itemStartTime}>
-            {startTime ? startTime : '../..'}
-          </Text>
-          <Text style={styles.itemEndTime}>{endTime ? endTime : '../..'}</Text>
-        </View>
-        <Text style={styles.itemDay}>{day}</Text>
-        <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
-      </>
-    </TouchableHighlight>
-  );
-};
-
-const ModalCreateUpdateWebComponent = ({
+const ModalLimitTimeUseDeviceComponent = ({
   visible = false,
   onPressClose,
-  isActive,
-  onPressActive,
-  nameApp,
-  iconApp,
-  onPressSubmit,
-  activeItemList,
+  itemList,
+  deviceId,
+  onSuccessTimer,
+  onRequestCloseModal,
 }) => {
   const [visibleSetupTimeModal, setVisibleSetupTimeModal] = useState(false);
   const [hoursStart, setHoursStart] = useState(HOURS_DEFAULT);
@@ -123,10 +126,17 @@ const ModalCreateUpdateWebComponent = ({
   const [activeItem, setActiveItem] = useState({});
   const [timeError, setTimeError] = useState('');
   const [timeList, setTimeList] = useState(DATA_TIME_LIST);
+  const [visibleAlert, setVisibleAlert] = useState(false);
+  const [isUpdateTimerSuccess, setIsUpdateTimerSuccess] = useState(false);
+
+  const mutationTimerUpdate = useMutation(({data_device_id, data_timer_list}) =>
+    deviceTimerAccessUpdateApi(data_device_id, data_timer_list),
+  );
+
   //set time list by active item list
   useEffect(() => {
-    if (activeItemList && activeItemList?.timer?.length > 0) {
-      let tmpTimeList = activeItemList?.timer?.map((item, key) => {
+    if (itemList && itemList?.timer?.length > 0) {
+      let tmpTimeList = itemList?.timer?.map((item, key) => {
         let tmpStartTime = item.start_time;
         let tmpEndTime = item.end_time;
         if (tmpStartTime || tmpEndTime) {
@@ -165,7 +175,7 @@ const ModalCreateUpdateWebComponent = ({
       });
       setTimeList(tmpTimeList);
     }
-  }, [activeItemList, visible]);
+  }, [itemList, visible]);
 
   //set hours start
   useEffect(() => {
@@ -212,6 +222,7 @@ const ModalCreateUpdateWebComponent = ({
     setHoursEnd(HOURS_DEFAULT);
     setMinutesStart(MINUTE_DEFAULT);
     setMinutesEnd(MINUTE_DEFAULT);
+    setTimeError('');
   };
 
   const handleShowPopupSetupTime = item => {
@@ -221,8 +232,14 @@ const ModalCreateUpdateWebComponent = ({
     let splitEndTime = endTime?.split(':');
     if (startTime) {
       let tmpHoursStart = splitStartTime.length > 1 ? splitStartTime[0] : '00';
+      if (parseInt(tmpHoursStart) >= 1 && parseInt(tmpHoursStart) < 10) {
+        tmpHoursStart = '0' + parseInt(tmpHoursStart);
+      }
       let tmpMinutesStart =
         splitStartTime.length > 1 ? splitStartTime[1] : '00';
+      if (parseInt(tmpMinutesStart) >= 1 && parseInt(tmpMinutesStart) < 10) {
+        tmpMinutesStart = '0' + parseInt(tmpMinutesStart);
+      }
       setHoursStart(tmpHoursStart);
       setMinutesStart(tmpMinutesStart);
     } else {
@@ -232,7 +249,13 @@ const ModalCreateUpdateWebComponent = ({
 
     if (endTime) {
       let tmpHoursEnd = splitEndTime.length > 1 ? splitEndTime[0] : '00';
+      if (parseInt(tmpHoursEnd) >= 1 && parseInt(tmpHoursEnd) < 10) {
+        tmpHoursEnd = '0' + parseInt(tmpHoursEnd);
+      }
       let tmpMinutesEnd = splitEndTime.length > 1 ? splitEndTime[1] : '00';
+      if (parseInt(tmpMinutesEnd) >= 1 && parseInt(tmpMinutesEnd) < 10) {
+        tmpMinutesEnd = '0' + parseInt(tmpMinutesEnd);
+      }
       setHoursEnd(tmpHoursEnd);
       setMinutesEnd(tmpMinutesEnd);
     } else {
@@ -296,23 +319,80 @@ const ModalCreateUpdateWebComponent = ({
         startTime: startTime,
         endTime: endTime,
       };
-      setTimeList([...timeList]);
+      // setTimeList([...timeList]);
     }
 
     setVisibleSetupTimeModal(false);
+
+    //handle request time use
+    let arrItem = [];
+    timeList?.map(item => {
+      arrItem.push({
+        day: item.day,
+        start_time: item.startTime ? item.startTime + ':00' : '',
+        end_time: item.endTime ? item.endTime + ':00' : '',
+      });
+    });
+
+    mutationTimerUpdate
+      .mutateAsync({
+        data_device_id: deviceId,
+        data_timer_list: arrItem,
+      })
+      .then(resp => {
+        if (resp?.status) {
+          setIsUpdateTimerSuccess(true);
+          setVisibleAlert(true);
+          onSuccessTimer();
+        } else {
+          setIsUpdateTimerSuccess(false);
+        }
+        mutationTimerUpdate.reset();
+      })
+      .catch(err => {
+        console.log(err?.msg);
+      });
+  };
+
+  const handleResetInputTime = () => {
+    // if (checkVar.isEmpty(hoursStart)) {
+    //   setHoursStart(HOURS_DEFAULT);
+    // }
+    // if (checkVar.isEmpty(minutesStart)) {
+    //   setMinutesStart(MINUTE_DEFAULT);
+    // }
+    // if (checkVar.isEmpty(hoursEnd)) {
+    //   setHoursEnd(HOURS_DEFAULT);
+    // }
+    // if (checkVar.isEmpty(minutesEnd)) {
+    //   setMinutesEnd(MINUTE_DEFAULT);
+    // }
   };
 
   return (
     <Modal
-      onRequestClose={onPressClose}
+      onRequestClose={onRequestCloseModal}
       animationType="none"
       transparent={true}
       visible={visible}>
+      <PopupAlert
+        content={
+          isUpdateTimerSuccess
+            ? 'Cập nhật giới hạn thời gian sử dụng thành công!'
+            : 'Cập nhật giới hạn thời gian sử dụng thất bại!'
+        }
+        srcImage={
+          !isUpdateTimerSuccess ? images.logos.error : images.logos.success
+        }
+        visible={visibleAlert}
+        onPressCancel={() => setVisibleAlert(false)}
+      />
       <ModalSetTimeBlockAccess
         onRequestCloseModal={() => {
           setVisibleSetupTimeModal(false);
           resetState();
         }}
+        onPressWithoutModal={handleResetInputTime}
         timeError={timeError}
         onPressClose={() => {
           setVisibleSetupTimeModal(false);
@@ -369,51 +449,10 @@ const ModalCreateUpdateWebComponent = ({
             <FastImage style={styles.iconClose} source={images.icons.close} />
           </TouchableOpacity>
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            Chặn truy cập ứng dụng
+            {'Giới hạn thời \ngian sử dụng'}
           </Text>
-          <View style={styles.wrapIcon}>
-            <FastImage
-              style={styles.appIcon}
-              source={iconApp ? {uri: iconApp} : images.avatars.default}
-            />
-            <Text>{nameApp}</Text>
-          </View>
-          <View style={styles.wrapRadio}>
-            <TouchableOpacity activeOpacity={0.9} onPress={onPressActive}>
-              <Radio
-                label="Cho phép"
-                active={isActive ? true : false}
-                containerStyle={styles.radioOne}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.9} onPress={onPressActive}>
-              <Radio
-                active={!isActive ? true : false}
-                label={'Chặn ứng dụng'}
-                containerStyle={styles.radioTwo}
-              />
-            </TouchableOpacity>
-          </View>
-          <TouchableHighlight
-            underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
-            activeOpacity={0.9}
-            style={styles.btn}
-            onPress={() => {
-              let arrItem = [];
-              timeList?.map(item => {
-                arrItem.push({
-                  day: item.day,
-                  start_time: item.startTime ? item.startTime + ':00' : '',
-                  end_time: item.endTime ? item.endTime + ':00' : '',
-                });
-              });
-              onPressSubmit(arrItem);
-            }}>
-            <Text style={styles.btnLabel}>Lưu lại</Text>
-          </TouchableHighlight>
-          <Text style={styles.timeUse}>Thời gian sử dụng</Text>
-          {isActive &&
-            timeList.map((item, key) => {
+          <View style={styles.wrapTimeList}>
+            {timeList?.map((item, key) => {
               return (
                 <View key={key}>
                   <ItemTime
@@ -430,6 +469,21 @@ const ModalCreateUpdateWebComponent = ({
                 </View>
               );
             })}
+          </View>
+          <View style={styles.wrapNote}>
+            <View style={styles.wrapIconLabelNote}>
+              <FastImage
+                style={styles.iconNote}
+                source={images.icons.question}
+              />
+              <Text style={styles.labelNote}>Ghi chú</Text>
+            </View>
+            <Text style={styles.note}>
+              {
+                'Đây là khung thời gian máy tính có thể sử dụng được. \nNgoài khung thời gian trên, máy tính sẽ bị khóa.\nĐặt giới hạn từ 00:00 đến 00:00 nếu phụ huynh muốn máy sử dụng được 24h/ngày.'
+              }
+            </Text>
+          </View>
         </ScrollView>
       </View>
       {/* </KeyboardAwareScrollView> */}
@@ -469,54 +523,18 @@ const styles = StyleSheet.create({
     paddingBottom: getBottomSpace(),
     paddingTop:
       Platform.OS === 'ios'
-        ? getStatusBarHeight() + sizes.SIZE_15
+        ? isIphoneX()
+          ? getStatusBarHeight() + sizes.SIZE_15
+          : getStatusBarHeight() + sizes.SIZE_5
         : sizes.SIZE_15,
     height: metrics.screenHeight,
   },
   contentContainer: {
-    paddingBottom: sizes.SIZE_15,
+    paddingBottom: sizes.SIZE_35,
   },
   mainTitle: {},
-  wrapIcon: {
-    ...commonStyles.center,
-    marginTop: sizes.SIZE_20,
-  },
-  appIcon: {
-    width: metrics.screenWidth / sizes.SIZE_7,
-    height: metrics.screenWidth / sizes.SIZE_7,
-    borderRadius: metrics.screenWidth / sizes.SIZE_14,
-    borderColor: colors.COLOR_WHITE,
-    borderWidth: sizes.SIZE_4,
-    marginBottom: sizes.SIZE_10,
-  },
-  wrapRadio: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: sizes.SIZE_10,
+  wrapTimeList: {
     marginTop: sizes.SIZE_25,
-  },
-  radioOne: {
-    marginRight: sizes.SIZE_25,
-  },
-  radioTwo: {},
-  btn: {
-    backgroundColor: colors.COLOR_RED_ORANGE,
-    // paddingHorizontal: sizes.SIZE_25,
-    paddingVertical: sizes.SIZE_10,
-    borderRadius: sizes.SIZE_10,
-    marginTop: sizes.SIZE_30,
-    width: metrics.screenWidth - sizes.SIZE_30,
-    alignSelf: 'center',
-    ...commonStyles.center,
-    height: sizes.SIZE_45,
-  },
-  btnLabel: {
-    fontSize: sizes.SIZE_13,
-  },
-  timeUse: {
-    fontFamily: fonts.montserrat.FONT_BOLD,
-    fontSize: sizes.SIZE_18,
-    marginVertical: sizes.SIZE_15,
   },
   //item
   wrapItem: {
@@ -549,6 +567,26 @@ const styles = StyleSheet.create({
     width: sizes.SIZE_22,
     height: sizes.SIZE_22,
   },
+  wrapNote: {
+    marginTop: sizes.SIZE_20,
+  },
+  wrapIconLabelNote: {
+    ...commonStyles.flexRowCenter,
+  },
+  iconNote: {
+    width: sizes.SIZE_20,
+    height: sizes.SIZE_20,
+  },
+  labelNote: {
+    marginLeft: sizes.SIZE_5,
+    fontFamily: fonts.montserrat.FONT_BOLD,
+  },
+  note: {
+    lineHeight: sizes.SIZE_22,
+    marginTop: sizes.SIZE_7,
+    textAlign: 'justify',
+    fontFamily: fonts.lexendDeca.FONT_LIGHT,
+  },
 });
 
-export default ModalCreateUpdateWebComponent;
+export default ModalLimitTimeUseDeviceComponent;

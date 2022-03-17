@@ -28,6 +28,7 @@ const ModalBottomSheetComponent: React.FC<Props> = ({
 }) => {
   return (
     <Modal
+      onRequestClose={onPressClose}
       style={styles.container}
       visible={visible}
       transparent={true}

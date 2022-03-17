@@ -57,6 +57,12 @@ const InputDateComponent: React.FC<Props> = ({
         btnTextConfirm: {
           color: colors.COLOR_BLUE,
         },
+        datePicker: {
+          backgroundColor: metrics.colorScheme === 'dark' ? '#222' : 'white',
+        },
+        datePickerCon: {
+          backgroundColor: metrics.colorScheme === 'dark' ? '#333' : 'white',
+        },
       }}
     />
   );

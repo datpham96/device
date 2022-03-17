@@ -10,22 +10,28 @@ export type Props = {
   visible?: any;
   onPressCancel?: any;
   content?: any;
+  srcImage?: any;
 };
 
 const PopupAlertComponent: React.FC<Props> = ({
   visible = false,
   onPressCancel,
   content,
+  srcImage = images.logos.success,
 }) => {
   return (
-    <Modal animationType="none" transparent={true} visible={visible}>
+    <Modal
+      onRequestClose={onPressCancel}
+      animationType="none"
+      transparent={true}
+      visible={visible}>
       <View style={styles.backgroundModal} />
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <FastImage
             resizeMode={FastImage.resizeMode.contain}
             style={styles.logoSuccess}
-            source={images.logos.success}
+            source={srcImage}
           />
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
             Thông báo
