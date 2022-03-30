@@ -1,7 +1,7 @@
 import ApiConstants from './ApiConstants';
 import axios from 'axios';
 import moment from 'moment';
-import {getToken, getExpiredToken, removeAll} from 'storages';
+import {getToken, getExpiredToken, removeAll, setError} from 'storages';
 import * as RootNavigation from '../navigation/RootNavigation';
 import navigationType from 'navigationTypes';
 import NetInfo from '@react-native-community/netinfo';
@@ -34,6 +34,7 @@ export function api(path, method, params = {}) {
       return json.data;
     })
     .catch(async error => {
+      await setError(JSON.stringify(error?.response?.data));
       if (
         error.response.status === statusCode.CODE_500 ||
         error?.response?.status === statusCode.CODE_429
@@ -52,7 +53,7 @@ export async function apiToken(path, method, params = {}, token) {
   let expired_token = await getExpiredToken();
   if (
     moment().diff(moment(expired_token, 'DD-MM-YYYY HH:mm:ss'), 'days', true) <=
-    2
+    30
   ) {
     tokenStore = await getToken();
   } else {
@@ -74,6 +75,7 @@ export async function apiToken(path, method, params = {}, token) {
       return json.data;
     })
     .catch(async error => {
+      await setError(JSON.stringify(error?.response?.data));
       if (
         error?.response?.status === statusCode.CODE_500 ||
         error?.response?.status === statusCode.CODE_429

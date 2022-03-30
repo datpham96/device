@@ -1,3 +1,4 @@
+import metrics from 'metrics';
 import {StyleSheet} from 'react-native';
 import {commonStyles, sizes, colors} from 'styles';
 
@@ -125,5 +126,21 @@ export default StyleSheet.create({
     marginBottom: sizes.SIZE_5,
     maxWidth: sizes.SIZE_120,
     ...commonStyles.center,
+  },
+
+  //map box
+  page: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  containerMapBox: {
+    height: '100%',
+    width: metrics.screenWidth,
+    backgroundColor: 'tomato',
+  },
+  mapMapBox: {
+    flex: 1,
   },
 });

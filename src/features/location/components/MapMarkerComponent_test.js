@@ -12,7 +12,6 @@ MapboxGL.setAccessToken(env.maps_box.accessToken);
 
 const MapMarker = ({markers, is_block, refresh_location}) => {
   const cameraRef = useRef(null);
-  const mapRef = useRef(null);
   const [totalLines, setTotalLines] = useState(0);
 
   useEffect(() => {
@@ -52,9 +51,14 @@ const MapMarker = ({markers, is_block, refresh_location}) => {
     }
     return tmpVectorY;
   }, [totalLines]);
+
+  const rasterSourceProps = {
+    id: 'stamenWatercolorSource',
+    tileUrlTemplates: ['http://a.tile.openstreetmap.org/${z}/${x}/${y}.png'],
+    tileSize: 256,
+  };
   return (
     <MapboxGL.MapView
-      ref={mapRef}
       styleURL={MapboxGL.StyleURL.Street}
       style={styles.map}
       userTrackingMode={false}
@@ -65,74 +69,18 @@ const MapMarker = ({markers, is_block, refresh_location}) => {
       rotateEnabled={false}
       preferredFramesPerSecond={30}
       zoomEnabled>
-      <View>
-        <MapboxGL.Camera
-          ref={cameraRef}
-          zoomLevel={14}
-          centerCoordinate={[markers?.longitude, markers?.latitude]}
-          maxZoomLevel={18}
-          minZoomLevel={8}
-          maxBounds={{
-            ne: [109.36305, 22.805301],
-            sw: [101.448316, 8.025235],
-          }}
-          animationDuration={1000}
-        />
-        {Platform.OS === 'android' && (
-          <MapboxGL.MarkerView
-            id="marker_3"
-            anchor={{
-              x: 0.5,
-              y: -0.3,
-            }}
-            coordinate={[markers?.longitude, markers?.latitude]}>
-            <View style={styles.triangleMarker} />
-          </MapboxGL.MarkerView>
-        )}
-        <MapboxGL.MarkerView
-          id="marker_1"
-          coordinate={[markers?.longitude, markers?.latitude]}>
-          <View style={commonStyles.center}>
-            {Platform.OS === 'ios' && markers?.address && (
-              <View style={styles.wrapLabelLocation}>
-                <Text style={styles.labelLocation}>{markers?.address}</Text>
-              </View>
-            )}
-            <Image
-              style={styles.imageMarker}
-              source={
-                is_block
-                  ? images.icons.lock_location
-                  : markers?.avatar
-                  ? {uri: markers.avatar, priority: FastImage.priority.low}
-                  : images.avatars.default
-              }
-            />
-            {Platform.OS === 'ios' && <View style={styles.triangleMarker} />}
-          </View>
-        </MapboxGL.MarkerView>
-        {Platform.OS === 'android' && markers?.address && (
-          <MapboxGL.MarkerView
-            id="marker_2"
-            anchor={{
-              x: 0.5,
-              y: vectorY,
-            }}
-            coordinate={[markers?.longitude, markers?.latitude]}>
-            <View style={styles.wrapLabelLocation}>
-              <Text
-                props={{
-                  onTextLayout: ({nativeEvent: {lines}}) => {
-                    setTotalLines(lines?.length);
-                  },
-                }}
-                style={styles.labelLocation}>
-                {markers?.address}
-              </Text>
-            </View>
-          </MapboxGL.MarkerView>
-        )}
-      </View>
+      <MapboxGL.Camera
+        ref={cameraRef}
+        zoomLevel={14}
+        centerCoordinate={[markers?.longitude, markers?.latitude]}
+        maxZoomLevel={18}
+        minZoomLevel={8}
+        maxBounds={{
+          ne: [109.36305, 22.805301],
+          sw: [101.448316, 8.025235],
+        }}
+        animationDuration={1000}
+      />
     </MapboxGL.MapView>
   );
 };

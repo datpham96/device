@@ -27,6 +27,9 @@ import {
   openSettings,
   RESULTS,
 } from 'react-native-permissions';
+import {genders} from 'types';
+import ImageResizer from 'react-native-image-resizer';
+import RNFS from 'react-native-fs';
 
 const options = {
   mediaType: 'photo',
@@ -81,8 +84,25 @@ const DeviceInfo = ({route}) => {
       launchCamera(options, response => {
         if (response && response?.assets) {
           let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
+          let dataFirstBase64 = 'data:' + item.type + ';base64,';
+          let formatData = dataFirstBase64 + item.base64;
+          ImageResizer.createResizedImage(
+            formatData,
+            300,
+            300,
+            'JPEG',
+            100,
+            0,
+            undefined,
+            false,
+            {},
+          )
+            .then(resp => {
+              return RNFS.readFile(resp.path, 'base64');
+            })
+            .then(result => {
+              setDataRequestAvatar(dataFirstBase64 + result);
+            });
           setAvatarUri({uri: item.uri});
         }
       });
@@ -96,8 +116,25 @@ const DeviceInfo = ({route}) => {
       launchImageLibrary(options, response => {
         if (response && response?.assets) {
           let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
+          let dataFirstBase64 = 'data:' + item.type + ';base64,';
+          let formatData = dataFirstBase64 + item.base64;
+          ImageResizer.createResizedImage(
+            formatData,
+            300,
+            300,
+            'JPEG',
+            100,
+            0,
+            undefined,
+            false,
+            {},
+          )
+            .then(resp => {
+              return RNFS.readFile(resp.path, 'base64');
+            })
+            .then(result => {
+              setDataRequestAvatar(dataFirstBase64 + result);
+            });
           setAvatarUri({uri: item.uri});
         }
       });
@@ -176,7 +213,6 @@ const DeviceInfo = ({route}) => {
         data_avatar: dataRequestAvatar,
       })
       .then(resp => {
-        console.log(resp, 'resp----');
         if (resp.status) {
           Toast(resp?.msg);
           RootNavigation.navigate(navigationTypes.childrenManager.screen);
@@ -274,10 +310,7 @@ const DeviceInfo = ({route}) => {
             <InputSelectComponent
               onDonePress={val => setGender(val)}
               placeholder="--Giới tính--"
-              listData={[
-                {label: 'Nam', value: 'male'},
-                {label: 'Nữ', value: 'female'},
-              ]}
+              listData={genders}
             />
             {errors?.gender && <TextError message={errors?.gender} />}
           </View>

@@ -2,6 +2,7 @@ import React from 'react';
 import {View, StyleSheet, TextInput, Image} from 'react-native';
 import {colors, sizes} from 'styles';
 import metrics from 'metrics';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export type Props = {
   customerInput?: any;
@@ -12,6 +13,7 @@ export type Props = {
   placeholder?: any;
   icon?: any;
   iconComponent?: any;
+  onPressIcon?: any;
 };
 
 const Input: React.FC<Props> = ({
@@ -23,6 +25,7 @@ const Input: React.FC<Props> = ({
   placeholder,
   icon,
   iconComponent,
+  onPressIcon,
 }) => {
   return (
     <View style={[styles.container, containerInput]}>
@@ -41,7 +44,14 @@ const Input: React.FC<Props> = ({
           autoCompleteType={'off'}
           {...props}
         />
-        {icon && <Image style={styles.imageIcon} source={icon} />}
+        {icon && (
+          <TouchableOpacity
+            style={styles.wrapIcon}
+            activeOpacity={1}
+            onPress={onPressIcon}>
+            <Image style={styles.imageIcon} source={icon} />
+          </TouchableOpacity>
+        )}
         {iconComponent}
       </View>
     </View>
@@ -59,14 +69,15 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingHorizontal: sizes.SIZE_20,
+    alignItems: 'center',
   },
   icon: {
     alignSelf: 'center',
   },
+  wrapIcon: {},
   imageIcon: {
     width: sizes.SIZE_20,
     height: sizes.SIZE_20,
-    alignSelf: 'center',
   },
   input: {
     borderRadius: sizes.SIZE_20,

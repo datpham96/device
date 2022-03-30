@@ -22,6 +22,14 @@ export const setExpiredToken = async () => {
   }
 };
 
+export const setError = async content => {
+  try {
+    await AsyncStorage.setItem(keys.error_bug, content);
+  } catch (e) {
+    await AsyncStorage.setItem(keys.error_bug, {});
+  }
+};
+
 //get
 export const getToken = async () => {
   try {
@@ -35,6 +43,15 @@ export const getToken = async () => {
 export const getExpiredToken = async () => {
   try {
     const value = await AsyncStorage.getItem(keys.expired_token);
+    return value;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const getError = async () => {
+  try {
+    const value = await AsyncStorage.getItem(keys.error_bug);
     return value;
   } catch (e) {
     return null;

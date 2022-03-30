@@ -36,7 +36,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
     () => deviceListApi(),
     {
       enabled: false,
-      // keepPreviousData: true,
+      keepPreviousData: true,
       // onSuccess: lists => {
       //   lists?.data.forEach((item: any) => {
       //     queryClient.setQueryData([keyTypes.DEVICE_INFO, item.id], item);
@@ -47,7 +47,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      onRefresh();
+      refetch();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,9 +160,13 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
         </View>
         {isLoading ? (
           <View style={[commonStyles.flex1, styles.flatListStyle]}>
-            <ItemChildrenPlaceholder />
-            <ItemChildrenPlaceholder />
-            <ItemChildrenPlaceholder />
+            {[1, 2, 3, 4].map(item => {
+              return (
+                <View key={item}>
+                  <ItemChildrenPlaceholder />
+                </View>
+              );
+            })}
           </View>
         ) : (
           <FlatList
@@ -171,7 +175,7 @@ const ChildrenManager: React.FC<Props> = ({navigation}) => {
             contentContainerStyle={styles.contentContainerFlatlist}
             style={[commonStyles.flex1, styles.flatListStyle]}
             data={data?.data}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item.id.toString() + item.avatar}
             renderItem={({item}) => (
               <ItemChildrenComponent
                 onPress={() => handleDetail(item)}

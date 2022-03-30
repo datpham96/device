@@ -25,7 +25,7 @@ const HOURS_23 = 23;
 const MINUTE_59 = 59;
 const MINUTE_60 = 60;
 const ZERO = 0;
-const ONE = 1;
+const TIME_DEFAULT = '00/00';
 
 const DATA_TIME_LIST = [
   {
@@ -81,8 +81,8 @@ const DATA_TIME_LIST = [
 
 const ItemTime = ({
   day,
-  startTime = '../..',
-  endTime = '../..',
+  startTime = TIME_DEFAULT,
+  endTime = TIME_DEFAULT,
   containerStyle,
   onPress,
 }) => {
@@ -94,9 +94,11 @@ const ItemTime = ({
       <>
         <View style={styles.wrapItemTime}>
           <Text style={styles.itemStartTime}>
-            {startTime ? startTime : '../..'}
+            {startTime ? startTime : TIME_DEFAULT}
           </Text>
-          <Text style={styles.itemEndTime}>{endTime ? endTime : '../..'}</Text>
+          <Text style={styles.itemEndTime}>
+            {endTime ? endTime : TIME_DEFAULT}
+          </Text>
         </View>
         <Text style={styles.itemDay}>{day}</Text>
         <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
@@ -148,10 +150,10 @@ const ModalCreateUpdateWebComponent = ({
             dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
             startTime: tmpStartTime
               ? tmpHoursStartTime + ':' + tmpMinuteStartTime
-              : '../..',
+              : TIME_DEFAULT,
             endTime: tmpEndTime
               ? tmpHoursEndTime + ':' + tmpMinuteEndTime
-              : '../..',
+              : TIME_DEFAULT,
           };
         } else {
           return {

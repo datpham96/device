@@ -65,24 +65,6 @@ export function deviceHistoryApi(page, perPage, device_id, date, s) {
   return apiToken(ApiConstants.DEVICE_HISTORY, 'post', bodyFormData);
 }
 
-export function deviceReportApi(page, perPage, device_id, date, status, s) {
-  //Lịch sử truy cập
-  let bodyFormData = new FormData();
-  bodyFormData.append('device_id', device_id);
-  bodyFormData.append('date', date);
-  bodyFormData.append('page', page);
-  bodyFormData.append('per_page', perPage);
-  if (Number.isInteger(status)) {
-    bodyFormData.append('status', status);
-  }
-
-  if (s) {
-    bodyFormData.append('s', s);
-  }
-
-  return apiToken(ApiConstants.DEVICE_REPORT, 'post', bodyFormData);
-}
-
 export function deviceUpdateApi(
   device_id,
   is_block,
@@ -94,9 +76,6 @@ export function deviceUpdateApi(
   let bodyFormData = new FormData();
   bodyFormData.append('device_id', device_id);
   bodyFormData.append('is_block', is_block);
-  bodyFormData.append('full_name', full_name);
-  bodyFormData.append('birthday', birthday);
-  bodyFormData.append('gender', gender);
   if (full_name) {
     bodyFormData.append('full_name', full_name);
   }

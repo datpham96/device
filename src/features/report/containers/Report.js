@@ -95,6 +95,7 @@ const Report = ({route}) => {
   const handleShowDatePicker = () => {
     dateTimeRef.current.onPressDate();
   };
+
   return (
     <Background bin>
       {/* <Loading isLoading={isRefetching} /> */}
@@ -179,6 +180,7 @@ const Report = ({route}) => {
                 tintColor={colors.COLOR_WHITE}
               />
             }
+            onEndReached={getMore}
             refreshing={false}
             onEndReachedThreshold={0.05}
             onScrollBeginDrag={() => {

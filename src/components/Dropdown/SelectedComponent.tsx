@@ -20,7 +20,10 @@ const SelectedComponent: React.FC<Props> = ({
     <View>
       <View style={styles.triangleMarker} />
       <ScrollView
-        contentContainerStyle={[styles.contentScroll]}
+        contentContainerStyle={[
+          styles.contentScroll,
+          data?.length > 10 ? {paddingBottom: sizes.SIZE_15} : {},
+        ]}
         style={[styles.containerScroll, containerStyle]}>
         {data.map((item?: any, key?: any) => {
           return (
@@ -47,6 +50,20 @@ const SelectedComponent: React.FC<Props> = ({
             </TouchableOpacity>
           );
         })}
+        {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 5, 6, 7, 8, 9].map(() => {
+          return (
+            <TouchableOpacity activeOpacity={0.9} style={styles.wrapItem}>
+              <View style={[styles.selectedItemCircle]} />
+              <Text
+                props={{
+                  numberOfLines: sizes.SIZE_1,
+                }}
+                style={styles.selectedItemLabel}>
+                pham tien dat
+              </Text>
+            </TouchableOpacity>
+          );
+        })} */}
       </ScrollView>
     </View>
   );
@@ -82,7 +99,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     position: 'absolute',
     top: sizes.SIZE_8,
-    maxHeight: sizes.SIZE_100,
+    maxHeight: 300,
   },
   wrapItem: {
     ...commonStyles.flexRowCenter,

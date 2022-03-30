@@ -16,6 +16,10 @@ export default StyleSheet.create({
     ...commonStyles.flexRowCenter,
     marginTop: sizes.SIZE_30,
   },
+  wrapMainTitle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   wrapAvatar: {
     alignSelf: 'center',
     width: SIZE_AVATAR + sizes.SIZE_4,

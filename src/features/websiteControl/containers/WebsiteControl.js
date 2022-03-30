@@ -298,6 +298,7 @@ const WebsiteControl = ({route}) => {
           <FlatList
             initialNumToRender={10}
             data={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            keyExtractor={(_, key) => key}
             removeClippedSubviews={true}
             renderItem={() => <ItemListPlaceholder />}
             contentContainerStyle={styles.loadingContainer}
@@ -308,7 +309,9 @@ const WebsiteControl = ({route}) => {
             contentContainerStyle={styles.contentContainerFlatlist}
             ListEmptyComponent={<EmptyData />}
             data={websiteList}
-            keyExtractor={item => item.id.toString() + item.status}
+            keyExtractor={(item, key) =>
+              `${item.id.toString()} + ${key} + ${item.status}`
+            }
             refreshControl={
               <RefreshControl
                 refreshing={false}

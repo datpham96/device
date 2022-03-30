@@ -22,7 +22,7 @@ const Avatar: React.FC<Props> = ({
   const [isLoading, setIsLoading] = useState(false);
   let tmpSrcImage = {
     uri: uriImage,
-    priority: FastImage.priority.high,
+    priority: FastImage.priority.normal,
   };
 
   const [uri, setUri] = useState(
@@ -33,7 +33,6 @@ const Avatar: React.FC<Props> = ({
       : images.avatars.picture_default,
   );
 
-  // console.log(uri, 'uri====');
   return (
     <View style={[styles.container, containerStyle]}>
       {isLoading && (

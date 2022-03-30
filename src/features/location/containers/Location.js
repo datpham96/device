@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   AppState,
+  Alert,
 } from 'react-native';
 import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
@@ -52,7 +53,7 @@ const Location = () => {
     value: '',
     is_block: 0,
   });
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(0);
   const [markers, serMarkers] = useState({
     latitude: 0,
     longitude: 0,
@@ -110,7 +111,7 @@ const Location = () => {
             result[PERMISSIONS.IOS.LOCATION_WHEN_IN_USE] === RESULTS.GRANTED ||
             result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] === RESULTS.GRANTED
           ) {
-            setRefresh(!refresh);
+            setRefresh(prev => prev + 1);
           }
         });
       }
@@ -154,7 +155,7 @@ const Location = () => {
               result[PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION] ===
                 RESULTS.GRANTED
             ) {
-              setRefresh(!refresh);
+              setRefresh(prev => prev + 1);
             }
           });
         }
@@ -170,43 +171,38 @@ const Location = () => {
       let deviceInfo = lodash.find(data.data, {id: selectedDevice?.value});
       if (
         deviceInfo &&
+        checkVar.isEmpty(deviceInfo?.latitude) &&
+        checkVar.isEmpty(deviceInfo?.longitude)
+      ) {
+        // Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
+        //   {
+        //     text: 'Đóng',
+        //     // onPress: () => console.log('Cancel Pressed'),
+        //     style: 'cancel',
+        //   },
+        // ]);
+      }
+      if (
+        deviceInfo &&
         !checkVar.isEmpty(deviceInfo?.latitude) &&
         !checkVar.isEmpty(deviceInfo?.longitude)
       ) {
         Geocoder.geocodePosition({
           lat: parseFloat(deviceInfo.latitude),
           lng: parseFloat(deviceInfo.longitude),
-        })
-          .then(resp => {
-            if (resp && resp[0]) {
-              serMarkers({
-                latitude: parseFloat(deviceInfo.latitude),
-                longitude: parseFloat(deviceInfo.longitude),
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
-                avatar: deviceInfo.avatar,
-                address: resp[0]?.formattedAddress,
-              });
-            }
-          })
-          .catch(err => {
-            // Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
-            //   {
-            //     text: 'Đóng',
-            //     onPress: () => console.log('Cancel Pressed'),
-            //     style: 'cancel',
-            //   },
-            // ]);
-            console.log(err, 'err1111');
-          });
+        }).then(resp => {
+          if (resp && resp[0]) {
+            serMarkers({
+              latitude: parseFloat(deviceInfo.latitude),
+              longitude: parseFloat(deviceInfo.longitude),
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+              avatar: deviceInfo.avatar,
+              address: resp[0]?.formattedAddress,
+            });
+          }
+        });
       } else {
-        // Alert.alert('Thông báo', 'Không tìm thấy vị trí trên bản đồ', [
-        //   {
-        //     text: 'Đóng',
-        //     onPress: () => console.log('Cancel Pressed'),
-        //     style: 'cancel',
-        //   },
-        // ]);
         serMarkers({
           latitude: 0,
           longitude: 0,
@@ -291,9 +287,9 @@ const Location = () => {
       .mutateAsync({
         data_device_id: selectedDevice?.value,
         data_is_block: 1,
-        data_full_name: null,
-        data_birthday: null,
-        data_gender: null,
+        data_full_name: '',
+        data_birthday: '',
+        data_gender: '',
       })
       .then(resp => {
         if (resp?.status) {
@@ -326,9 +322,9 @@ const Location = () => {
       .mutateAsync({
         data_device_id: selectedDevice?.value,
         data_is_block: 0,
-        data_full_name: null,
-        data_birthday: null,
-        data_gender: null,
+        data_full_name: '',
+        data_birthday: '',
+        data_gender: '',
       })
       .then(resp => {
         if (resp?.status) {
@@ -410,7 +406,7 @@ const Location = () => {
           {deviceList?.length > 0 && (
             <TouchableOpacity
               activeOpacity={0.9}
-              onPress={() => setRefresh(!refresh)}>
+              onPress={() => setRefresh(prev => prev + 1)}>
               <FastImage
                 source={images.icons.refresh}
                 style={styles.iconRefresh}
@@ -485,7 +481,11 @@ const Location = () => {
           <LoadingData />
         ) : isCheckMarker ? (
           <View style={styles.contentContainer}>
-            <MapMarker is_block={selectedDevice?.is_block} markers={markers} />
+            <MapMarker
+              is_block={selectedDevice?.is_block}
+              markers={markers}
+              refresh_location={refresh}
+            />
           </View>
         ) : (
           <EmptyData />
@@ -495,4 +495,4 @@ const Location = () => {
   );
 };
 
-export default React.memo(Location);
+export default Location;

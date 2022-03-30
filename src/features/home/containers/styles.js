@@ -10,12 +10,14 @@ const styles = StyleSheet.create({
     ...commonStyles.flex1,
   },
   sectionOne: {
+    zIndex: 1,
     // height: heightOutSideBottomTab / sizes.SIZE_2,
     // height: 335,
     // backgroundColor: 'red',
   },
   sectionTwo: {
     // height: heightOutSideBottomTab / sizes.SIZE_2,
+    zIndex: 0,
   },
   wrapHeader: {
     ...commonStyles.flexRowCenter,

@@ -21,6 +21,7 @@ const Login = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -110,10 +111,11 @@ const Login = ({navigation}) => {
             value={password}
             onChangeValue={val => setPassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntry,
             }}
             placeholder="Nhập mật khẩu"
             icon={images.icons.key}
+            onPressIcon={() => setSecureTextEntry(!secureTextEntry)}
           />
           {errors?.password && <TextError message={errors?.password} />}
         </View>

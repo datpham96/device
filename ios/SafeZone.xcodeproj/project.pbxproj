@@ -24,6 +24,7 @@
 		5214389A22914A18BE93E36B /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B40025E744D44D83AB22A2C1 /* Montserrat-Black.ttf */; };
 		60700603BF194DE3A55ACA0E /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F14C42EF814C4780BC1D3B72 /* Montserrat-Medium.ttf */; };
 		6D4A7CBAD9D34963B42AB25A /* Montserrat-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 25484A6FC2B5468680DA899A /* Montserrat-Italic.ttf */; };
+		73646E0C27F1A30B00E665B3 /* MapboxMobileEvents.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73646E0B27F1A30B00E665B3 /* MapboxMobileEvents.xcframework */; };
 		75D8F93BA1ED49F8A45C98A6 /* LexendDeca-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0EC74A15019B4FDE9294BABC /* LexendDeca-Thin.ttf */; };
 		768ED90319FC49A39E1CC236 /* LexendDeca-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FAC19DD55D448CC964B6C21 /* LexendDeca-ExtraLight.ttf */; };
 		7E405CB336424069B3A1B39E /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1DAADABB6574298B2BAD11C /* Montserrat-Light.ttf */; };
@@ -91,6 +92,7 @@
 		6510DEAD90F44D9CA2CE49B2 /* Montserrat-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-BlackItalic.ttf"; path = "../src/assets/fonts/Montserrat-BlackItalic.ttf"; sourceTree = "<group>"; };
 		6B4EA0C576584DE2929AC2A9 /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Light.ttf"; path = "../src/assets/fonts/LexendDeca-Light.ttf"; sourceTree = "<group>"; };
 		6E64215DF968BB239C332F24 /* libPods-SafeZone.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SafeZone.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		73646E0B27F1A30B00E665B3 /* MapboxMobileEvents.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MapboxMobileEvents.xcframework; path = "Pods/@react-native-mapbox-gl-mapbox-static/MapboxMobileEvents.xcframework"; sourceTree = "<group>"; };
 		7FAC19DD55D448CC964B6C21 /* LexendDeca-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-ExtraLight.ttf"; path = "../src/assets/fonts/LexendDeca-ExtraLight.ttf"; sourceTree = "<group>"; };
 		812ABD8AD014425692BD9154 /* LexendDeca-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Regular.ttf"; path = "../src/assets/fonts/LexendDeca-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SafeZone/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73646E0C27F1A30B00E665B3 /* MapboxMobileEvents.xcframework in Frameworks */,
 				EECDA0274B04F96BB206B697 /* libPods-SafeZone.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -171,6 +174,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				73646E0B27F1A30B00E665B3 /* MapboxMobileEvents.xcframework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				6E64215DF968BB239C332F24 /* libPods-SafeZone.a */,
 				4C770F1EBE057419B6DA71A3 /* libPods-SafeZone-SafeZoneTests.a */,
@@ -284,6 +288,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				1FB2F1E320C2DBD74F6419C9 /* [CP] Copy Pods Resources */,
+				A1FE5AAD0FBB5608E6C49725 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -306,6 +311,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				90BCEAE2C5DA11A2A152B059 /* [CP] Copy Pods Resources */,
+				0FC92929874C8C53EEA7F81E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -436,6 +442,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		0FC92929874C8C53EEA7F81E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		1FB2F1E320C2DBD74F6419C9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -490,6 +513,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SafeZone/Pods-SafeZone-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A1FE5AAD0FBB5608E6C49725 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SafeZone-SafeZoneTests/Pods-SafeZone-SafeZoneTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -603,7 +643,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 40;
 				DEVELOPMENT_TEAM = 8K65KKA338;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SafeZone/Info.plist;
@@ -611,7 +651,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.8;
+				MARKETING_VERSION = 2.4.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -634,14 +674,14 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 40;
 				DEVELOPMENT_TEAM = 8K65KKA338;
 				INFOPLIST_FILE = SafeZone/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.8;
+				MARKETING_VERSION = 2.4.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

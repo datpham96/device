@@ -78,7 +78,7 @@ const ChildrenInfo = ({route}) => {
       let detail = data?.data;
       setFullname(detail?.full_name);
       setDeviceName(detail?.device_name);
-      setGender(detail?.gender ? detail?.gender : '');
+      setGender(detail?.gender);
       setAvatarUri({uri: detail?.avatar});
       if (moment(detail?.birthday, 'YYYY-MM-DD').isValid()) {
         setBirthday(

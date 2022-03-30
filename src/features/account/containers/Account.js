@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {Text, Background, Button, Input} from 'base';
 import {
   ScrollView,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  Alert,
 } from 'react-native';
 import styles from './styles';
 import {useDispatch, useSelector} from 'react-redux';
@@ -29,6 +30,9 @@ import {buildAvatar} from 'src/helpers/funcs';
 import VersionInfo from 'react-native-version-info';
 import {useQueryClient} from 'react-query';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import ImageResizer from 'react-native-image-resizer';
+import RNFS from 'react-native-fs';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 import {
   requestMultiple,
@@ -36,14 +40,16 @@ import {
   openSettings,
   RESULTS,
 } from 'react-native-permissions';
+import {getError} from 'storages';
 
 const options = {
   mediaType: 'photo',
-  quality: 0.1,
+  quality: 1,
   includeBase64: true,
 };
 
 const Account = () => {
+  const touchTimoutRef = useRef(null);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const isLoadingLogout = useSelector(state => state.auth.isLoadingLogout);
@@ -73,6 +79,7 @@ const Account = () => {
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
   const [loadingAvatar, setLoadingAvatar] = useState(false);
   const [visiblePermissionCamera, setVisiblePermissionCamera] = useState(false);
+  const [touchTimes, setTouchTimes] = useState(0);
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
@@ -138,8 +145,25 @@ const Account = () => {
     launchCamera(options, response => {
       if (response && response?.assets) {
         let item = response.assets?.[0];
-        let formatData = 'data:' + item.type + ';base64,' + item.base64;
-        setDataRequestAvatar(formatData);
+        let dataFirstBase64 = 'data:' + item.type + ';base64,';
+        let formatData = dataFirstBase64 + item.base64;
+        ImageResizer.createResizedImage(
+          formatData,
+          300,
+          300,
+          'JPEG',
+          100,
+          0,
+          undefined,
+          false,
+          {},
+        )
+          .then(resp => {
+            return RNFS.readFile(resp.path, 'base64');
+          })
+          .then(result => {
+            setDataRequestAvatar(dataFirstBase64 + result);
+          });
         setAvatarUri({uri: item.uri});
       }
     });
@@ -151,8 +175,25 @@ const Account = () => {
     launchImageLibrary(options, response => {
       if (response && response?.assets) {
         let item = response.assets?.[0];
-        let formatData = 'data:' + item.type + ';base64,' + item.base64;
-        setDataRequestAvatar(formatData);
+        let dataFirstBase64 = 'data:' + item.type + ';base64,';
+        let formatData = dataFirstBase64 + item.base64;
+        ImageResizer.createResizedImage(
+          formatData,
+          300,
+          300,
+          'JPEG',
+          100,
+          0,
+          undefined,
+          false,
+          {},
+        )
+          .then(resp => {
+            return RNFS.readFile(resp.path, 'base64');
+          })
+          .then(result => {
+            setDataRequestAvatar(dataFirstBase64 + result);
+          });
         setAvatarUri({uri: item.uri});
       }
     });
@@ -184,6 +225,40 @@ const Account = () => {
   const handleSetting = () => {
     setVisiblePermissionCamera(false);
     openSettings().catch(() => console.warn('cannot open settings'));
+  };
+
+  const handleTabLogErr = () => {
+    setTouchTimes(prev => prev + 1);
+    if (touchTimoutRef.current) {
+      clearTimeout(touchTimoutRef.current);
+    }
+    touchTimoutRef.current = setTimeout(async () => {
+      if (touchTimes === 4) {
+        handleGetFileErrorLog();
+      }
+      setTouchTimes(0);
+    }, 500);
+  };
+
+  const handleCoppy = content => {
+    Clipboard.setString(content);
+  };
+
+  const handleGetFileErrorLog = async () => {
+    let getErrorLog = await getError();
+    if (getErrorLog) {
+      Alert.alert('Thông tin', getErrorLog, [
+        {
+          text: 'Đóng',
+          style: 'cancel',
+        },
+        {
+          text: 'Sao chép',
+          style: 'cancel',
+          onPress: () => handleCoppy(getErrorLog),
+        },
+      ]);
+    }
   };
 
   return (
@@ -234,9 +309,11 @@ const Account = () => {
         enableOnAndroid={true}
         enableAutomaticScroll={Platform.OS === 'ios'}>
         <ScrollView style={styles.container}>
-          <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
-            Quản lý thông tin
-          </Text>
+          <TouchableOpacity onPress={handleTabLogErr} activeOpacity={0.9}>
+            <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
+              Quản lý thông tin
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={handleOpenBottomSheetImagePicker}
             activeOpacity={0.9}
@@ -274,7 +351,7 @@ const Account = () => {
               customerInput={{backgroundColor: colors.COLOR_DISABLE}}
               props={{editable: false}}
               placeholder="Số điện thoại"
-              value={userInfo.phone}
+              value={userInfo?.phone}
             />
           </View>
           <Text

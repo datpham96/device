@@ -35,7 +35,17 @@ const screenOptions = {
 const RootStack = () => {
   const logged = useSelector(state => state.auth.logged);
   return (
-    <RootNavStack.Navigator>
+    <RootNavStack.Navigator
+      screenOptions={{
+        cardStyle: {
+          opacity: 1,
+          ...Platform.select({
+            android: {
+              backgroundColor: 'rgba(0, 0, 0, 1)',
+            },
+          }),
+        },
+      }}>
       {logged ? (
         <>
           <RootNavStack.Screen
@@ -118,13 +128,6 @@ const RootStack = () => {
           />
         </>
       )}
-      {/* <RootNavStack.Screen
-        name={navigationTypes.login.screen}
-        component={LoginScreen}
-        options={{
-          headerShown: false,
-        }}
-      /> */}
       <RootNavStack.Screen
         name={navigationTypes.error.screen}
         component={ErrorScreen}

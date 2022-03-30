@@ -9,6 +9,9 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {TextError, InputDateComponent, InputSelectComponent} from 'components';
 import {ModalBottomSheet} from 'components';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {genders} from 'types';
+import ImageResizer from 'react-native-image-resizer';
+import RNFS from 'react-native-fs';
 
 const options = {
   mediaType: 'photo',
@@ -49,8 +52,25 @@ const ModalUpdateInfoComponent = ({
       launchCamera(options, response => {
         if (response && response?.assets) {
           let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
+          let dataFirstBase64 = 'data:' + item.type + ';base64,';
+          let formatData = dataFirstBase64 + item.base64;
+          ImageResizer.createResizedImage(
+            formatData,
+            300,
+            300,
+            'JPEG',
+            100,
+            0,
+            undefined,
+            false,
+            {},
+          )
+            .then(resp => {
+              return RNFS.readFile(resp.path, 'base64');
+            })
+            .then(result => {
+              setDataRequestAvatar(dataFirstBase64 + result);
+            });
           setAvatarUri({uri: item.uri});
         }
       });
@@ -64,8 +84,25 @@ const ModalUpdateInfoComponent = ({
       launchImageLibrary(options, response => {
         if (response && response?.assets) {
           let item = response.assets?.[0];
-          let formatData = 'data:' + item.type + ';base64,' + item.base64;
-          setDataRequestAvatar(formatData);
+          let dataFirstBase64 = 'data:' + item.type + ';base64,';
+          let formatData = dataFirstBase64 + item.base64;
+          ImageResizer.createResizedImage(
+            formatData,
+            300,
+            300,
+            'JPEG',
+            100,
+            0,
+            undefined,
+            false,
+            {},
+          )
+            .then(resp => {
+              return RNFS.readFile(resp.path, 'base64');
+            })
+            .then(result => {
+              setDataRequestAvatar(dataFirstBase64 + result);
+            });
           setAvatarUri({uri: item.uri});
         }
       });
@@ -144,10 +181,7 @@ const ModalUpdateInfoComponent = ({
                     selectedValue={genderValue}
                     onDonePress={val => onChangeGender(val)}
                     placeholder="--Giới tính--"
-                    listData={[
-                      {label: 'Nam', value: 1},
-                      {label: 'Nữ', value: 2},
-                    ]}
+                    listData={genders}
                   />
                   {errors?.gender && <TextError message={errors?.gender} />}
                 </View>

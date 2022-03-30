@@ -37,7 +37,6 @@ const Imei = ({route}) => {
         data_license,
       ),
   );
-  // console.log(dataParams, 'dataParams');
 
   const handleDeviceActivation = () => {
     const validation = new Validator(
@@ -79,7 +78,6 @@ const Imei = ({route}) => {
         data_license: licenseKey,
       })
       .then(resp => {
-        console.log(resp, 'resp------');
         if (resp.status) {
           Toast(resp?.msg);
           RootNavigation.navigate(navigationTypes.childrenManager.screen);
@@ -89,7 +87,6 @@ const Imei = ({route}) => {
         mutationActivatedDevice.reset();
       })
       .catch(err => {
-        console.log(err, 'err------');
         Toast(err?.msg);
         mutationActivatedDevice.reset();
       });
@@ -101,11 +98,11 @@ const Imei = ({route}) => {
       <ButtonBack />
       <View style={styles.container}>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
-          Kích hoạt sử dụng
+          Bản quyền sử dụng
         </Text>
         <View style={styles.wrapInputImei}>
           <Input
-            placeholder="Nhập mã kích hoạt"
+            placeholder="Nhập mã bản quyền"
             value={licenseKey}
             onChangeValue={val => setLicenseKey(val)}
           />

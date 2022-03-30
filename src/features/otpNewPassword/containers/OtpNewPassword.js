@@ -29,6 +29,10 @@ const OtpNewPassword = () => {
   const [rePassword, setRePassword] = useState('');
   const [errors, setErrors] = useState({});
   const [countdownTime, setCountdownTime] = useState(expiredTime);
+  const [secureTextEntryNewPassword, setSecureTextEntryNewPassword] =
+    useState(true);
+  const [secureTextEntryReNewPassword, setSecureTextEntryReNewPassword] =
+    useState(true);
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
@@ -167,10 +171,13 @@ const OtpNewPassword = () => {
             value={password}
             onChangeValue={val => setPassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryNewPassword,
             }}
             placeholder="Nhập mật khẩu mới"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryNewPassword(!secureTextEntryNewPassword)
+            }
           />
           {errors?.password && <TextError message={errors?.password} />}
         </View>
@@ -179,10 +186,13 @@ const OtpNewPassword = () => {
             value={rePassword}
             onChangeValue={val => setRePassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryReNewPassword,
             }}
             placeholder="Nhập lại mật khẩu mới"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryReNewPassword(!secureTextEntryReNewPassword)
+            }
           />
           {errors?.rePassword && <TextError message={errors?.rePassword} />}
         </View>

@@ -112,7 +112,7 @@ const Home = ({navigation}) => {
   const deviceList = useMemo(() => {
     let tmpDataList = [];
     if (isSuccessDeviceList && dataDeviceList?.data) {
-      dataDeviceList.data.map(item => {
+      dataDeviceList?.data?.map(item => {
         tmpDataList.push({
           label: item.full_name,
           value: item.id,
@@ -248,7 +248,7 @@ const Home = ({navigation}) => {
   const onRefreshing = useCallback(() => {
     setRefreshing(true);
 
-    wait(500).then(() => setRefreshing(false));
+    wait(1000).then(() => setRefreshing(false));
   }, []);
 
   let checkDeviceData =
@@ -263,169 +263,169 @@ const Home = ({navigation}) => {
       ) : checkDeviceData ? (
         <View style={styles.container}>
           {/* <Loading isLoading={isLoadingReportAccess} /> */}
-          <TouchableWithoutFeedback
+          {/* <TouchableWithoutFeedback
             onPress={() => {
               setToggleDeviceSelected(false);
-            }}>
-            <View onLayout={onLayoutSectionOne} style={styles.sectionOne}>
-              <View style={styles.wrapHeader}>
-                <FastImage
-                  resizeMode={FastImage.resizeMode.contain}
-                  style={styles.logoLock}
-                  source={images.logos.lock}
-                />
-                {isLoadingDeviceList ? (
-                  <DevicePlaceholder />
-                ) : (
-                  <View style={styles.selectedContainer}>
-                    <TouchableOpacity
-                      style={styles.wrapSelected}
-                      activeOpacity={0.9}
-                      onPress={handleShowDeviceSelect}>
-                      <MaterialCommunityIcons
-                        name="chevron-left"
-                        size={sizes.SIZE_20}
-                        color={colors.COLOR_WHITE}
-                        style={styles.iconChevronLeft}
-                      />
-                      <View style={styles.wrapAvatarDevice}>
-                        <FastImage
-                          source={
-                            selectedDevice?.is_block === 0
-                              ? selectedDevice.avatar
-                                ? {uri: selectedDevice.avatar}
-                                : images.avatars.default
-                              : images.avatars.shield
-                          }
-                          style={styles.avatarShield}
-                          resizeMode={FastImage.resizeMode.cover}
-                        />
-                        {selectedDevice && selectedDevice?.is_online === 1 && (
-                          <View style={styles.dotOnline} />
-                        )}
-                        {selectedDevice && selectedDevice?.is_online !== 1 && (
-                          <View style={styles.dotOffline} />
-                        )}
-                      </View>
-                      <Text style={styles.titleShield}>
-                        {truncateWords(
-                          selectedDevice?.full_name,
-                          sizes.SIZE_2,
-                          '...',
-                        )}
-                      </Text>
-                    </TouchableOpacity>
-                    {toggleDeviceSelected && (
-                      <DropdownSelected
-                        onPressItem={item => handleActiveItemDevice(item)}
-                        containerStyle={styles.scrollItemDeviceSelect}
-                        data={deviceList}
-                        selected={selectedDevice?.id}
-                      />
-                    )}
-                  </View>
-                )}
-              </View>
-              <View style={styles.wrapContainerTitle}>
-                <View style={styles.wrapTitle}>
-                  <View style={styles.bar} />
-                  <Text style={styles.title}>Thống kê chung</Text>
-                </View>
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={handleShowDatePicker}
-                  style={styles.wrapSelectCalendar}>
-                  <View style={styles.wrapCalendar}>
-                    <FastImage
-                      style={styles.iconWrapCalendar}
-                      source={images.icons.wrapCalendar}
-                    />
-                    <Text style={styles.calendarDay}>{day}</Text>
-                  </View>
-                  <Text style={styles.calendarMonth}>Tháng {month}</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.chartContainer}>
-                {isLoadingReportAccess ? (
-                  <PieCharPlaceholder />
-                ) : deviceList && deviceList.length > 0 ? (
-                  <PieChart
-                    selectedKey={pieChartActive}
-                    onSelected={handleActivePieChart}
-                    dataList={dataPieChartList}
-                  />
-                ) : (
-                  <></>
-                )}
-                <View style={styles.wrapParams}>
-                  <View
+            }}> */}
+          <View onLayout={onLayoutSectionOne} style={styles.sectionOne}>
+            <View style={styles.wrapHeader}>
+              <FastImage
+                resizeMode={FastImage.resizeMode.contain}
+                style={styles.logoLock}
+                source={images.logos.lock}
+              />
+              {isLoadingDeviceList ? (
+                <DevicePlaceholder />
+              ) : (
+                <View style={styles.selectedContainer}>
+                  <TouchableOpacity
+                    style={styles.wrapSelected}
                     activeOpacity={0.9}
-                    onPress={() => console.log('website')}
-                    style={styles.paramInfo}>
-                    <Text style={styles.paramInfoLabel}>Thống kê</Text>
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => handlePieChartActive(0)}
-                      style={styles.wrapParamInfoValue}>
-                      <View
-                        style={[
-                          styles.paramInfoValueDot,
-                          {backgroundColor: colors.COLOR_CHART_BLUE},
-                        ]}
+                    onPress={handleShowDeviceSelect}>
+                    <MaterialCommunityIcons
+                      name="chevron-left"
+                      size={sizes.SIZE_20}
+                      color={colors.COLOR_WHITE}
+                      style={styles.iconChevronLeft}
+                    />
+                    <View style={styles.wrapAvatarDevice}>
+                      <FastImage
+                        source={
+                          selectedDevice?.is_block === 0
+                            ? selectedDevice.avatar
+                              ? {uri: selectedDevice.avatar}
+                              : images.avatars.default
+                            : images.avatars.shield
+                        }
+                        style={styles.avatarShield}
+                        resizeMode={FastImage.resizeMode.cover}
                       />
-                      <View style={styles.wrapReportLabel}>
-                        <Text
-                          style={[
-                            styles.paramInfoValue,
-                            pieChartActive === 0
-                              ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                              : {},
-                          ]}>
-                          {types.status.allow.name}:{' '}
-                        </Text>
-                        {!checkVar.isEmpty(dataPieChartList) ? (
-                          <Text>
-                            {formatNumberThousand(dataPieChartList[0]?.total)}
-                          </Text>
-                        ) : (
-                          <View>
-                            <NumberPlaceholder />
-                          </View>
-                        )}
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={0.9}
-                      onPress={() => handlePieChartActive(1)}
-                      style={styles.wrapParamInfoValue}>
-                      <View
+                      {selectedDevice && selectedDevice?.is_online === 1 && (
+                        <View style={styles.dotOnline} />
+                      )}
+                      {selectedDevice && selectedDevice?.is_online !== 1 && (
+                        <View style={styles.dotOffline} />
+                      )}
+                    </View>
+                    <Text style={styles.titleShield}>
+                      {truncateWords(
+                        selectedDevice?.full_name,
+                        sizes.SIZE_2,
+                        '...',
+                      )}
+                    </Text>
+                  </TouchableOpacity>
+                  {toggleDeviceSelected && (
+                    <DropdownSelected
+                      onPressItem={item => handleActiveItemDevice(item)}
+                      containerStyle={styles.scrollItemDeviceSelect}
+                      data={deviceList}
+                      selected={selectedDevice?.id}
+                    />
+                  )}
+                </View>
+              )}
+            </View>
+            <View style={styles.wrapContainerTitle}>
+              <View style={styles.wrapTitle}>
+                <View style={styles.bar} />
+                <Text style={styles.title}>Thống kê chung</Text>
+              </View>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={handleShowDatePicker}
+                style={styles.wrapSelectCalendar}>
+                <View style={styles.wrapCalendar}>
+                  <FastImage
+                    style={styles.iconWrapCalendar}
+                    source={images.icons.wrapCalendar}
+                  />
+                  <Text style={styles.calendarDay}>{day}</Text>
+                </View>
+                <Text style={styles.calendarMonth}>Tháng {month}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.chartContainer}>
+              {isLoadingReportAccess ? (
+                <PieCharPlaceholder />
+              ) : deviceList && deviceList.length > 0 ? (
+                <PieChart
+                  selectedKey={pieChartActive}
+                  onSelected={handleActivePieChart}
+                  dataList={dataPieChartList}
+                />
+              ) : (
+                <></>
+              )}
+              <View style={styles.wrapParams}>
+                <View
+                  activeOpacity={0.9}
+                  onPress={() => console.log('website')}
+                  style={styles.paramInfo}>
+                  <Text style={styles.paramInfoLabel}>Thống kê</Text>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => handlePieChartActive(0)}
+                    style={styles.wrapParamInfoValue}>
+                    <View
+                      style={[
+                        styles.paramInfoValueDot,
+                        {backgroundColor: colors.COLOR_CHART_BLUE},
+                      ]}
+                    />
+                    <View style={styles.wrapReportLabel}>
+                      <Text
                         style={[
-                          styles.paramInfoValueDot,
-                          {backgroundColor: colors.COLOR_CHART_RED},
-                        ]}
-                      />
-                      <View style={styles.wrapReportLabel}>
-                        <Text
-                          style={[
-                            styles.paramInfoValue,
-                            pieChartActive === 1
-                              ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                              : {},
-                          ]}>
-                          {types.status.block.name}:{' '}
+                          styles.paramInfoValue,
+                          pieChartActive === 0
+                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                            : {},
+                        ]}>
+                        {types.status.allow.name}:{' '}
+                      </Text>
+                      {!checkVar.isEmpty(dataPieChartList) ? (
+                        <Text>
+                          {formatNumberThousand(dataPieChartList[0]?.total)}
                         </Text>
-                        {!checkVar.isEmpty(dataPieChartList) ? (
-                          <Text>
-                            {formatNumberThousand(dataPieChartList[1]?.total)}
-                          </Text>
-                        ) : (
-                          <View>
-                            <NumberPlaceholder />
-                          </View>
-                        )}
-                      </View>
-                    </TouchableOpacity>
-                    {/* {dataPieChartList.map((item, key) => {
+                      ) : (
+                        <View>
+                          <NumberPlaceholder />
+                        </View>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => handlePieChartActive(1)}
+                    style={styles.wrapParamInfoValue}>
+                    <View
+                      style={[
+                        styles.paramInfoValueDot,
+                        {backgroundColor: colors.COLOR_CHART_RED},
+                      ]}
+                    />
+                    <View style={styles.wrapReportLabel}>
+                      <Text
+                        style={[
+                          styles.paramInfoValue,
+                          pieChartActive === 1
+                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
+                            : {},
+                        ]}>
+                        {types.status.block.name}:{' '}
+                      </Text>
+                      {!checkVar.isEmpty(dataPieChartList) ? (
+                        <Text>
+                          {formatNumberThousand(dataPieChartList[1]?.total)}
+                        </Text>
+                      ) : (
+                        <View>
+                          <NumberPlaceholder />
+                        </View>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                  {/* {dataPieChartList.map((item, key) => {
                       return (
                         <TouchableOpacity
                           key={key}
@@ -450,11 +450,11 @@ const Home = ({navigation}) => {
                         </TouchableOpacity>
                       );
                     })} */}
-                  </View>
                 </View>
               </View>
             </View>
-          </TouchableWithoutFeedback>
+          </View>
+          {/* </TouchableWithoutFeedback> */}
           <ScrollView
             refreshControl={
               <RefreshControl

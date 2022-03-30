@@ -4,15 +4,20 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '11.0'
 
 target 'SafeZone' do
+  
   config = use_native_modules!
   rn_maps_path = '../node_modules/react-native-maps'
+  pod '@react-native-mapbox-gl-mapbox-static', '~> 10.0.0-beta.12'
   pod 'react-native-google-maps', :path => rn_maps_path
   pod 'Google-Maps-iOS-Utils'
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+ 
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
     :hermes_enabled => false
   )
+  
 
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
@@ -22,6 +27,8 @@ target 'SafeZone' do
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  # pod 'react-native-mapbox-gl', :path => '../node_modules/@react-native-mapbox-gl/maps'
 
   target 'SafeZoneTests' do
     inherit! :complete
@@ -33,13 +40,10 @@ target 'SafeZone' do
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
   # use_flipper!()
+  
 
   # post_install do |installer|
-    # react_native_post_install(installer)
-    # ## Fix for Flipper-Folly on iOS 14.5
-    # find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
-
-    # find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h", "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
+  #   $RNMapboxMaps.post_install(installer)
   # end
 
   # def find_and_replace(dir, findstr, replacestr)
@@ -54,4 +58,8 @@ target 'SafeZone' do
   #   end
   #   Dir[dir + '*/'].each(&method(:find_and_replace))
   # end
+  post_install do |installer|
+    $RNMBGL.post_install(installer)
+    # ... other post install hooks
+  end
 end

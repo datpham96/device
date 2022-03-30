@@ -43,7 +43,6 @@ const ApiConstants = {
 
   //Path history
   DEVICE_HISTORY: 'history/listWebHistory', //Lịch sử truy cập web
-  DEVICE_REPORT: 'history/webHistoryStatistics', //Thống kê truy cập
 };
 
 export default ApiConstants;

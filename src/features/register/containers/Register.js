@@ -24,6 +24,9 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [secureTextEntryPassword, setSecureTextEntryPassword] = useState(true);
+  const [secureTextEntryRePassword, setSecureTextEntryRePassword] =
+    useState(true);
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
@@ -181,10 +184,13 @@ const Register = () => {
             value={password}
             onChangeValue={val => setPassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryPassword,
             }}
             placeholder="Nhập mật khẩu"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryPassword(!secureTextEntryPassword)
+            }
           />
           {errors?.password && <TextError message={errors?.password} />}
         </View>
@@ -193,10 +199,13 @@ const Register = () => {
             value={rePassword}
             onChangeValue={val => setRePassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryRePassword,
             }}
             placeholder="Nhập lại mật khẩu"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryRePassword(!secureTextEntryRePassword)
+            }
           />
           {errors?.rePassword && <TextError message={errors?.rePassword} />}
         </View>

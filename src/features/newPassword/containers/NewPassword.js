@@ -28,6 +28,12 @@ const NewPassword = () => {
   const [newPassword, setNewPassword] = useState('');
   const [reNewPassword, setReNewPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [secureTextEntryOldPassword, setSecureTextEntryOldPassword] =
+    useState(true);
+  const [secureTextEntryNewPassword, setSecureTextEntryNewPassword] =
+    useState(true);
+  const [secureTextEntryReNewPassword, setSecureTextEntryReNewPassword] =
+    useState(true);
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
@@ -141,10 +147,13 @@ const NewPassword = () => {
             value={oldPassword}
             onChangeValue={val => setOldPassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryOldPassword,
             }}
             placeholder="Nhập mật khẩu hiện tại"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryOldPassword(!secureTextEntryOldPassword)
+            }
           />
           {errors?.oldPassword && <TextError message={errors?.oldPassword} />}
         </View>
@@ -153,10 +162,13 @@ const NewPassword = () => {
             value={newPassword}
             onChangeValue={val => setNewPassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryNewPassword,
             }}
             placeholder="Nhập mật khẩu mới"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryNewPassword(!secureTextEntryNewPassword)
+            }
           />
           {errors?.newPassword && <TextError message={errors?.newPassword} />}
         </View>
@@ -165,10 +177,13 @@ const NewPassword = () => {
             value={reNewPassword}
             onChangeValue={val => setReNewPassword(val)}
             props={{
-              secureTextEntry: true,
+              secureTextEntry: secureTextEntryReNewPassword,
             }}
             placeholder="Nhập lại mật khẩu mới"
             icon={images.icons.key}
+            onPressIcon={() =>
+              setSecureTextEntryReNewPassword(!secureTextEntryReNewPassword)
+            }
           />
           {errors?.reNewPassword && (
             <TextError message={errors?.reNewPassword} />
