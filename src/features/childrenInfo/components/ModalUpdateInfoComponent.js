@@ -37,7 +37,7 @@ const ModalUpdateInfoComponent = ({
   birthdayValue,
   onChangeBirthday,
   onChangeGender,
-  genderValue,
+  genderValue = 1,
   errors,
   setDataRequestAvatar,
   setAvatarUri,

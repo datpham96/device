@@ -93,6 +93,7 @@
 		6B4EA0C576584DE2929AC2A9 /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Light.ttf"; path = "../src/assets/fonts/LexendDeca-Light.ttf"; sourceTree = "<group>"; };
 		6E64215DF968BB239C332F24 /* libPods-SafeZone.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SafeZone.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		73646E0B27F1A30B00E665B3 /* MapboxMobileEvents.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MapboxMobileEvents.xcframework; path = "Pods/@react-native-mapbox-gl-mapbox-static/MapboxMobileEvents.xcframework"; sourceTree = "<group>"; };
+		73839BD027F6A5DA00E85FB4 /* SafeZone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SafeZone.entitlements; path = SafeZone/SafeZone.entitlements; sourceTree = "<group>"; };
 		7FAC19DD55D448CC964B6C21 /* LexendDeca-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-ExtraLight.ttf"; path = "../src/assets/fonts/LexendDeca-ExtraLight.ttf"; sourceTree = "<group>"; };
 		812ABD8AD014425692BD9154 /* LexendDeca-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LexendDeca-Regular.ttf"; path = "../src/assets/fonts/LexendDeca-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SafeZone/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -161,6 +162,7 @@
 		13B07FAE1A68108700A75B9A /* SafeZone */ = {
 			isa = PBXGroup;
 			children = (
+				73839BD027F6A5DA00E85FB4 /* SafeZone.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -641,9 +643,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SafeZone/SafeZone.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = 8K65KKA338;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SafeZone/Info.plist;
@@ -651,7 +654,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4.1;
+				MARKETING_VERSION = 2.4.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -672,16 +675,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SafeZone/SafeZone.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = 8K65KKA338;
 				INFOPLIST_FILE = SafeZone/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.4.1;
+				MARKETING_VERSION = 2.4.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

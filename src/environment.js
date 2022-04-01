@@ -1,6 +1,7 @@
 const env = {
   //config host
   host: 'https://quanlytreem.masscom.vn',
+  //tài khoản datd2537@gmail.com
   google_maps: {
     key: 'AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU',
   },

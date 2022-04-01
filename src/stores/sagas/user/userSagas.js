@@ -5,7 +5,7 @@ import {
   updateUserInfoApi,
   changePasswordApi,
 } from 'src/api/methods/user';
-import {getToken, setToken} from 'storages';
+import {getToken, setToken, setKeyChain, getKeyChain} from 'storages';
 import {
   userInfoSuccess,
   userInfoFailure,
@@ -22,10 +22,10 @@ import SplashScreen from 'react-native-splash-screen';
 //get user info
 export function* userInfoRequest() {
   try {
-    let token = yield call(getToken);
-    if (token) {
+    let token = yield call(getKeyChain);
+    if (token?.password) {
       yield put(loginSuccess());
-      let respUserInfo = yield call(userInfoApi, token);
+      let respUserInfo = yield call(userInfoApi, token?.password);
       yield put(userInfoSuccess(respUserInfo?.data));
       yield SplashScreen.hide();
     } else {
@@ -43,9 +43,14 @@ export function* updateAvatarRequest(action) {
     let respUpdateAvatar = yield call(updateUserAvatarApi, image);
     if (respUpdateAvatar?.status) {
       yield put(updateUserAvatarSuccess(respUpdateAvatar?.data?.image));
-      let token = yield call(getToken);
-      if (token) {
-        let respUserInfo = yield call(userInfoApi, token);
+      // let token = yield call(getToken);
+      // if (token) {
+      //   let respUserInfo = yield call(userInfoApi, token);
+      //   yield put(userInfoSuccess(respUserInfo?.data));
+      // }
+      let respKeyChain = yield call(getKeyChain);
+      if (respKeyChain?.password) {
+        let respUserInfo = yield call(userInfoApi, respKeyChain?.password);
         yield put(userInfoSuccess(respUserInfo?.data));
       }
     } else {
@@ -85,8 +90,9 @@ export function* changePasswordRequest(action) {
       newPassword,
       rePassword,
     );
+    let respKeyChain = yield getKeyChain();
     if (respChangePassword?.status) {
-      yield setToken(respChangePassword?.token);
+      yield setKeyChain(respKeyChain?.username, respChangePassword?.token);
       yield put(changePasswordSuccess());
     } else {
       yield put(changePasswordFailure(respChangePassword?.msg));

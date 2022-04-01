@@ -39,6 +39,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) muốn truy cập camera của bạn để chụp ảnh và quét QRCode</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>$(PRODUCT_NAME) muốn truy cập FaceID của bạn để đăng nhập</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>$(PRODUCT_NAME) muốn truy cập vị trí của bạn để đánh dấu trên bản đồ 1</string>
 	<key>NSLocationAlwaysUsageDescription</key>

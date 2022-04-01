@@ -397,6 +397,8 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController
+  - RNKeychain (8.0.0):
+    - React-Core
   - RNPermissions (3.2.0):
     - React-Core
   - RNReanimated (2.4.1):
@@ -506,6 +508,7 @@ DEPENDENCIES:
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -642,6 +645,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -720,6 +725,7 @@ SPEC CHECKSUMS:
   RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageCropPicker: 448d3c6e923fde3466b49caf3c2457c2a0ba02dd
+  RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNPermissions: bf844d392fe0ecbfbd2e4ae2b88cc32f2f09b369
   RNReanimated: e8afbe2a9e08e9e778ea72ddb1a8533445812621
   RNScreens: fd535547baa4ef8aeaee1a8b1e3ffd17b8df44a4

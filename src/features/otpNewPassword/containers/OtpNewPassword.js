@@ -86,7 +86,7 @@ const OtpNewPassword = () => {
         setErrors({
           ...errors,
           password:
-            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, ký tự thường, 1 ký tự đặc biệt và 1 số',
           rePassword: validation.errors.first('rePassword'),
           otp: validation.errors.first('otp'),
         });
@@ -106,7 +106,7 @@ const OtpNewPassword = () => {
         setErrors({
           ...errors,
           password:
-            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, ký tự thường, 1 ký tự đặc biệt và 1 số',
           otp: false,
           rePassword: false,
         });

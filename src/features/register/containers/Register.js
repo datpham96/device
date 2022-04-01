@@ -85,7 +85,7 @@ const Register = () => {
         setErrors({
           ...errors,
           password:
-            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, ký tự thường, 1 ký tự đặc biệt và 1 số',
         });
         return;
       }
@@ -104,7 +104,7 @@ const Register = () => {
         setErrors({
           ...errors,
           password:
-            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, ký tự thường, 1 ký tự đặc biệt và 1 số',
           name: false,
           phone: false,
           rePassword: false,

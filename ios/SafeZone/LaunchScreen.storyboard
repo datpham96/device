@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina5_5" orientation="portrait" appearance="light"/>
+    <device id="retina6_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Montserrat-Regular.ttf">
+            <string>Montserrat-Regular</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--View Controller-->
         <scene sceneID="EHf-IW-A2E">
@@ -17,29 +22,69 @@
                         <viewControllerLayoutGuide type="bottom" id="rTP-gI-geG"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="GY7-yX-AbZ" userLabel="launch">
-                                <rect key="frame" x="0.0" y="-8" width="414" height="752"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Copyright by Masscom Vietnam" textAlignment="center" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xa2-Nz-XQ3" userLabel="label company">
+                                <rect key="frame" x="20" y="857" width="388" height="16"/>
+                                <fontDescription key="fontDescription" name="Montserrat-Regular" family="Montserrat" pointSize="13"/>
+                                <color key="textColor" systemColor="systemBackgroundColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="computer" translatesAutoresizingMaskIntoConstraints="NO" id="P0D-D6-GhH">
+                                <rect key="frame" x="20" y="565.33333333333337" width="388" height="271.66666666666663"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" secondItem="P0D-D6-GhH" secondAttribute="width" multiplier="0.7:1" id="Yqp-Cg-JFS"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="mwq-DY-bWp">
+                                <rect key="frame" x="20" y="144" width="388" height="77.666666666666686"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" secondItem="mwq-DY-bWp" secondAttribute="width" multiplier="0.2:1" id="u6M-R9-LbU"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="label" translatesAutoresizingMaskIntoConstraints="NO" id="xQL-eX-NI5">
+                                <rect key="frame" x="20" y="231.66666666666666" width="388" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="Ua4-tL-pJf"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch-1" translatesAutoresizingMaskIntoConstraints="NO" id="GY7-yX-AbZ" userLabel="launch">
+                                <rect key="frame" x="0.0" y="-8" width="428" height="942"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="xa2-Nz-XQ3" secondAttribute="bottom" constant="19" id="2fJ-sZ-yvW"/>
+                            <constraint firstItem="xa2-Nz-XQ3" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="9No-YJ-89p"/>
                             <constraint firstItem="GY7-yX-AbZ" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="9sP-5y-5zI"/>
+                            <constraint firstItem="P0D-D6-GhH" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="J0V-Kc-M5R"/>
+                            <constraint firstItem="P0D-D6-GhH" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailingMargin" id="J4W-3C-JOn"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="xQL-eX-NI5" secondAttribute="trailing" id="JLK-44-Ktm"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="xa2-Nz-XQ3" secondAttribute="trailing" id="Njw-hu-gvg"/>
                             <constraint firstItem="rTP-gI-geG" firstAttribute="top" secondItem="GY7-yX-AbZ" secondAttribute="bottomMargin" id="T2Y-Bd-19O"/>
+                            <constraint firstItem="xQL-eX-NI5" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="TAi-2a-sGf"/>
+                            <constraint firstItem="mwq-DY-bWp" firstAttribute="centerX" secondItem="P0D-D6-GhH" secondAttribute="centerX" id="Ur1-mD-5zD"/>
+                            <constraint firstItem="mwq-DY-bWp" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="Xkb-S5-dnR"/>
                             <constraint firstItem="GY7-yX-AbZ" firstAttribute="topMargin" secondItem="nPs-R3-jxP" secondAttribute="bottom" id="aYp-aS-ezb"/>
                             <constraint firstAttribute="trailing" secondItem="GY7-yX-AbZ" secondAttribute="trailing" id="ag7-H4-PID"/>
+                            <constraint firstItem="xa2-Nz-XQ3" firstAttribute="top" secondItem="P0D-D6-GhH" secondAttribute="bottom" constant="20" id="f92-cY-HW6"/>
+                            <constraint firstItem="mwq-DY-bWp" firstAttribute="top" secondItem="nPs-R3-jxP" secondAttribute="bottom" constant="100" id="he2-a5-pR0"/>
+                            <constraint firstItem="xQL-eX-NI5" firstAttribute="top" secondItem="mwq-DY-bWp" secondAttribute="bottom" constant="10" id="mgy-jn-leR"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="mwq-DY-bWp" secondAttribute="trailing" id="nEh-px-rpj"/>
                         </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="46.261682242990652" y="372.57019438444928"/>
+            <point key="canvasLocation" x="44.927536231884062" y="372.554347826087"/>
         </scene>
     </scenes>
     <resources>
-        <image name="launch" width="125" height="270.66665649414062"/>
+        <image name="computer" width="97" height="103.33333587646484"/>
+        <image name="label" width="41.666667938232422" height="7"/>
+        <image name="launch-1" width="375" height="812"/>
+        <image name="logo" width="100" height="100"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

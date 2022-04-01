@@ -83,7 +83,7 @@ const NewPassword = () => {
         setErrors({
           ...errors,
           newPassword:
-            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, ký tự thường, 1 ký tự đặc biệt và 1 số',
         });
         return;
       }
@@ -102,7 +102,7 @@ const NewPassword = () => {
         setErrors({
           ...errors,
           newPassword:
-            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, 1 ký tự đặc biệt và 1 số',
+            'Mật khẩu phải lớn hơn 8 ký tự, ít nhất 1 ký tự viết hoa, ký tự thường, 1 ký tự đặc biệt và 1 số',
           oldPassword: false,
           reNewPassword: false,
         });

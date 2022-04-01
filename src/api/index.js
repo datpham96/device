@@ -6,6 +6,7 @@ import * as RootNavigation from '../navigation/RootNavigation';
 import navigationType from 'navigationTypes';
 import NetInfo from '@react-native-community/netinfo';
 import statusCode from 'src/config/errors/statusCodes';
+import * as Keychain from 'react-native-keychain';
 
 axios.interceptors.request.use(function (config) {
   NetInfo.fetch().then(state => {
@@ -49,17 +50,18 @@ export function api(path, method, params = {}) {
 }
 
 export async function apiToken(path, method, params = {}, token) {
-  let tokenStore = null;
-  let expired_token = await getExpiredToken();
-  if (
-    moment().diff(moment(expired_token, 'DD-MM-YYYY HH:mm:ss'), 'days', true) <=
-    30
-  ) {
-    tokenStore = await getToken();
-  } else {
-    await removeAll();
-  }
-  let myToken = tokenStore || token;
+  // let tokenStore = null;
+  // let expired_token = await getExpiredToken();
+  // if (
+  //   moment().diff(moment(expired_token, 'DD-MM-YYYY HH:mm:ss'), 'days', true) <=
+  //   30
+  // ) {
+  //   tokenStore = await Keychain.getGenericPassword();
+  // } else {
+  //   await removeAll();
+  // }
+  let tokenStore = await Keychain.getGenericPassword();
+  let myToken = tokenStore?.password || token;
   let options = {
     headers: {
       Accept: 'application/json',

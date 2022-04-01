@@ -8,7 +8,13 @@ import {
   verifyOtpApi,
 } from 'src/api/methods/login';
 import {userInfoApi} from 'src/api/methods/user';
-import {setToken, setExpiredToken, removeAll} from 'storages';
+import {
+  setToken,
+  setExpiredToken,
+  removeAll,
+  setKeyChain,
+  removeKeyChain,
+} from 'storages';
 import {
   loginSuccess,
   loginFailure,
@@ -30,9 +36,10 @@ export function* loginRequest(action) {
     let response = yield call(loginApi, phone, password);
     if (response?.data) {
       let respUserInfo = yield call(userInfoApi, response.data?.token);
+      yield setKeyChain(phone, response.data?.token);
       yield put(userInfoSuccess(respUserInfo?.data));
-      yield setToken(response.data?.token);
-      yield setExpiredToken();
+      // yield setToken(response.data?.token);
+      // yield setExpiredToken();
       yield put(loginSuccess());
     }
   } catch (error) {
@@ -54,8 +61,9 @@ export function* registerRequest(action) {
     if (respRegister?.data?.token) {
       let respUserInfo = yield call(userInfoApi, respRegister.data?.token);
       yield put(userInfoSuccess(respUserInfo?.data));
-      yield setToken(respRegister?.data?.token);
-      yield setExpiredToken();
+      yield setKeyChain(phone, respRegister?.data?.token);
+      // yield setToken(respRegister?.data?.token);
+      // yield setExpiredToken();
       yield put(registerSuccess());
       yield put(loginSuccess());
     } else {
@@ -126,7 +134,8 @@ export function* resetPasswordRequest(action) {
       rePassword,
     );
     if (respResetPassword?.status) {
-      yield setToken(respResetPassword?.token);
+      yield setKeyChain(phone, respResetPassword?.token);
+      // yield setToken(respResetPassword?.token);
       yield put(resetPasswordSuccess());
     } else {
       yield put(resetPasswordFailure(respResetPassword?.msg));
@@ -146,6 +155,7 @@ export function* resetPasswordRequest(action) {
 export function* logoutRequest() {
   try {
     yield removeAll();
+    yield removeKeyChain();
     yield put({type: types.LOGOUT.SUCCESS});
   } catch (error) {
     yield put({
