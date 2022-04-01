@@ -1,15 +1,16 @@
 import React from 'react';
 import {View} from 'react-native';
-import images from '../../../config/images';
-import FastImage from 'react-native-fast-image';
 import styles from './styles';
 import {Background, Button, Text} from 'base';
 import * as RootNavigation from 'RootNavigation';
 import LottieView from 'lottie-react-native';
 import {commonStyles} from 'styles';
+import {useQueryClient} from 'react-query';
 
 const Disconnect = () => {
-  const handleRetry = () => {
+  const queryClient = useQueryClient();
+  const handleRetry = async () => {
+    await queryClient.refetchQueries({stale: true});
     RootNavigation.goBack();
   };
   return (

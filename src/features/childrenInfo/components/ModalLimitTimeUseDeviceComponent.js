@@ -375,7 +375,7 @@ const ModalLimitTimeUseDeviceComponent = ({
   return (
     <Modal
       onRequestClose={onRequestCloseModal}
-      animationType="none"
+      animationType="slide"
       transparent={true}
       visible={visible}>
       <PopupAlert

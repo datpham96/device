@@ -6,10 +6,13 @@ import {useDispatch} from 'react-redux';
 import {logoutRequest} from 'actions/loginActions';
 import LottieView from 'lottie-react-native';
 import {commonStyles} from 'styles';
+import {useQueryClient} from 'react-query';
 
 const Error401 = () => {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const handleRetry = async () => {
+    await queryClient.refetchQueries({stale: true});
     dispatch(logoutRequest());
   };
   return (

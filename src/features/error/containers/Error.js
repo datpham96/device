@@ -5,9 +5,12 @@ import {Background, Button, Text} from 'base';
 import * as RootNavigation from '../../../navigation/RootNavigation';
 import LottieView from 'lottie-react-native';
 import {commonStyles} from 'styles';
+import {useQueryClient} from 'react-query';
 
 const Error = () => {
+  const queryClient = useQueryClient();
   const handleRetry = async () => {
+    await queryClient.refetchQueries({stale: true});
     RootNavigation.goBack();
   };
   return (

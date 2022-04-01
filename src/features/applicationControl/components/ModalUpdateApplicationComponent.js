@@ -307,7 +307,7 @@ const ModalCreateUpdateWebComponent = ({
   return (
     <Modal
       onRequestClose={onPressClose}
-      animationType="none"
+      animationType="slide"
       transparent={true}
       visible={visible}>
       <ModalSetTimeBlockAccess

@@ -97,7 +97,7 @@ const ApplicationControl = ({route}) => {
     if (isSuccess) {
       let listApplication = data?.data;
       const regex = new RegExp(`${textSearch.trim()}`, 'i');
-      tmpList = listApplication.filter(obj => obj.name.search(regex) >= 0);
+      tmpList = listApplication?.filter(obj => obj.name.search(regex) >= 0);
       // .slice(0, 1000);
     }
     return tmpList;
