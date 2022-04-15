@@ -5,6 +5,9 @@ import {
   TouchableHighlight,
   ScrollView,
   RefreshControl,
+  Platform,
+  UIManager,
+  TouchableOpacity,
 } from 'react-native';
 import styles from './styles';
 import {commonStyles, colors, sizes} from 'styles';
@@ -16,34 +19,26 @@ import keyTypes from 'keyTypes';
 import {
   deviceInfoApi,
   removeDeviceApi,
-  deviceSettingListApi,
-  deviceSettingUpdateApi,
   deviceAvatarUpdateApi,
   deviceUpdateApi,
 } from 'methods/device';
 import {Toast} from 'customs';
-import {ModalLimitTimeUseDevice, ModalUpdateInfo, Switch} from '../components';
-import FastImage from 'react-native-fast-image';
-import images from 'images';
-import types from '../types';
-import lodash from 'lodash';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {ModalLimitTimeUseDevice, ModalUpdateInfo, Safe} from '../components';
 import {checkVar} from 'src/helpers/funcs';
 import Validator from 'validatorjs';
 import {ChildrenPlaceholder} from '../placeholders';
 import moment from 'moment';
 
 const ChildrenInfo = ({route}) => {
+  if (Platform.OS === 'android') {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
   const params = route?.params;
   const device_id = params?.device_id;
 
   const queryClient = useQueryClient();
 
   const [visibleRemoveDevice, setVisibleRemoveDevice] = useState(false);
-  const [visibleConfirm, setVisibleConfirm] = useState(false);
-  const [enableSafeSearch, setEnableSafeSearch] = useState(true);
-  const [enableSafeWeb, setEnableSafeWeb] = useState(true);
-  const [settingType, setSettingType] = useState('');
   const [visibleUpdateInfoModal, setVisibleUpdateInfoModal] = useState(false);
 
   const [fullName, setFullname] = useState('');
@@ -59,19 +54,7 @@ const ChildrenInfo = ({route}) => {
   const {data, refetch, isLoading} = useQuery(
     [keyTypes.DEVICE_INFO, device_id],
     () => deviceInfoApi(device_id),
-    // {
-    //   keepPreviousData: true,
-    // },
   );
-
-  const {data: dataDeviceSettingList, refetch: refetchDeviceSettingList} =
-    useQuery(
-      [keyTypes.DEVICE_SETTING_LIST, device_id],
-      () => deviceSettingListApi(device_id),
-      {
-        keepPreviousData: true,
-      },
-    );
 
   useEffect(() => {
     if (!checkVar.isEmpty(data?.data)) {
@@ -89,16 +72,6 @@ const ChildrenInfo = ({route}) => {
       }
     }
   }, [data]);
-
-  const mutationUpdate = useMutation(
-    ({data_device_id, data_setting_id, data_name, data_status}) =>
-      deviceSettingUpdateApi(
-        data_device_id,
-        data_setting_id,
-        data_name,
-        data_status,
-      ),
-  );
 
   //cập nhật device avatar
   const mutationDeviceAvatarUpdate = useMutation(
@@ -128,27 +101,10 @@ const ChildrenInfo = ({route}) => {
     removeDeviceApi(data_device_id),
   );
 
-  useEffect(() => {
-    if (dataDeviceSettingList) {
-      let infoSafeWeb = lodash.find(dataDeviceSettingList.data, {
-        name: types.safe_web.code,
-      });
-      let infoSafeSearch = lodash.find(dataDeviceSettingList.data, {
-        name: types.safe_search.code,
-      });
-      if (infoSafeWeb) {
-        setEnableSafeWeb(infoSafeWeb.status ? true : false);
-      }
-      if (infoSafeSearch) {
-        setEnableSafeSearch(infoSafeSearch.status ? true : false);
-      }
-    }
-  }, [dataDeviceSettingList]);
-
   const avatarLink = useMemo(() => {
     let avatar = '';
     if (data?.data?.avatar) {
-      avatar = data.data.avatar;
+      avatar = data?.data?.avatar;
     }
     return avatar;
   }, [data]);
@@ -175,11 +131,7 @@ const ChildrenInfo = ({route}) => {
     await queryClient.removeQueries([keyTypes.DEVICE_INFO, device_id], {
       exact: true,
     });
-    await queryClient.removeQueries([keyTypes.DEVICE_SETTING_LIST, device_id], {
-      exact: true,
-    });
     await refetch();
-    await refetchDeviceSettingList();
   };
 
   const handleRemoveDevice = () => {
@@ -201,71 +153,6 @@ const ChildrenInfo = ({route}) => {
         Toast(err?.msg);
         mutationRemoveDevice.reset();
       });
-  };
-
-  const handleAgreeSettingDevice = () => {
-    setVisibleConfirm(false);
-    let infoSafeWeb = lodash.find(dataDeviceSettingList.data, {
-      name: types.safe_web.code,
-    });
-    let infoSafeSearch = lodash.find(dataDeviceSettingList.data, {
-      name: types.safe_search.code,
-    });
-    // eslint-disable-next-line no-shadow
-    let params = {};
-    switch (settingType) {
-      case types.safe_web.code:
-        if (infoSafeWeb) {
-          params.data_device_id = device_id;
-          params.data_setting_id = infoSafeWeb.id;
-          params.data_name = types.safe_web.code;
-          params.data_status = enableSafeWeb ? 1 : 0;
-        } else {
-          params.data_device_id = device_id;
-          params.data_name = types.safe_web.code;
-          params.data_status = 0;
-        }
-        break;
-      case types.safe_search.code:
-        if (infoSafeSearch) {
-          params.data_device_id = device_id;
-          params.data_setting_id = infoSafeSearch.id;
-          params.data_name = types.safe_search.code;
-          params.data_status = enableSafeSearch ? 1 : 0;
-        } else {
-          params.data_device_id = device_id;
-          params.data_name = types.safe_search.code;
-          params.data_status = 0;
-        }
-        break;
-    }
-
-    mutationUpdate
-      .mutateAsync(params)
-      .then(resp => {
-        if (resp?.status) {
-          Toast('Thiết lập thành công');
-          refetchDeviceSettingList();
-        } else {
-          Toast('Thiết lập không thành công');
-        }
-        mutationUpdate.reset();
-      })
-      .catch(() => {
-        Toast('Thiết lập không thành công');
-        mutationUpdate.reset();
-      });
-  };
-  const handleCancelSettingDevice = () => {
-    setVisibleConfirm(false);
-    switch (settingType) {
-      case types.safe_web.code:
-        setEnableSafeWeb(!enableSafeWeb);
-        break;
-      case types.safe_search.code:
-        setEnableSafeSearch(!enableSafeSearch);
-        break;
-    }
   };
 
   const handleCloseUpdateInfo = () => {
@@ -366,6 +253,8 @@ const ChildrenInfo = ({route}) => {
     return obj;
   };
 
+  console.log(111111);
+
   return (
     <Background bin>
       <ModalLimitTimeUseDevice
@@ -399,23 +288,14 @@ const ChildrenInfo = ({route}) => {
       />
       <Loading
         isLoading={
-          mutationRemoveDevice.isLoading ||
-          mutationUpdate.isLoading ||
-          mutationDeviceUpdate.isLoading
+          mutationRemoveDevice?.isLoading || mutationDeviceUpdate?.isLoading
         }
       />
-
       <PopupConfirm
         content="Bạn có chắc chắn muốn ngắt kết nối không?"
         visible={visibleRemoveDevice}
         onPressAgree={handleRemoveDevice}
         onPressCancel={() => setVisibleRemoveDevice(false)}
-      />
-      <PopupConfirm
-        onPressAgree={handleAgreeSettingDevice}
-        onPressCancel={handleCancelSettingDevice}
-        visible={visibleConfirm}
-        content="Bạn có muốn thực hiện tác vụ này không?"
       />
       <ButtonBack />
       <View style={styles.container}>
@@ -432,12 +312,7 @@ const ChildrenInfo = ({route}) => {
             />
           }
           style={styles.scrollContainer}>
-          <View
-          // style={{
-          //   height: heightContainer - heightSectionTwo - sizes.SIZE_10,
-          // }}
-          // onLayout={handleLayoutSectionOne}
-          >
+          <View>
             {isLoading ? (
               <ChildrenPlaceholder />
             ) : (
@@ -514,55 +389,7 @@ const ChildrenInfo = ({route}) => {
               label="Lịch sử truy cập"
             />
           </View>
-          <View
-            // onLayout={handleLayoutSectionTwo}
-            style={styles.settingContainer}>
-            <View style={styles.wrapSafeWeb}>
-              <View style={styles.headerSafeWeb}>
-                <FastImage
-                  style={styles.iconInfo}
-                  source={images.icons.safe_web}
-                />
-                <Text style={styles.labelInfo}>Lướt web an toàn</Text>
-                <Switch
-                  value={enableSafeWeb}
-                  onValueChange={() => {
-                    setEnableSafeWeb(!enableSafeWeb);
-                    setSettingType(types.safe_web.code);
-                    setVisibleConfirm(true);
-                  }}
-                  containerStyle={styles.switchSafeWeb}
-                />
-              </View>
-              <Text style={styles.contentSafeWeb}>
-                Ngăn chặn quyền truy cập các website người lớn, bạo lực, cờ bạc
-                và lừa đảo. {'\n'}Bảo vệ quyền riêng tư và loại bỏ quảng cáo.
-              </Text>
-            </View>
-            {/* <Line customStyle={styles.lineOne} /> */}
-            <View style={styles.wrapSafeWeb}>
-              <View style={styles.headerSafeWeb}>
-                <FastImage
-                  style={styles.iconInfo}
-                  source={images.icons.safe_search}
-                />
-                <Text style={styles.labelInfo}>Tìm kiếm an toàn</Text>
-                <Switch
-                  value={enableSafeSearch}
-                  onValueChange={() => {
-                    setEnableSafeSearch(!enableSafeSearch);
-                    setSettingType(types.safe_search.code);
-                    setVisibleConfirm(true);
-                  }}
-                  containerStyle={styles.switchSafeWeb}
-                />
-              </View>
-              <Text style={styles.contentSafeWeb}>
-                Lọc bỏ kết quả tìm kiếm có chứa nội dung người lớn, bạo lực, cờ
-                bạc và lừa đảo.
-              </Text>
-            </View>
-          </View>
+          <Safe deviceId={device_id} />
         </ScrollView>
       </View>
     </Background>

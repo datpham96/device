@@ -1,4 +1,5 @@
-import React, {useEffect} from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React from 'react';
 import {StyleSheet, TouchableOpacity, Animated, Easing} from 'react-native';
 import {Text} from 'base';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -16,6 +17,7 @@ import images from 'images';
 import metrics from 'metrics';
 
 const MAPABLE = [0, 1, 2, 3];
+const COLOR_GRADIENT = ['#298DC6', '#475DDF', '#471BC1'];
 
 const MyTabBar = ({state, descriptors, navigation}) => {
   const [activeRouteTab, setActiveRouteTab] = React.useState(
@@ -24,29 +26,29 @@ const MyTabBar = ({state, descriptors, navigation}) => {
 
   let spinValue = {};
   MAPABLE.forEach((_, key) => {
-    spinValue[key] = new Animated.Value(0);
+    spinValue[key] = new Animated.Value(sizes.ZERO);
   });
 
   React.useEffect(() => {
     switch (activeRouteTab) {
       case navigationTypes.home.screen:
-        spin(0);
+        spin(sizes.ZERO);
         break;
       case navigationTypes.childrenManager.screen:
-        spin(1);
+        spin(sizes.SIZE_1);
         break;
       case navigationTypes.location.screen:
-        spin(2);
+        spin(sizes.SIZE_2);
         break;
       case navigationTypes.account.screen:
-        spin(3);
+        spin(sizes.SIZE_3);
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRouteTab]);
 
   function spin(index) {
-    spinValue[index].setValue(0);
+    spinValue[index].setValue(sizes.ZERO);
     Animated.timing(spinValue[index], {
       toValue: 1,
       duration: 500,
@@ -65,11 +67,7 @@ const MyTabBar = ({state, descriptors, navigation}) => {
   });
 
   return (
-    <LinearGradient
-      // start={{x: 0, y: 0}}
-      // end={{x: 1, y: 0}}
-      colors={['#298DC6', '#475DDF', '#471BC1']}
-      style={styles.containerTabBar}>
+    <LinearGradient colors={COLOR_GRADIENT} style={styles.containerTabBar}>
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
         let label = route.name;
@@ -137,11 +135,10 @@ const MyTabBar = ({state, descriptors, navigation}) => {
                       rotateY: rotate[index],
                     },
                   ],
-                },
-                {
                   tintColor: isFocused
-                    ? colors.COLOR_ACTIVED_BOTTOM_TAB
+                    ? colors.COLOR_WHITE
                     : colors.COLOR_WHITE,
+                  opacity: isFocused ? sizes.SIZE_1 : 0.65,
                 },
               ]}
               source={icon}
@@ -150,12 +147,11 @@ const MyTabBar = ({state, descriptors, navigation}) => {
               style={[
                 styles.labelBottomTab,
                 {
-                  color: isFocused
-                    ? colors.COLOR_ACTIVED_BOTTOM_TAB
-                    : colors.COLOR_WHITE,
+                  color: isFocused ? colors.COLOR_WHITE : colors.COLOR_WHITE,
                   fontFamily: isFocused
                     ? fonts.lexendDeca.FONT_BOLD
                     : fonts.lexendDeca.FONT_REGULAR,
+                  opacity: isFocused ? sizes.SIZE_1 : 0.65,
                 },
               ]}>
               {label}
@@ -167,34 +163,30 @@ const MyTabBar = ({state, descriptors, navigation}) => {
   );
 };
 
+const tabOptions = {
+  headerShown: false,
+};
+
 const BottomTabs = () => {
   return (
     <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
       <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
+        options={tabOptions}
         name={navigationTypes.home.screen}
         component={HomeScreen}
       />
       <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
+        options={tabOptions}
         name={navigationTypes.childrenManager.screen}
         component={ChildrenManagerScreen}
       />
       <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
+        options={tabOptions}
         name={navigationTypes.location.screen}
         component={LocationScreen}
       />
       <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
+        options={tabOptions}
         name={navigationTypes.account.screen}
         component={AccountScreen}
       />
@@ -212,9 +204,6 @@ const styles = StyleSheet.create({
   containerTabBar: {
     flexDirection: 'row',
     height: metrics.heightBottomTab,
-    // paddingBottom: isIphoneX()
-    //   ? getBottomSpace()
-    //   : getBottomSpace() + sizes.SIZE_10,
   },
   btIcon: {
     width: sizes.SIZE_25,

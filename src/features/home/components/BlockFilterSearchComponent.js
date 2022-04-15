@@ -17,16 +17,23 @@ const BlockFilterSearchComponent = ({
   svgFillColor,
   containerStyle,
   areaChartStyle,
+  heightBlock,
+  heightAreaBlock,
 }) => {
-  const maxNumber = lodash.max(data);
-  const unitNumber = landmarkUnitOfNumber(maxNumber)
-    ? landmarkUnitOfNumber(maxNumber)
-    : 0;
+  let maxNumber = 0,
+    unitNumber = 0;
+  try {
+    maxNumber = lodash.max(data);
+    unitNumber = landmarkUnitOfNumber(maxNumber)
+      ? landmarkUnitOfNumber(maxNumber)
+      : 0;
+  } catch (error) {}
+
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[styles.container, {height: heightBlock}, containerStyle]}>
       <>
         <AreaChart
-          style={[styles.areaChart, areaChartStyle]}
+          style={[styles.areaChart, {height: heightAreaBlock}, areaChartStyle]}
           data={data?.map(val => {
             return unitNumber > 0 ? Math.ceil(val / unitNumber) * 1.5 : 0;
           })}
@@ -111,4 +118,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(BlockFilterSearchComponent);
+function areEqual(prevProps, nextProps) {
+  return (
+    prevProps?.total === nextProps?.total &&
+    prevProps?.heightBlock === nextProps?.heightBlock &&
+    prevProps?.heightAreaBlock === nextProps?.heightAreaBlock &&
+    prevProps?.total === nextProps?.total
+  );
+}
+
+export default React.memo(BlockFilterSearchComponent, areEqual);

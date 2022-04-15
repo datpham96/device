@@ -25,22 +25,22 @@ const ItemComponent: React.FC<Props> = ({item}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onLongPress={() => handleShowDetail(item.url)}
+      onLongPress={() => handleShowDetail(item?.url)}
       style={styles.container}>
       <Avatar
         isWeb
         imageStyle={styles.image}
-        uriImage={item.icon}
+        uriImage={item?.icon}
         containerStyle={styles.image}
       />
       <View style={styles.info}>
-        {!checkVar.isEmpty(item.name) && (
+        {!checkVar.isEmpty(item?.name) && (
           <Text
             props={{
               numberOfLines: 1,
             }}
             style={styles.label}>
-            {item.name}
+            {item?.name}
           </Text>
         )}
         <Text
@@ -48,12 +48,12 @@ const ItemComponent: React.FC<Props> = ({item}) => {
             numberOfLines: 1,
           }}
           style={styles.domain}>
-          {item.domain}
+          {item?.domain}
         </Text>
       </View>
-      <Text style={styles.total}>{item.total}</Text>
+      <Text style={styles.total}>{item?.total}</Text>
       <Text style={styles.status}>
-        {item.status === 0 ? 'Đã chặn' : 'Cho phép'}
+        {item?.status === 0 ? 'Đã chặn' : 'Cho phép'}
       </Text>
     </TouchableOpacity>
   );

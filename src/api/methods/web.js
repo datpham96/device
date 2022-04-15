@@ -13,12 +13,16 @@ export function webUpdateApi(web_id, status, url, timeList) {
   let bodyFormData = new FormData();
   bodyFormData.append('web_id', web_id);
   bodyFormData.append('status', status);
-  bodyFormData.append('url', url);
+  if (url) {
+    bodyFormData.append('url', url);
+  }
+
   if (timeList) {
     timeList.map((item, key) => {
       bodyFormData.append('timer[' + key + '][day]', item.day);
       bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
       bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+      bodyFormData.append('timer[' + key + '][status]', item.status);
     });
   }
   return apiToken(ApiConstants.WEB_UPDATE, 'post', bodyFormData, null);
@@ -35,6 +39,7 @@ export function webCreateApi(url, status, device_id, timeList) {
       bodyFormData.append('timer[' + key + '][day]', item.day);
       bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
       bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+      bodyFormData.append('timer[' + key + '][status]', item.status);
     });
   }
 

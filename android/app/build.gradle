@@ -134,8 +134,8 @@ android {
         applicationId "vn.masscom.safezone"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 32
-        versionName "2.4.1"
+        versionCode 34
+        versionName "2.4.3"
         missingDimensionStrategy 'react-native-camera', 'general'
         vectorDrawables.useSupportLibrary = true
     }

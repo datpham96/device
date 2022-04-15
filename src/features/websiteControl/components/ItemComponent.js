@@ -1,38 +1,22 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Alert, Linking} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Text, Avatar, Switch} from 'base';
 import {colors, commonStyles, sizes} from 'styles';
-import FastImage from 'react-native-fast-image';
-import images from 'images';
 import {useMutation} from 'react-query';
 import {webUpdateApi} from 'src/api/methods/web';
 import {Loading, PopupConfirm} from 'components';
 import {Toast} from 'customs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
-import {ItemListPlaceholder} from '../placeholders';
 
 momentDurationFormatSetup(moment);
 
-const ItemComponent = ({item, onPressDetail}) => {
-  const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
-    moment(),
-    'minutes',
-  );
-  let duration = '00:00';
-  if (timeUse && timeUse > 0) {
-    if (timeUse > 60) {
-      duration = moment.duration(timeUse, 'minutes').format('HH:mm');
-    } else {
-      duration = moment.duration(timeUse, 'minutes').format('00:mm');
-    }
-  }
-  const mutation = useMutation(
-    ({data_web_id, data_status, data_time_remaining}) =>
-      webUpdateApi(data_web_id, data_status, data_time_remaining),
+const ItemComponent = ({item, onPressDetail, refreshList}) => {
+  const mutation = useMutation(({data_web_id, data_status}) =>
+    webUpdateApi(data_web_id, data_status),
   );
 
-  const [enableSwitch, setEnablSwitch] = useState(item.status ? true : false);
+  const [enableSwitch, setEnablSwitch] = useState(item?.status ? true : false);
   const [visibleModal, setVisibleModal] = useState(false);
 
   const handleToggleSwitch = () => {
@@ -45,15 +29,15 @@ const ItemComponent = ({item, onPressDetail}) => {
     setVisibleModal(false);
     mutation
       .mutateAsync({
-        data_web_id: item.id,
+        data_web_id: item?.id,
         data_status: enableSwitch ? 1 : 0,
-        data_time_remaining: 0,
       })
       .then(resp => {
-        if (resp.status) {
-          Toast(resp.msg);
+        if (resp?.status) {
+          Toast(resp?.msg);
+          refreshList();
         } else {
-          Toast(resp.msg);
+          Toast(resp?.msg);
         }
         mutation.reset();
       })
@@ -79,7 +63,7 @@ const ItemComponent = ({item, onPressDetail}) => {
 
   return (
     <View style={styles.container}>
-      <Loading isLoading={mutation.isLoading} />
+      <Loading isLoading={mutation?.isLoading} />
       <PopupConfirm
         visible={visibleModal}
         onPressAgree={() => handleAgreeUpdate()}
@@ -91,11 +75,11 @@ const ItemComponent = ({item, onPressDetail}) => {
       />
       <TouchableOpacity
         activeOpacity={0.9}
-        onLongPress={() => handleShowDetail(item.url)}
+        onLongPress={() => handleShowDetail(item?.url)}
         style={styles.wrapItemWebsite}>
         <Avatar
           isWeb
-          uriImage={item.icon}
+          uriImage={item?.icon}
           containerStyle={styles.imageContainer}
           imageStyle={styles.image}
         />
@@ -105,14 +89,14 @@ const ItemComponent = ({item, onPressDetail}) => {
               numberOfLines: 1,
             }}
             style={styles.name}>
-            {item.name}
+            {item?.name}
           </Text>
           <Text
             props={{
               numberOfLines: 1,
             }}
             style={styles.domain}>
-            {item.url}
+            {item?.url}
           </Text>
         </View>
       </TouchableOpacity>

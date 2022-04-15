@@ -15,12 +15,12 @@ import navigationTypes from 'navigationTypes';
 const FogotPassword = () => {
   const dispatch = useDispatch();
   const isLoadingFogotPassword = useSelector(
-    state => state.auth.isLoadingFogotPassword,
+    state => state?.auth?.isLoadingFogotPassword,
   );
   const statusFogotPassword = useSelector(
-    state => state.auth.statusFogotPassword,
+    state => state?.auth?.statusFogotPassword,
   );
-  const dataErrors = useSelector(state => state.auth.errors);
+  const dataErrors = useSelector(state => state?.auth?.errors);
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState({});
 

@@ -32,7 +32,7 @@ const ModalBottomSheetComponent: React.FC<Props> = ({
       style={styles.container}
       visible={visible}
       transparent={true}
-      animationType="slide">
+      animationType="none">
       <TouchableOpacity
         activeOpacity={1}
         style={styles.wrapPress}

@@ -1,7 +1,7 @@
 /* eslint-disable radix */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Text} from 'base';
+import {Switch, Text} from 'base';
 import {
   View,
   StyleSheet,
@@ -20,7 +20,12 @@ import {
   getStatusBarHeight,
   isIphoneX,
 } from 'react-native-iphone-x-helper';
-import {ModalSetTimeBlockAccess, PopupAlert} from 'components';
+import {
+  ModalSetTimeBlockAccess,
+  PopupAlert,
+  ItemTimeUse,
+  Loading,
+} from 'components';
 import lodash from 'lodash';
 import {deviceTimerAccessUpdateApi} from 'src/api/methods/device';
 import {useMutation} from 'react-query';
@@ -34,33 +39,46 @@ const MINUTE_60 = 60;
 const ZERO = 0;
 const TIME_DEFAULT = '00/00';
 
-const ItemTime = ({
-  day,
-  startTime = TIME_DEFAULT,
-  endTime = TIME_DEFAULT,
-  containerStyle,
-  onPress,
-}) => {
-  return (
-    <TouchableHighlight
-      underlayColor="rgba(90, 142, 209, 0.5)"
-      onPress={onPress}
-      style={[styles.wrapItem, containerStyle]}>
-      <>
-        <View style={styles.wrapItemTime}>
-          <Text style={styles.itemStartTime}>
-            {startTime ? startTime : TIME_DEFAULT}
-          </Text>
-          <Text style={styles.itemEndTime}>
-            {endTime ? endTime : TIME_DEFAULT}
-          </Text>
-        </View>
-        <Text style={styles.itemDay}>{day}</Text>
-        <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
-      </>
-    </TouchableHighlight>
-  );
-};
+// const ItemTime = ({
+//   day,
+//   startTime = TIME_DEFAULT,
+//   endTime = TIME_DEFAULT,
+//   onChangeSwitch,
+//   status,
+//   containerStyle,
+//   onPress,
+// }) => {
+//   const [toggleSwitch, setToggleSwitch] = useState(status ? true : false);
+//   return (
+//     <TouchableHighlight
+//       underlayColor="rgba(90, 142, 209, 0.5)"
+//       onPress={onPress}
+//       style={[styles.wrapItem, containerStyle]}>
+//       <>
+//         <View style={styles.wrapItemTime}>
+//           <Text style={styles.itemStartTime}>
+//             {startTime ? startTime : TIME_DEFAULT}
+//           </Text>
+//           <Text style={styles.itemEndTime}>
+//             {endTime ? endTime : TIME_DEFAULT}
+//           </Text>
+//         </View>
+//         <Text style={styles.itemDay}>{day}</Text>
+//         <View style={styles.wrapSectionRight}>
+//           <Switch
+//             onValueChange={() => {
+//               onChangeSwitch(!toggleSwitch);
+//               setToggleSwitch(!toggleSwitch);
+//             }}
+//             value={toggleSwitch}
+//             containerStyle={styles.switch}
+//           />
+//         </View>
+//         <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
+//       </>
+//     </TouchableHighlight>
+//   );
+// };
 
 const DATA_TIME_LIST = [
   {
@@ -140,8 +158,8 @@ const ModalLimitTimeUseDeviceComponent = ({
   useEffect(() => {
     if (itemList && itemList?.timer?.length > 0) {
       let tmpTimeList = itemList?.timer?.map((item, key) => {
-        let tmpStartTime = item.start_time;
-        let tmpEndTime = item.end_time;
+        let tmpStartTime = item?.start_time;
+        let tmpEndTime = item?.end_time;
         if (tmpStartTime || tmpEndTime) {
           let tmpHoursStartTime = tmpStartTime
             ? tmpStartTime?.split(':')[0]
@@ -229,17 +247,18 @@ const ModalLimitTimeUseDeviceComponent = ({
   };
 
   const handleShowPopupSetupTime = item => {
-    let startTime = item.startTime;
-    let endTime = item.endTime;
+    let startTime = item?.startTime;
+    let endTime = item?.endTime;
     let splitStartTime = startTime?.split(':');
     let splitEndTime = endTime?.split(':');
     if (startTime) {
-      let tmpHoursStart = splitStartTime.length > 1 ? splitStartTime[0] : '00';
+      let tmpHoursStart =
+        splitStartTime?.length > 1 ? splitStartTime?.[0] : '00';
       if (parseInt(tmpHoursStart) >= 1 && parseInt(tmpHoursStart) < 10) {
         tmpHoursStart = '0' + parseInt(tmpHoursStart);
       }
       let tmpMinutesStart =
-        splitStartTime.length > 1 ? splitStartTime[1] : '00';
+        splitStartTime?.length > 1 ? splitStartTime?.[1] : '00';
       if (parseInt(tmpMinutesStart) >= 1 && parseInt(tmpMinutesStart) < 10) {
         tmpMinutesStart = '0' + parseInt(tmpMinutesStart);
       }
@@ -251,11 +270,11 @@ const ModalLimitTimeUseDeviceComponent = ({
     }
 
     if (endTime) {
-      let tmpHoursEnd = splitEndTime.length > 1 ? splitEndTime[0] : '00';
+      let tmpHoursEnd = splitEndTime?.length > 1 ? splitEndTime?.[0] : '00';
       if (parseInt(tmpHoursEnd) >= 1 && parseInt(tmpHoursEnd) < 10) {
         tmpHoursEnd = '0' + parseInt(tmpHoursEnd);
       }
-      let tmpMinutesEnd = splitEndTime.length > 1 ? splitEndTime[1] : '00';
+      let tmpMinutesEnd = splitEndTime?.length > 1 ? splitEndTime?.[1] : '00';
       if (parseInt(tmpMinutesEnd) >= 1 && parseInt(tmpMinutesEnd) < 10) {
         tmpMinutesEnd = '0' + parseInt(tmpMinutesEnd);
       }
@@ -315,7 +334,7 @@ const ModalLimitTimeUseDeviceComponent = ({
         (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
     }
 
-    let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
+    let itemIndex = lodash.findIndex(timeList, {id: activeItem?.id});
     if (itemIndex !== -1) {
       timeList[itemIndex] = {
         ...timeList[itemIndex],
@@ -331,9 +350,10 @@ const ModalLimitTimeUseDeviceComponent = ({
     let arrItem = [];
     timeList?.map(item => {
       arrItem.push({
-        day: item.day,
-        start_time: item.startTime ? item.startTime + ':00' : '',
-        end_time: item.endTime ? item.endTime + ':00' : '',
+        day: item?.day,
+        start_time: item?.startTime ? item.startTime + ':00' : '',
+        end_time: item?.endTime ? item?.endTime + ':00' : '',
+        status: item?.status ? 1 : 0,
       });
     });
 
@@ -372,12 +392,47 @@ const ModalLimitTimeUseDeviceComponent = ({
     // }
   };
 
+  const handleSwitch = (status, key) => {
+    let arrItem = [];
+    timeList?.map(item => {
+      arrItem.push({
+        day: item?.day,
+        start_time: item?.startTime ? item.startTime + ':00' : '',
+        end_time: item?.endTime ? item?.endTime + ':00' : '',
+        status: item.status,
+      });
+    });
+
+    if (arrItem) {
+      arrItem[key] = {...arrItem[key], status: status ? 1 : 0};
+    }
+    mutationTimerUpdate
+      .mutateAsync({
+        data_device_id: deviceId,
+        data_timer_list: arrItem,
+      })
+      .then(resp => {
+        if (resp?.status) {
+          setIsUpdateTimerSuccess(true);
+          setVisibleAlert(true);
+          onSuccessTimer();
+        } else {
+          setIsUpdateTimerSuccess(false);
+        }
+        mutationTimerUpdate.reset();
+      })
+      .catch(err => {
+        console.log(err?.msg);
+      });
+  };
+
   return (
     <Modal
       onRequestClose={onRequestCloseModal}
-      animationType="slide"
+      animationType="none"
       transparent={true}
       visible={visible}>
+      <Loading isLoading={mutationTimerUpdate?.isLoading} />
       <PopupAlert
         content={
           isUpdateTimerSuccess
@@ -457,14 +512,16 @@ const ModalLimitTimeUseDeviceComponent = ({
           <View style={styles.wrapTimeList}>
             {timeList?.map((item, key) => {
               return (
-                <View key={key}>
-                  <ItemTime
+                <View key={`${item.id} + ${item.status}`}>
+                  <ItemTimeUse
                     onPress={() => handleShowPopupSetupTime(item)}
                     containerStyle={
                       key % 2 === 0
                         ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
                         : {}
                     }
+                    status={item.status}
+                    onChangeSwitch={status => handleSwitch(status, key)}
                     day={item.dayName}
                     startTime={item.startTime}
                     endTime={item.endTime}
@@ -563,8 +620,20 @@ const styles = StyleSheet.create({
     fontFamily: fonts.montserrat.FONT_REGULAR,
     fontSize: sizes.SIZE_16,
     marginHorizontal: sizes.SIZE_15,
-    ...commonStyles.flex1,
+    // ...commonStyles.flex1,
     paddingLeft: sizes.SIZE_15,
+    width: sizes.SIZE_70,
+  },
+  wrapSectionRight: {
+    ...commonStyles.flex1,
+  },
+  switch: {
+    alignSelf: 'center',
+  },
+  wrapEdit: {
+    backgroundColor: 'red',
+    height: '100%',
+    width: sizes.SIZE_40,
   },
   itemIconEdit: {
     width: sizes.SIZE_22,

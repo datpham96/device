@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Text, Input, Background, Button, ButtonBack} from 'base';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, Platform} from 'react-native';
 import styles from './styles';
 import {colors, commonStyles} from 'styles';
 import FastImage from 'react-native-fast-image';
@@ -19,7 +19,11 @@ import Validator from 'validatorjs';
 import moment from 'moment';
 import images from 'images';
 import {useMutation} from 'react-query';
-import {deviceActivationApi} from 'src/api/methods/device';
+import {
+  deviceActivationApi,
+  deviceUpdateApi,
+  deviceAvatarUpdateApi,
+} from 'src/api/methods/device';
 import {Toast} from 'customs';
 import {
   requestMultiple,
@@ -30,6 +34,7 @@ import {
 import {genders} from 'types';
 import ImageResizer from 'react-native-image-resizer';
 import RNFS from 'react-native-fs';
+import {ModalWaiting} from 'components';
 
 const options = {
   mediaType: 'photo',
@@ -47,16 +52,19 @@ const options = {
 
 const DeviceInfo = ({route}) => {
   const deviceInfo = route?.params?.device_info;
+  const deviceId = route?.params?.device_id;
   const deviceName = deviceInfo?.ManufacturerName;
+  const childrenName = route?.params?.children_name;
   const deviceSN = deviceInfo?.SerialNumber;
   const [avatarUri, setAvatarUri] = useState('');
   const [dataRequestAvatar, setDataRequestAvatar] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState(childrenName);
   const [birthday, setBirthday] = useState(moment().format('DD/MM/YYYY'));
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState(1);
   const [errors, setErrors] = useState({});
   const [visibleImagePicker, setVisibleImagePicker] = useState(false);
   const [visiblePermissionCamera, setVisiblePermissionCamera] = useState(false);
+  const [visibleWaitingModal, setVisibleWaitingModal] = useState(false);
 
   const mutationActivatedDevice = useMutation(
     ({
@@ -77,33 +85,57 @@ const DeviceInfo = ({route}) => {
       ),
   );
 
+  //cập nhật device info
+  const mutationDeviceUpdate = useMutation(
+    ({
+      data_device_id,
+      data_is_block,
+      data_full_name,
+      data_birthday,
+      data_gender,
+    }) =>
+      deviceUpdateApi(
+        data_device_id,
+        data_is_block,
+        data_full_name,
+        data_birthday,
+        data_gender,
+      ),
+  );
+
+  //cập nhật device avatar
+  const mutationDeviceAvatarUpdate = useMutation(
+    ({data_device_id, data_avatar}) =>
+      deviceAvatarUpdateApi(data_device_id, data_avatar),
+  );
+
   const handleOpenCamera = () => {
     setVisibleImagePicker(false);
     setTimeout(() => {
       options.mediaType = 'photo';
       launchCamera(options, response => {
         if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let dataFirstBase64 = 'data:' + item.type + ';base64,';
-          let formatData = dataFirstBase64 + item.base64;
+          let item = response?.assets?.[0];
+          let dataFirstBase64 = 'data:' + item?.type + ';base64,';
+          let formatData = dataFirstBase64 + item?.base64;
           ImageResizer.createResizedImage(
             formatData,
             300,
             300,
             'JPEG',
             100,
-            0,
+            Platform.OS === 'android' ? 90 : 0,
             undefined,
             false,
             {},
           )
             .then(resp => {
-              return RNFS.readFile(resp.path, 'base64');
+              return RNFS.readFile(resp?.path, 'base64');
             })
             .then(result => {
               setDataRequestAvatar(dataFirstBase64 + result);
             });
-          setAvatarUri({uri: item.uri});
+          setAvatarUri({uri: item?.uri});
         }
       });
     }, 100);
@@ -115,27 +147,27 @@ const DeviceInfo = ({route}) => {
       options.mediaType = 'photo';
       launchImageLibrary(options, response => {
         if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let dataFirstBase64 = 'data:' + item.type + ';base64,';
-          let formatData = dataFirstBase64 + item.base64;
+          let item = response?.assets?.[0];
+          let dataFirstBase64 = 'data:' + item?.type + ';base64,';
+          let formatData = dataFirstBase64 + item?.base64;
           ImageResizer.createResizedImage(
             formatData,
             300,
             300,
             'JPEG',
             100,
-            0,
+            Platform.OS === 'android' ? 90 : 0,
             undefined,
             false,
             {},
           )
             .then(resp => {
-              return RNFS.readFile(resp.path, 'base64');
+              return RNFS.readFile(resp?.path, 'base64');
             })
             .then(result => {
               setDataRequestAvatar(dataFirstBase64 + result);
             });
-          setAvatarUri({uri: item.uri});
+          setAvatarUri({uri: item?.uri});
         }
       });
     }, 100);
@@ -164,31 +196,30 @@ const DeviceInfo = ({route}) => {
     );
   };
 
-  const handleSaveInfo = () => {
-    const validation = new Validator(
+  const handleUpdateInfo = () => {
+    let validation = new Validator(
       {
-        name: name,
-        birthday: birthday,
+        fullName: name,
         gender: gender,
+        birthday: birthday,
       },
       {
-        name: 'required',
-        birthday: 'required',
+        fullName: 'required',
         gender: 'required',
+        birthday: 'required',
       },
       {
-        'required.name': 'Họ tên trẻ không được bỏ trống',
-        'required.birthday': 'Ngày sinh trẻ không được bỏ trống',
-        'required.gender': 'Giới tính trẻ không được bỏ trống',
+        'required.fullName': 'Tên không được bỏ trống',
+        'required.gender': 'Giới tính không được bỏ trống',
+        'required.birthday': 'Ngày sinh không được bỏ trống',
       },
     );
-
     if (validation.fails()) {
       setErrors({
         ...errors,
         name: validation.errors.first('name'),
-        birthday: validation.errors.first('birthday'),
         gender: validation.errors.first('gender'),
+        birthday: validation.errors.first('birthday'),
       });
       return;
     }
@@ -197,45 +228,117 @@ const DeviceInfo = ({route}) => {
       setErrors({
         ...errors,
         name: validation.errors.first('name'),
-        birthday: validation.errors.first('birthday'),
         gender: validation.errors.first('gender'),
+        birthday: validation.errors.first('birthday'),
       });
     }
-
-    //thực hiện kích hoạt
-    mutationActivatedDevice
+    //cập nhật avatar
+    mutationDeviceAvatarUpdate
       .mutateAsync({
-        data_imei: deviceSN,
-        data_device_info: deviceInfo,
-        data_name: name,
-        data_birthday: birthday,
-        data_gender: gender,
+        data_device_id: deviceId,
         data_avatar: dataRequestAvatar,
       })
+      .then(() => {
+        return mutationDeviceUpdate.mutateAsync({
+          data_device_id: deviceId,
+          data_is_block: 0,
+          data_full_name: name,
+          data_birthday: birthday
+            ? moment(birthday, 'DD/MM/YYYY').format('YYYY-MM-DD')
+            : '',
+          data_gender: gender,
+        });
+      })
       .then(resp => {
-        if (resp.status) {
-          Toast(resp?.msg);
+        if (resp?.status) {
           RootNavigation.navigate(navigationTypes.childrenManager.screen);
+          Toast('Cập nhật thông tin thành công');
         } else {
-          if (!resp?.imei_invalid) {
-            RootNavigation.navigate(navigationTypes.imei.screen, {
-              imei: deviceSN,
-              name: name,
-              deviceName: deviceName,
-              birthday: birthday,
-              gender: gender,
-              dataRequestAvatar: dataRequestAvatar,
-              deviceInfo: deviceInfo,
-            });
-          }
+          Toast('Cập nhật thông tin thất bại');
         }
-        mutationActivatedDevice.reset();
+        mutationDeviceAvatarUpdate.reset();
+        mutationDeviceUpdate.reset();
       })
       .catch(err => {
+        mutationDeviceAvatarUpdate.reset();
+        mutationDeviceUpdate.reset();
         Toast(err?.msg);
-        mutationActivatedDevice.reset();
       });
   };
+
+  // const handleSaveInfo = () => {
+  //   const validation = new Validator(
+  //     {
+  //       name: name,
+  //       birthday: birthday,
+  //       gender: gender,
+  //     },
+  //     {
+  //       name: 'required',
+  //       birthday: 'required',
+  //       gender: 'required',
+  //     },
+  //     {
+  //       'required.name': 'Họ tên trẻ không được bỏ trống',
+  //       'required.birthday': 'Ngày sinh trẻ không được bỏ trống',
+  //       'required.gender': 'Giới tính trẻ không được bỏ trống',
+  //     },
+  //   );
+
+  //   if (validation.fails()) {
+  //     setErrors({
+  //       ...errors,
+  //       name: validation.errors.first('name'),
+  //       birthday: validation.errors.first('birthday'),
+  //       gender: validation.errors.first('gender'),
+  //     });
+  //     return;
+  //   }
+
+  //   if (validation.passes()) {
+  //     setErrors({
+  //       ...errors,
+  //       name: validation.errors.first('name'),
+  //       birthday: validation.errors.first('birthday'),
+  //       gender: validation.errors.first('gender'),
+  //     });
+  //   }
+
+  //   //thực hiện kích hoạt
+  //   mutationActivatedDevice
+  //     .mutateAsync({
+  //       data_imei: deviceSN,
+  //       data_device_info: deviceInfo,
+  //       data_name: name,
+  //       data_birthday: birthday,
+  //       data_gender: gender,
+  //       data_avatar: dataRequestAvatar,
+  //     })
+  //     .then(resp => {
+  //       if (resp.status) {
+  //         setVisibleWaitingModal(true);
+  //         // Toast(resp?.msg);
+  //         // RootNavigation.navigate(navigationTypes.childrenManager.screen);
+  //       } else {
+  //         if (!resp?.imei_invalid) {
+  //           RootNavigation.navigate(navigationTypes.imei.screen, {
+  //             imei: deviceSN,
+  //             name: name,
+  //             deviceName: deviceName,
+  //             birthday: birthday,
+  //             gender: gender,
+  //             dataRequestAvatar: dataRequestAvatar,
+  //             deviceInfo: deviceInfo,
+  //           });
+  //         }
+  //       }
+  //       mutationActivatedDevice.reset();
+  //     })
+  //     .catch(err => {
+  //       Toast(err?.msg);
+  //       mutationActivatedDevice.reset();
+  //     });
+  // };
 
   const handleSetting = () => {
     setVisiblePermissionCamera(false);
@@ -243,7 +346,14 @@ const DeviceInfo = ({route}) => {
   };
   return (
     <Background isKeyboard bout>
-      <Loading isLoading={mutationActivatedDevice.isLoading} />
+      <ModalWaiting
+        onPressCancel={() => {
+          setVisibleWaitingModal(false);
+          RootNavigation.navigate(navigationTypes.childrenManager.screen);
+        }}
+        visible={visibleWaitingModal}
+      />
+      <Loading isLoading={mutationActivatedDevice?.isLoading} />
       <PopupConfirm
         labelBtnLeft="Cài đặt"
         labelBtnRight="Huỷ"
@@ -308,6 +418,7 @@ const DeviceInfo = ({route}) => {
           </View>
           <View style={styles.wrapInputGender}>
             <InputSelectComponent
+              selectedValue={gender}
               onDonePress={val => setGender(val)}
               placeholder="--Giới tính--"
               listData={genders}
@@ -317,8 +428,8 @@ const DeviceInfo = ({route}) => {
         </View>
         <Button
           customStyle={styles.btn}
-          label="Kích hoạt"
-          onPress={handleSaveInfo}
+          label="Lưu lại"
+          onPress={handleUpdateInfo}
         />
       </View>
     </Background>

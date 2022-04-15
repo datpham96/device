@@ -2,7 +2,7 @@ import React, {useMemo, useState} from 'react';
 import {Text, Background, Button, Input, ButtonBack} from 'base';
 import {ScrollView, View} from 'react-native';
 import styles from './styles';
-import {commonStyles, sizes} from 'styles';
+import {commonStyles} from 'styles';
 import {PopupAlert, TextError, Loading} from 'components';
 import Validator from 'validatorjs';
 import moment from 'moment';
@@ -10,7 +10,6 @@ import * as RootNavigation from 'RootNavigation';
 import {useMutation} from 'react-query';
 import {deviceLicenseKeyUpdateApi} from 'src/api/methods/device';
 import {Toast} from 'customs';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const Activated = ({route}) => {
   const dataParams = route?.params;
@@ -92,7 +91,7 @@ const Activated = ({route}) => {
   return (
     <Background isKeyboard bout>
       <ButtonBack />
-      <Loading isLoading={mutateDeviceLicenkeyUpdate.isLoading} />
+      <Loading isLoading={mutateDeviceLicenkeyUpdate?.isLoading} />
       <PopupAlert
         content="Bản quyền của bạn đã kích hoạt thành công"
         onPressCancel={handleRedirectChilrenInfo}

@@ -37,7 +37,7 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
-  [GMSServices provideAPIKey:@"AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU"]; // add this line using the api key obtained from Google Console
+//  [GMSServices provideAPIKey:@"AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU"]; // add this line using the api key obtained from Google Console
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   //fix warning (RCTBridge required dispatch_sync to load)
 //  #if RCT_DEV

@@ -15,7 +15,7 @@ import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
 import {getBottomSpace, getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {ModalSetTimeBlockAccess} from 'components';
+import {ItemTimeUse, ModalSetTimeBlockAccess} from 'components';
 import lodash from 'lodash';
 
 const HOURS_DEFAULT = '00';
@@ -34,6 +34,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 2',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 2,
@@ -41,6 +42,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 3',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 3,
@@ -48,6 +50,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 4',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 4,
@@ -55,6 +58,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 5',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 5,
@@ -62,6 +66,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 6',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 6,
@@ -69,6 +74,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 7',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 7,
@@ -76,36 +82,37 @@ const DATA_TIME_LIST = [
     dayName: 'CN',
     startTime: '',
     endTime: '',
+    status: 1,
   },
 ];
 
-const ItemTime = ({
-  day,
-  startTime = TIME_DEFAULT,
-  endTime = TIME_DEFAULT,
-  containerStyle,
-  onPress,
-}) => {
-  return (
-    <TouchableHighlight
-      underlayColor="rgba(90, 142, 209, 0.5)"
-      onPress={onPress}
-      style={[styles.wrapItem, containerStyle]}>
-      <>
-        <View style={styles.wrapItemTime}>
-          <Text style={styles.itemStartTime}>
-            {startTime ? startTime : TIME_DEFAULT}
-          </Text>
-          <Text style={styles.itemEndTime}>
-            {endTime ? endTime : TIME_DEFAULT}
-          </Text>
-        </View>
-        <Text style={styles.itemDay}>{day}</Text>
-        <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
-      </>
-    </TouchableHighlight>
-  );
-};
+// const ItemTime = ({
+//   day,
+//   startTime = TIME_DEFAULT,
+//   endTime = TIME_DEFAULT,
+//   containerStyle,
+//   onPress,
+// }) => {
+//   return (
+//     <TouchableHighlight
+//       underlayColor="rgba(90, 142, 209, 0.5)"
+//       onPress={onPress}
+//       style={[styles.wrapItem, containerStyle]}>
+//       <>
+//         <View style={styles.wrapItemTime}>
+//           <Text style={styles.itemStartTime}>
+//             {startTime ? startTime : TIME_DEFAULT}
+//           </Text>
+//           <Text style={styles.itemEndTime}>
+//             {endTime ? endTime : TIME_DEFAULT}
+//           </Text>
+//         </View>
+//         <Text style={styles.itemDay}>{day}</Text>
+//         <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
+//       </>
+//     </TouchableHighlight>
+//   );
+// };
 
 const ModalCreateUpdateWebComponent = ({
   visible = false,
@@ -129,8 +136,8 @@ const ModalCreateUpdateWebComponent = ({
   useEffect(() => {
     if (activeItemList && activeItemList?.timer?.length > 0) {
       let tmpTimeList = activeItemList?.timer?.map((item, key) => {
-        let tmpStartTime = item.start_time;
-        let tmpEndTime = item.end_time;
+        let tmpStartTime = item?.start_time;
+        let tmpEndTime = item?.end_time;
         if (tmpStartTime || tmpEndTime) {
           let tmpHoursStartTime = tmpStartTime
             ? tmpStartTime?.split(':')[0]
@@ -165,6 +172,7 @@ const ModalCreateUpdateWebComponent = ({
           };
         }
       });
+
       setTimeList(tmpTimeList);
     }
   }, [activeItemList, visible]);
@@ -217,14 +225,15 @@ const ModalCreateUpdateWebComponent = ({
   };
 
   const handleShowPopupSetupTime = item => {
-    let startTime = item.startTime;
-    let endTime = item.endTime;
+    let startTime = item?.startTime;
+    let endTime = item?.endTime;
     let splitStartTime = startTime?.split(':');
     let splitEndTime = endTime?.split(':');
     if (startTime) {
-      let tmpHoursStart = splitStartTime.length > 1 ? splitStartTime[0] : '00';
+      let tmpHoursStart =
+        splitStartTime?.length > 1 ? splitStartTime?.[0] : '00';
       let tmpMinutesStart =
-        splitStartTime.length > 1 ? splitStartTime[1] : '00';
+        splitStartTime?.length > 1 ? splitStartTime?.[1] : '00';
       setHoursStart(tmpHoursStart);
       setMinutesStart(tmpMinutesStart);
     } else {
@@ -233,8 +242,8 @@ const ModalCreateUpdateWebComponent = ({
     }
 
     if (endTime) {
-      let tmpHoursEnd = splitEndTime.length > 1 ? splitEndTime[0] : '00';
-      let tmpMinutesEnd = splitEndTime.length > 1 ? splitEndTime[1] : '00';
+      let tmpHoursEnd = splitEndTime?.length > 1 ? splitEndTime?.[0] : '00';
+      let tmpMinutesEnd = splitEndTime?.length > 1 ? splitEndTime?.[1] : '00';
       setHoursEnd(tmpHoursEnd);
       setMinutesEnd(tmpMinutesEnd);
     } else {
@@ -291,7 +300,7 @@ const ModalCreateUpdateWebComponent = ({
         (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
     }
 
-    let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
+    let itemIndex = lodash.findIndex(timeList, {id: activeItem?.id});
     if (itemIndex !== -1) {
       timeList[itemIndex] = {
         ...timeList[itemIndex],
@@ -304,10 +313,18 @@ const ModalCreateUpdateWebComponent = ({
     setVisibleSetupTimeModal(false);
   };
 
+  const handleSwitch = (status, key) => {
+    timeList[key] = {
+      ...timeList[key],
+      status: status,
+    };
+    setTimeList([...timeList]);
+  };
+
   return (
     <Modal
       onRequestClose={onPressClose}
-      animationType="slide"
+      animationType="none"
       transparent={true}
       visible={visible}>
       <ModalSetTimeBlockAccess
@@ -325,7 +342,7 @@ const ModalCreateUpdateWebComponent = ({
         valueHoursStart={hoursStart}
         onFocusHourStart={() => {
           // eslint-disable-next-line radix
-          if (hoursStart.length === 2 && parseInt(hoursStart) === 0) {
+          if (hoursStart?.length === 2 && parseInt(hoursStart) === 0) {
             setHoursStart('');
           }
         }}
@@ -333,7 +350,7 @@ const ModalCreateUpdateWebComponent = ({
         valueMinutesStart={minutesStart}
         onFocusMinuteStart={() => {
           // eslint-disable-next-line radix
-          if (minutesStart.length === 2 && parseInt(minutesStart) === 0) {
+          if (minutesStart?.length === 2 && parseInt(minutesStart) === 0) {
             setMinutesStart('');
           }
         }}
@@ -341,7 +358,7 @@ const ModalCreateUpdateWebComponent = ({
         valueHoursEnd={hoursEnd}
         onFocusHourEnd={() => {
           // eslint-disable-next-line radix
-          if (hoursEnd.length === 2 && parseInt(hoursEnd) === 0) {
+          if (hoursEnd?.length === 2 && parseInt(hoursEnd) === 0) {
             setHoursEnd('');
           }
         }}
@@ -349,7 +366,7 @@ const ModalCreateUpdateWebComponent = ({
         valueMinutesEnd={minutesEnd}
         onFocusMinuteEnd={() => {
           // eslint-disable-next-line radix
-          if (minutesEnd.length === 2 && parseInt(minutesEnd) === 0) {
+          if (minutesEnd?.length === 2 && parseInt(minutesEnd) === 0) {
             setMinutesEnd('');
           }
         }}
@@ -404,9 +421,10 @@ const ModalCreateUpdateWebComponent = ({
               let arrItem = [];
               timeList?.map(item => {
                 arrItem.push({
-                  day: item.day,
-                  start_time: item.startTime ? item.startTime + ':00' : '',
-                  end_time: item.endTime ? item.endTime + ':00' : '',
+                  day: item?.day,
+                  start_time: item?.startTime ? item?.startTime + ':00' : '',
+                  end_time: item?.endTime ? item?.endTime + ':00' : '',
+                  status: item?.status ? 1 : 0,
                 });
               });
               onPressSubmit(arrItem);
@@ -415,19 +433,21 @@ const ModalCreateUpdateWebComponent = ({
           </TouchableHighlight>
           <Text style={styles.timeUse}>Thời gian sử dụng</Text>
           {isActive &&
-            timeList.map((item, key) => {
+            timeList?.map((item, key) => {
               return (
-                <View key={key}>
-                  <ItemTime
+                <View key={`${item.id} + ${item.status}`}>
+                  <ItemTimeUse
+                    status={item.status}
+                    onChangeSwitch={status => handleSwitch(status, key)}
                     onPress={() => handleShowPopupSetupTime(item)}
                     containerStyle={
                       key % 2 === 0
                         ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
                         : {}
                     }
-                    day={item.dayName}
-                    startTime={item.startTime}
-                    endTime={item.endTime}
+                    day={item?.dayName}
+                    startTime={item?.startTime}
+                    endTime={item?.endTime}
                   />
                 </View>
               );

@@ -10,6 +10,7 @@ export {default as Background} from './BackgroundComponent';
 export {default as ModalScanQRcode} from './Modals/ModalScanQRcodeComponent';
 export {default as ModalSetTimeBlockAccess} from './Modals/ModalSetTimeBlockAccessComponent';
 export {default as ModalBottomSheet} from './Modals/ModalBottomSheetComponent';
+export {default as ModalWaiting} from './Modals/ModalWaitingComponent';
 
 //loading
 export {default as LoadingData} from './Loadings/LoadingDataComponent';
@@ -39,3 +40,6 @@ export {default as Line} from './LineComponent';
 
 //dropdown
 export {default as DropdownSelected} from './Dropdown/SelectedComponent';
+
+//item ItemTimeUseComponent
+export {default as ItemTimeUse} from './Items/ItemTimeUseComponent';

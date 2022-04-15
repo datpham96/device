@@ -1,6 +1,12 @@
 import React, {useState} from 'react';
 import {Text, Input, Button} from 'base';
-import {View, StyleSheet, TouchableOpacity, Modal} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Platform,
+} from 'react-native';
 import images from 'images';
 import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, sizes} from 'styles';
@@ -51,27 +57,27 @@ const ModalUpdateInfoComponent = ({
       options.mediaType = 'photo';
       launchCamera(options, response => {
         if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let dataFirstBase64 = 'data:' + item.type + ';base64,';
-          let formatData = dataFirstBase64 + item.base64;
+          let item = response?.assets?.[0];
+          let dataFirstBase64 = 'data:' + item?.type + ';base64,';
+          let formatData = dataFirstBase64 + item?.base64;
           ImageResizer.createResizedImage(
             formatData,
             300,
             300,
             'JPEG',
             100,
-            0,
+            Platform.OS === 'android' ? 90 : 0,
             undefined,
             false,
             {},
           )
             .then(resp => {
-              return RNFS.readFile(resp.path, 'base64');
+              return RNFS.readFile(resp?.path, 'base64');
             })
             .then(result => {
               setDataRequestAvatar(dataFirstBase64 + result);
             });
-          setAvatarUri({uri: item.uri});
+          setAvatarUri({uri: item?.uri});
         }
       });
     }, 100);
@@ -83,16 +89,16 @@ const ModalUpdateInfoComponent = ({
       options.mediaType = 'photo';
       launchImageLibrary(options, response => {
         if (response && response?.assets) {
-          let item = response.assets?.[0];
-          let dataFirstBase64 = 'data:' + item.type + ';base64,';
-          let formatData = dataFirstBase64 + item.base64;
+          let item = response?.assets?.[0];
+          let dataFirstBase64 = 'data:' + item?.type + ';base64,';
+          let formatData = dataFirstBase64 + item?.base64;
           ImageResizer.createResizedImage(
             formatData,
             300,
             300,
             'JPEG',
             100,
-            0,
+            Platform.OS === 'android' ? 90 : 0,
             undefined,
             false,
             {},

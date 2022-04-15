@@ -7,3 +7,4 @@ export {default as Radio} from './Radio';
 export {default as Input} from './Input';
 export {default as Loading} from './Loading';
 export {default as ButtonBack} from './ButtonBack';
+export {default as TouchableOpacity} from './TouchableOpacity';

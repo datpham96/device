@@ -66,12 +66,21 @@ export default StyleSheet.create({
     marginTop: sizes.SIZE_10,
     paddingVertical: sizes.SIZE_10,
   },
+  wrapContentSafeWeb: {
+    ...commonStyles.flexRowCenter,
+    ...commonStyles.flex1,
+  },
   wrapSafeWeb: {
     // ...commonStyles.flexRowCenter,
-    marginBottom: sizes.SIZE_20,
+    // marginBottom: sizes.SIZE_20,
+  },
+  wrapSafeSearch: {
+    // ...commonStyles.flexRowCenter,
+    marginVertical: sizes.SIZE_15,
   },
   headerSafeWeb: {
     ...commonStyles.flexRowCenter,
+    justifyContent: 'space-between',
   },
   switchSafeWeb: {
     alignSelf: 'center',
@@ -86,6 +95,11 @@ export default StyleSheet.create({
     width: sizes.SIZE_40,
     height: sizes.SIZE_40,
   },
+  labelInfoWithChildren: {
+    fontFamily: fonts.lexendDeca.FONT_MEDIUM,
+    fontSize: sizes.SIZE_14,
+    paddingHorizontal: sizes.SIZE_10,
+  },
   labelInfo: {
     fontFamily: fonts.lexendDeca.FONT_MEDIUM,
     fontSize: sizes.SIZE_14,
@@ -94,5 +108,20 @@ export default StyleSheet.create({
   },
   lineOne: {
     marginVertical: sizes.SIZE_20,
+  },
+
+  wrapChildrenSafe: {
+    marginTop: sizes.SIZE_5,
+    ...commonStyles.flexRowCenter,
+  },
+  verticalBar: {
+    width: sizes.SIZE_3,
+    backgroundColor: colors.COLOR_WHITE,
+    height: '90%',
+    borderRadius: sizes.SIZE_5,
+  },
+  wrapChildrenItem: {
+    flex: 1,
+    marginLeft: sizes.SIZE_15,
   },
 });

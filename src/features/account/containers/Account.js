@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import styles from './styles';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,6 +17,7 @@ import {
   updateUserAvatarReset,
   updateUserInfoRequest,
   updateUserInfoReset,
+  userInfoRequest,
 } from 'actions/userActions';
 import {colors, commonStyles} from 'styles';
 import FastImage from 'react-native-fast-image';
@@ -52,21 +54,21 @@ const Account = () => {
   const touchTimoutRef = useRef(null);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const isLoadingLogout = useSelector(state => state.auth.isLoadingLogout);
-  const userInfo = useSelector(state => state.user.userInfo);
+  const isLoadingLogout = useSelector(state => state?.auth?.isLoadingLogout);
+  const userInfo = useSelector(state => state?.user?.userInfo);
   const isLoadingUpdateUserAvatar = useSelector(
-    state => state.user.isLoadingUpdateUserAvatar,
+    state => state?.user?.isLoadingUpdateUserAvatar,
   );
   const isLoadingUpdateUserInfo = useSelector(
-    state => state.user.isLoadingUpdateUserInfo,
+    state => state?.user?.isLoadingUpdateUserInfo,
   );
   const statusUpdateUserAvatar = useSelector(
-    state => state.user.statusUpdateUserAvatar,
+    state => state?.user?.statusUpdateUserAvatar,
   );
   const statusUpdateUserInfo = useSelector(
-    state => state.user.statusUpdateUserInfo,
+    state => state?.user?.statusUpdateUserInfo,
   );
-  const dataErrors = useSelector(state => state.user.errors);
+  const dataErrors = useSelector(state => state?.user?.errors);
   const [visibleConfirm, setVisibleConfirm] = useState(false);
   const [visibleImagePicker, setVisibleImagePicker] = useState(false);
   const [name, setName] = useState(userInfo?.name);
@@ -144,27 +146,27 @@ const Account = () => {
     options.mediaType = 'photo';
     launchCamera(options, response => {
       if (response && response?.assets) {
-        let item = response.assets?.[0];
-        let dataFirstBase64 = 'data:' + item.type + ';base64,';
-        let formatData = dataFirstBase64 + item.base64;
+        let item = response?.assets?.[0];
+        let dataFirstBase64 = 'data:' + item?.type + ';base64,';
+        let formatData = dataFirstBase64 + item?.base64;
         ImageResizer.createResizedImage(
           formatData,
           300,
           300,
           'JPEG',
           100,
-          0,
+          Platform.OS === 'android' ? 90 : 0,
           undefined,
           false,
           {},
         )
           .then(resp => {
-            return RNFS.readFile(resp.path, 'base64');
+            return RNFS.readFile(resp?.path, 'base64');
           })
           .then(result => {
             setDataRequestAvatar(dataFirstBase64 + result);
           });
-        setAvatarUri({uri: item.uri});
+        setAvatarUri({uri: item?.uri});
       }
     });
   };
@@ -174,27 +176,27 @@ const Account = () => {
     options.mediaType = 'photo';
     launchImageLibrary(options, response => {
       if (response && response?.assets) {
-        let item = response.assets?.[0];
-        let dataFirstBase64 = 'data:' + item.type + ';base64,';
-        let formatData = dataFirstBase64 + item.base64;
+        let item = response?.assets?.[0];
+        let dataFirstBase64 = 'data:' + item?.type + ';base64,';
+        let formatData = dataFirstBase64 + item?.base64;
         ImageResizer.createResizedImage(
           formatData,
           300,
           300,
           'JPEG',
           100,
-          0,
+          Platform.OS === 'android' ? 90 : 0,
           undefined,
           false,
           {},
         )
           .then(resp => {
-            return RNFS.readFile(resp.path, 'base64');
+            return RNFS.readFile(resp?.path, 'base64');
           })
           .then(result => {
             setDataRequestAvatar(dataFirstBase64 + result);
           });
-        setAvatarUri({uri: item.uri});
+        setAvatarUri({uri: item?.uri});
       }
     });
   };
@@ -261,6 +263,10 @@ const Account = () => {
     }
   };
 
+  const onRefresh = () => {
+    dispatch(userInfoRequest());
+  };
+
   return (
     <Background bottomTab bout>
       <PopupConfirm
@@ -306,9 +312,16 @@ const Account = () => {
         onPressAgree={handleLogout}
       />
       <KeyboardAwareScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={onRefresh}
+            tintColor={colors.COLOR_WHITE}
+          />
+        }
         enableOnAndroid={true}
         enableAutomaticScroll={Platform.OS === 'ios'}>
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
           <TouchableOpacity onPress={handleTabLogErr} activeOpacity={0.9}>
             <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
               Quản lý thông tin
@@ -371,7 +384,7 @@ const Account = () => {
               label="Cập nhật"
             />
           </View>
-        </ScrollView>
+        </View>
       </KeyboardAwareScrollView>
       <Text style={styles.version}>Phiên bản {VersionInfo.appVersion}</Text>
     </Background>

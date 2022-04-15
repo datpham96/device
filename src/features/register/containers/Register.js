@@ -15,9 +15,11 @@ import {checkVar} from 'src/helpers/funcs';
 
 const Register = () => {
   const dispatch = useDispatch();
-  const isLoadingRegister = useSelector(state => state.auth.isLoadingRegister);
-  const statusRegister = useSelector(state => state.auth.statusRegister);
-  const dataErrors = useSelector(state => state.auth.errors);
+  const isLoadingRegister = useSelector(
+    state => state?.auth?.isLoadingRegister,
+  );
+  const statusRegister = useSelector(state => state?.auth?.statusRegister);
+  const dataErrors = useSelector(state => state?.auth?.errors);
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');

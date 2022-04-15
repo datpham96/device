@@ -16,14 +16,14 @@ import {checkVar} from 'src/helpers/funcs';
 const OtpNewPassword = () => {
   const dispatch = useDispatch();
   const isLoadingResetPassword = useSelector(
-    state => state.auth.isLoadingResetPassword,
+    state => state?.auth?.isLoadingResetPassword,
   );
   const statusResetPassword = useSelector(
-    state => state.auth.statusResetPassword,
+    state => state?.auth?.statusResetPassword,
   );
-  const expiredTime = useSelector(state => state.auth.expiredTime);
-  const phone = useSelector(state => state.auth.phone);
-  const dataErrors = useSelector(state => state.auth.errors);
+  const expiredTime = useSelector(state => state?.auth?.expiredTime);
+  const phone = useSelector(state => state?.auth?.phone);
+  const dataErrors = useSelector(state => state?.auth?.errors);
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [rePassword, setRePassword] = useState('');

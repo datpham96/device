@@ -15,13 +15,15 @@ const ItemChildrenComponent: React.FC<Props> = ({item, onPress}) => {
       expired: false,
       date: '',
     };
-    if (moment().isAfter(moment(date, 'YYYY-MM-DD HH:mm:ss'), 'days')) {
-      obj.date = 'Đã hết hạn';
-      obj.expired = true;
-    } else {
-      obj.date = moment(date, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
-      obj.expired = false;
-    }
+    try {
+      if (moment().isAfter(moment(date, 'YYYY-MM-DD HH:mm:ss'), 'days')) {
+        obj.date = 'Đã hết hạn';
+        obj.expired = true;
+      } else {
+        obj.date = moment(date, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
+        obj.expired = false;
+      }
+    } catch (error) {}
 
     return obj;
   };
@@ -31,11 +33,11 @@ const ItemChildrenComponent: React.FC<Props> = ({item, onPress}) => {
       style={styles.container}
       activeOpacity={0.9}
       onPress={onPress}>
-      <Avatar uriImage={item.avatar} />
+      <Avatar uriImage={item?.avatar} />
       <View style={styles.wrapInfo}>
-        <Text style={styles.singleInfo}>{item.full_name}</Text>
-        <Text style={styles.singleInfo}>{item.device_name}</Text>
-        {!formatExpiredDate(item.expire_time)?.expired ? (
+        <Text style={styles.singleInfo}>{item?.full_name}</Text>
+        <Text style={styles.singleInfo}>{item?.device_name}</Text>
+        {!formatExpiredDate(item?.expire_time)?.expired ? (
           <Text style={styles.singleInfo}>
             {item.status ? 'Đã kết nối' : 'Chưa kết nối'}
           </Text>

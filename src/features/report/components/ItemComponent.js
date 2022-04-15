@@ -9,20 +9,6 @@ import {checkVar} from 'src/helpers/funcs';
 momentDurationFormatSetup(moment);
 
 const ItemComponent = ({item}) => {
-  const timeUse = moment(item.access_time, 'YYYY-MM-DD HH:mm:ss').diff(
-    moment(),
-    'minutes',
-  );
-  let duration = '0h';
-  if (timeUse && timeUse > 0) {
-    if (timeUse > 60) {
-      // duration = moment.duration(timeUse, 'minutes').format('HH');
-      duration = moment.duration(timeUse, 'minutes').format('HHgmmp');
-    } else {
-      duration = moment.duration(timeUse, 'minutes').format('mmp');
-    }
-  }
-
   const handleShowDetail = url => {
     Alert.alert('Thông tin', url, [
       {
@@ -39,11 +25,11 @@ const ItemComponent = ({item}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onLongPress={() => handleShowDetail(item.url)}
+      onLongPress={() => handleShowDetail(item?.url)}
       style={styles.container}>
       <View style={styles.wrapItemWebsite}>
         <Avatar
-          uriImage={item.icon}
+          uriImage={item?.icon}
           containerStyle={styles.imageContainer}
           imageStyle={styles.image}
           isWeb
@@ -54,15 +40,15 @@ const ItemComponent = ({item}) => {
               numberOfLines: 1,
             }}
             style={styles.name}>
-            {item.name}
+            {item?.name}
           </Text>
-          {!checkVar.isEmpty(item.domain) && (
+          {!checkVar.isEmpty(item?.domain) && (
             <Text
               props={{
                 numberOfLines: 1,
               }}
               style={styles.domain}>
-              {item.domain}
+              {item?.domain}
             </Text>
           )}
         </View>
@@ -70,7 +56,7 @@ const ItemComponent = ({item}) => {
       <View style={styles.wrapTime}>
         {/* <Text style={styles.time}>{duration}</Text> */}
         <Text style={styles.time}>
-          {moment(item.access_time, 'YYYY-MM-DD HH:mm:ss').format('HH:mm')}
+          {moment(item?.access_time, 'YYYY-MM-DD HH:mm:ss').format('HH:mm')}
         </Text>
       </View>
     </TouchableOpacity>

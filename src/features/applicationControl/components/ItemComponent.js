@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Text, Avatar, Switch} from 'base';
 import {colors, commonStyles, sizes} from 'styles';
-import FastImage from 'react-native-fast-image';
-import images from 'images';
 import {useMutation} from 'react-query';
 import {applicationUpdateApi} from 'src/api/methods/application';
 import {PopupConfirm, Loading} from 'components';
@@ -12,19 +10,7 @@ import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 momentDurationFormatSetup(moment);
 
-const ItemComponent = ({item, onPressDetail}) => {
-  const timeUse = moment(item.time_remaining, 'YYYY-MM-DD HH:mm:ss').diff(
-    moment(),
-    'minutes',
-  );
-  let duration = '00:00';
-  if (timeUse && timeUse > 0) {
-    if (timeUse > 60) {
-      duration = moment.duration(timeUse, 'minutes').format('HH:mm');
-    } else {
-      duration = moment.duration(timeUse, 'minutes').format('00:mm');
-    }
-  }
+const ItemComponent = ({item, onPressDetail, refreshList}) => {
   const mutation = useMutation(
     ({data_application_id, data_status, data_time_remaining}) =>
       applicationUpdateApi(
@@ -34,7 +20,7 @@ const ItemComponent = ({item, onPressDetail}) => {
       ),
   );
 
-  const [enableSwitch, setEnablSwitch] = useState(item.status ? true : false);
+  const [enableSwitch, setEnablSwitch] = useState(item?.status ? true : false);
   const [visibleModal, setVisibleModal] = useState(false);
 
   const handleToggleSwitch = () => {
@@ -47,15 +33,16 @@ const ItemComponent = ({item, onPressDetail}) => {
     setVisibleModal(false);
     mutation
       .mutateAsync({
-        data_application_id: item.id,
+        data_application_id: item?.id,
         data_status: enableSwitch ? 1 : 0,
         data_time_remaining: 0,
       })
       .then(resp => {
-        if (resp.status) {
-          Toast(resp.msg);
+        if (resp?.status) {
+          Toast(resp?.msg);
+          refreshList();
         } else {
-          Toast(resp.msg);
+          Toast(resp?.msg);
         }
         mutation.reset();
       })
@@ -81,7 +68,7 @@ const ItemComponent = ({item, onPressDetail}) => {
 
   return (
     <View style={styles.container}>
-      <Loading isLoading={mutation.isLoading} />
+      <Loading isLoading={mutation?.isLoading} />
       <PopupConfirm
         visible={visibleModal}
         onPressAgree={() => handleAgreeUpdate()}
@@ -93,10 +80,10 @@ const ItemComponent = ({item, onPressDetail}) => {
       />
       <TouchableOpacity
         activeOpacity={0.9}
-        onLongPress={() => handleShowDetail(item.name)}
+        onLongPress={() => handleShowDetail(item?.name)}
         style={styles.wrapItemApplication}>
         <Avatar
-          uriImage={item.icon}
+          uriImage={item?.icon}
           containerStyle={styles.imageContainer}
           imageStyle={styles.image}
         />
@@ -106,7 +93,7 @@ const ItemComponent = ({item, onPressDetail}) => {
               numberOfLines: 1,
             }}
             style={styles.name}>
-            {item.name}
+            {item?.name}
           </Text>
         </View>
       </TouchableOpacity>

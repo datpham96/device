@@ -68,9 +68,9 @@ export function deviceHistoryApi(page, perPage, device_id, date, s) {
 export function deviceUpdateApi(
   device_id,
   is_block,
-  full_name,
-  birthday,
-  gender,
+  full_name = '',
+  birthday = '',
+  gender = '',
 ) {
   //Cập nhật thiết bị
   let bodyFormData = new FormData();
@@ -96,14 +96,10 @@ export function deviceSettingListApi(device_id) {
   return apiToken(ApiConstants.DEVICE_SETTING_LIST, 'post', bodyFormData);
 }
 
-export function deviceSettingUpdateApi(device_id, setting_id, name, status) {
+export function deviceSettingUpdateApi(device_id, name, status) {
   //Cập nhật cài đặt thiết bị
   let bodyFormData = new FormData();
   bodyFormData.append('device_id', device_id);
-  if (setting_id) {
-    bodyFormData.append('setting_id', setting_id);
-  }
-
   bodyFormData.append('name', name);
   bodyFormData.append('status', status);
   return apiToken(ApiConstants.DEVICE_SETTING_UPDATE, 'post', bodyFormData);
@@ -134,6 +130,7 @@ export function deviceTimerAccessUpdateApi(device_id, time_list) {
       bodyFormData.append('timer[' + key + '][day]', item.day);
       bodyFormData.append('timer[' + key + '][start_time]', item.start_time);
       bodyFormData.append('timer[' + key + '][end_time]', item.end_time);
+      bodyFormData.append('timer[' + key + '][status]', item.status);
     });
   }
   return apiToken(

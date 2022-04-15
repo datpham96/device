@@ -51,19 +51,19 @@ const Report = ({route}) => {
       keepPreviousData: true,
       getNextPageParam: lastPage => {
         // eslint-disable-next-line radix
-        return parseInt(lastPage.current_page) < lastPage.last_page
+        return parseInt(lastPage?.current_page) < lastPage?.last_page
           ? // eslint-disable-next-line radix
-            parseInt(lastPage.current_page) + 1
+            parseInt(lastPage?.current_page) + 1
           : undefined;
       },
       // eslint-disable-next-line no-shadow
       select: data => {
         return {
           pages: data.pages.flatMap(pageItem => {
-            if (checkVar.isEmpty(pageItem.data)) {
+            if (checkVar.isEmpty(pageItem?.data)) {
               return [];
             }
-            return pageItem.data;
+            return pageItem?.data;
           }),
         };
       },

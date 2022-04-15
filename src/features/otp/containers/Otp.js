@@ -18,8 +18,8 @@ const Otp = () => {
   const isLoadingVerifyOtp = useSelector(
     state => state.auth.isLoadingVerifyOtp,
   );
-  const statusVerifyOtp = useSelector(state => state.auth.statusVerifyOtp);
-  const dataErrors = useSelector(state => state.auth.errors);
+  const statusVerifyOtp = useSelector(state => state?.auth?.statusVerifyOtp);
+  const dataErrors = useSelector(state => state?.auth?.errors);
   const [otp, setOtp] = useState('');
   const [errors, setErrors] = useState({});
 

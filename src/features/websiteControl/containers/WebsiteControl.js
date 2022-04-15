@@ -47,6 +47,7 @@ const WebsiteControl = ({route}) => {
 
   const [errors, setErrors] = useState({});
   const [activeItem, setActiveItem] = useState({});
+  const [isTimoutLoading, setIsTimoutLoading] = useState(false);
 
   //website list
   const {data, isLoading, isSuccess, refetch} = useQuery(
@@ -104,10 +105,9 @@ const WebsiteControl = ({route}) => {
     if (isSuccess) {
       let listWebsite = data?.data;
       const regex = new RegExp(`${textSearch.trim()}`, 'i');
-      tmpList = listWebsite.filter(
-        obj => obj.name.search(regex) >= 0 || obj.url.search(regex) >= 0,
+      tmpList = listWebsite?.filter(
+        obj => obj?.name.search(regex) >= 0 || obj?.url.search(regex) >= 0,
       );
-      // .slice(0, 200);
     }
     return tmpList;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,12 +119,12 @@ const WebsiteControl = ({route}) => {
       clearTimeout(typingTimoutRef.current);
     }
     typingTimoutRef.current = setTimeout(async () => {
-      //typing code
       setDebounceTextSearch(!debounceTextSearch);
     }, 300);
   };
 
   const handleWebCreate = timeList => {
+    setVisibleModal(false);
     let validation = new Validator(
       {
         url: url,
@@ -143,7 +143,6 @@ const WebsiteControl = ({route}) => {
 
     if (validation.passes()) {
       setErrors({...errors, url: validation.errors.first('url')});
-      setVisibleModal(false);
     }
     mutationCreate
       .mutateAsync({
@@ -154,13 +153,13 @@ const WebsiteControl = ({route}) => {
       })
       .then(resp => {
         if (resp?.status) {
-          refetch();
-          resetState();
           Toast(resp?.msg);
         } else {
           Toast(resp?.msg);
         }
+        resetState();
         mutationCreate.reset();
+        refetch();
       })
       .catch(err => {
         Toast(err?.msg);
@@ -188,26 +187,32 @@ const WebsiteControl = ({route}) => {
     if (validation.passes()) {
       setErrors({...errors, url: validation.errors.first('url')});
       setVisibleModal(false);
+      setIsTimoutLoading(true);
     }
 
     mutationUpdate
       .mutateAsync({
         data_url: url,
         data_status: activeRadio ? ONE : ZERO,
-        data_web_id: activeItem.id,
+        data_web_id: activeItem?.id,
         data_timer: activeRadio ? timeList : null,
       })
       .then(resp => {
         if (resp?.status) {
           refetch();
           Toast(resp?.msg);
+          setTimeout(() => {
+            setIsTimoutLoading(false);
+          }, 100);
         } else {
+          setIsTimoutLoading(false);
           Toast(resp?.msg);
         }
         resetState();
         mutationCreate.reset();
       })
       .catch(err => {
+        setIsTimoutLoading(false);
         Toast(err?.msg);
         mutationCreate.reset();
       });
@@ -225,15 +230,12 @@ const WebsiteControl = ({route}) => {
   const showModalDetail = (item, t) => {
     setType(t);
     setActiveItem(item);
-    setUrl(item.url);
-    setActiveRadio(item.status);
+    setUrl(item?.url);
+    setActiveRadio(item?.status);
     setVisibleModal(true);
   };
   return (
     <Background bin>
-      <Loading
-        isLoading={mutationCreate.isLoading || mutationUpdate.isLoading}
-      />
       <ModalCreateUpdateWebComponent
         onPressClose={() => {
           setVisibleModal(false);
@@ -255,6 +257,13 @@ const WebsiteControl = ({route}) => {
           }
         }}
         errors={errors}
+      />
+      <Loading
+        isLoading={
+          mutationCreate?.isLoading ||
+          mutationUpdate?.isLoading ||
+          isTimoutLoading
+        }
       />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -309,9 +318,7 @@ const WebsiteControl = ({route}) => {
             contentContainerStyle={styles.contentContainerFlatlist}
             ListEmptyComponent={<EmptyData />}
             data={websiteList}
-            keyExtractor={(item, key) =>
-              `${item.id.toString()} + ${key} + ${item.status}`
-            }
+            keyExtractor={item => item?.id.toString() + item?.status}
             refreshControl={
               <RefreshControl
                 refreshing={false}
@@ -321,6 +328,7 @@ const WebsiteControl = ({route}) => {
             }
             renderItem={({item}) => (
               <ItemComponent
+                refreshList={() => refetch()}
                 onPressDetail={obj => showModalDetail(obj, types.update.code)}
                 item={item}
               />

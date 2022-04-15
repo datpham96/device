@@ -14,7 +14,7 @@ import images from 'images';
 import FastImage from 'react-native-fast-image';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {TextError} from 'components';
+import {ItemTimeUse, TextError} from 'components';
 import {
   getBottomSpace,
   getStatusBarHeight,
@@ -32,33 +32,33 @@ const MINUTE_60 = 60;
 const ZERO = 0;
 const TIME_DEFAULT = '00/00';
 
-const ItemTime = ({
-  day,
-  startTime = TIME_DEFAULT,
-  endTime = TIME_DEFAULT,
-  containerStyle,
-  onPress,
-}) => {
-  return (
-    <TouchableHighlight
-      underlayColor="rgba(90, 142, 209, 0.5)"
-      onPress={onPress}
-      style={[styles.wrapItem, containerStyle]}>
-      <>
-        <View style={styles.wrapItemTime}>
-          <Text style={styles.itemStartTime}>
-            {startTime ? startTime : TIME_DEFAULT}
-          </Text>
-          <Text style={styles.itemEndTime}>
-            {endTime ? endTime : TIME_DEFAULT}
-          </Text>
-        </View>
-        <Text style={styles.itemDay}>{day}</Text>
-        <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
-      </>
-    </TouchableHighlight>
-  );
-};
+// const ItemTime = ({
+//   day,
+//   startTime = TIME_DEFAULT,
+//   endTime = TIME_DEFAULT,
+//   containerStyle,
+//   onPress,
+// }) => {
+//   return (
+//     <TouchableHighlight
+//       underlayColor="rgba(90, 142, 209, 0.5)"
+//       onPress={onPress}
+//       style={[styles.wrapItem, containerStyle]}>
+//       <>
+//         <View style={styles.wrapItemTime}>
+//           <Text style={styles.itemStartTime}>
+//             {startTime ? startTime : TIME_DEFAULT}
+//           </Text>
+//           <Text style={styles.itemEndTime}>
+//             {endTime ? endTime : TIME_DEFAULT}
+//           </Text>
+//         </View>
+//         <Text style={styles.itemDay}>{day}</Text>
+//         <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
+//       </>
+//     </TouchableHighlight>
+//   );
+// };
 
 const DATA_TIME_LIST = [
   {
@@ -67,6 +67,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 2',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 2,
@@ -74,6 +75,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 3',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 3,
@@ -81,6 +83,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 4',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 4,
@@ -88,6 +91,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 5',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 5,
@@ -95,6 +99,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 6',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 6,
@@ -102,6 +107,7 @@ const DATA_TIME_LIST = [
     dayName: 'Thứ 7',
     startTime: '',
     endTime: '',
+    status: 1,
   },
   {
     id: 7,
@@ -109,6 +115,7 @@ const DATA_TIME_LIST = [
     dayName: 'CN',
     startTime: '',
     endTime: '',
+    status: 1,
   },
 ];
 const ModalCreateUpdateWebComponent = ({
@@ -135,20 +142,20 @@ const ModalCreateUpdateWebComponent = ({
   useEffect(() => {
     if (activeItemList && activeItemList?.timer?.length > 0) {
       let tmpTimeList = activeItemList?.timer?.map((item, key) => {
-        let tmpStartTime = item.start_time;
-        let tmpEndTime = item.end_time;
+        let tmpStartTime = item?.start_time;
+        let tmpEndTime = item?.end_time;
         if (tmpStartTime || tmpEndTime) {
           let tmpHoursStartTime = tmpStartTime
-            ? tmpStartTime?.split(':')[0]
+            ? tmpStartTime?.split(':')?.[0]
             : HOURS_DEFAULT;
           let tmpHoursEndTime = tmpEndTime
-            ? tmpEndTime?.split(':')[0]
+            ? tmpEndTime?.split(':')?.[0]
             : HOURS_DEFAULT;
           let tmpMinuteStartTime = tmpStartTime
-            ? tmpStartTime?.split(':')[1]
+            ? tmpStartTime?.split(':')?.[1]
             : MINUTE_DEFAULT;
           let tmpMinuteEndTime = tmpEndTime
-            ? tmpEndTime?.split(':')[1]
+            ? tmpEndTime?.split(':')?.[1]
             : MINUTE_DEFAULT;
           return {
             ...item,
@@ -223,14 +230,15 @@ const ModalCreateUpdateWebComponent = ({
   };
 
   const handleShowPopupSetupTime = item => {
-    let startTime = item.startTime;
-    let endTime = item.endTime;
+    let startTime = item?.startTime;
+    let endTime = item?.endTime;
     let splitStartTime = startTime?.split(':');
     let splitEndTime = endTime?.split(':');
     if (startTime) {
-      let tmpHoursStart = splitStartTime.length > 1 ? splitStartTime[0] : '00';
+      let tmpHoursStart =
+        splitStartTime?.length > 1 ? splitStartTime?.[0] : '00';
       let tmpMinutesStart =
-        splitStartTime.length > 1 ? splitStartTime[1] : '00';
+        splitStartTime?.length > 1 ? splitStartTime?.[1] : '00';
       setHoursStart(tmpHoursStart);
       setMinutesStart(tmpMinutesStart);
     } else {
@@ -239,8 +247,8 @@ const ModalCreateUpdateWebComponent = ({
     }
 
     if (endTime) {
-      let tmpHoursEnd = splitEndTime.length > 1 ? splitEndTime[0] : '00';
-      let tmpMinutesEnd = splitEndTime.length > 1 ? splitEndTime[1] : '00';
+      let tmpHoursEnd = splitEndTime?.length > 1 ? splitEndTime?.[0] : '00';
+      let tmpMinutesEnd = splitEndTime?.length > 1 ? splitEndTime?.[1] : '00';
       setHoursEnd(tmpHoursEnd);
       setMinutesEnd(tmpMinutesEnd);
     } else {
@@ -297,7 +305,7 @@ const ModalCreateUpdateWebComponent = ({
         (hoursEnd ? hoursEnd : '00') + ':' + (minutesEnd ? minutesEnd : '00');
     }
 
-    let itemIndex = lodash.findIndex(timeList, {id: activeItem.id});
+    let itemIndex = lodash.findIndex(timeList, {id: activeItem?.id});
     if (itemIndex !== -1) {
       timeList[itemIndex] = {
         ...timeList[itemIndex],
@@ -310,10 +318,18 @@ const ModalCreateUpdateWebComponent = ({
     setVisibleSetupTimeModal(false);
   };
 
+  const handleSwitch = (status, key) => {
+    timeList[key] = {
+      ...timeList[key],
+      status: status,
+    };
+    setTimeList([...timeList]);
+  };
+
   return (
     <Modal
       onRequestClose={onPressClose}
-      animationType="slide"
+      animationType="none"
       transparent={true}
       visible={visible}>
       <ModalSetTimeBlockAccess
@@ -417,9 +433,10 @@ const ModalCreateUpdateWebComponent = ({
               let arrItem = [];
               timeList?.map(item => {
                 arrItem.push({
-                  day: item.day,
-                  start_time: item.startTime ? item.startTime + ':00' : '',
-                  end_time: item.endTime ? item.endTime + ':00' : '',
+                  day: item?.day,
+                  start_time: item?.startTime ? item?.startTime + ':00' : '',
+                  end_time: item?.endTime ? item?.endTime + ':00' : '',
+                  status: item.status ? 1 : 0,
                 });
               });
               onPressSubmit(arrItem);
@@ -430,17 +447,19 @@ const ModalCreateUpdateWebComponent = ({
           {isActive &&
             timeList?.map((item, key) => {
               return (
-                <View key={key}>
-                  <ItemTime
+                <View key={`${key} + ${item.status}`}>
+                  <ItemTimeUse
+                    status={item.status}
+                    onChangeSwitch={status => handleSwitch(status, key)}
                     onPress={() => handleShowPopupSetupTime(item)}
                     containerStyle={
                       key % 2 === 0
                         ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
                         : {}
                     }
-                    day={item.dayName}
-                    startTime={item.startTime}
-                    endTime={item.endTime}
+                    day={item?.dayName}
+                    startTime={item?.startTime}
+                    endTime={item?.endTime}
                   />
                 </View>
               );

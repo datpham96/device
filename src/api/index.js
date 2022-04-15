@@ -1,7 +1,6 @@
 import ApiConstants from './ApiConstants';
 import axios from 'axios';
-import moment from 'moment';
-import {getToken, getExpiredToken, removeAll, setError} from 'storages';
+import {setError} from 'storages';
 import * as RootNavigation from '../navigation/RootNavigation';
 import navigationType from 'navigationTypes';
 import NetInfo from '@react-native-community/netinfo';
@@ -17,11 +16,12 @@ axios.interceptors.request.use(function (config) {
   return config;
 }, null);
 
-const TIME_OUT = 60000;
+const TIME_OUT = 30000;
 
 export function api(path, method, params = {}) {
   let options;
   options = {
+    retries: 1,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -63,6 +63,7 @@ export async function apiToken(path, method, params = {}, token) {
   let tokenStore = await Keychain.getGenericPassword();
   let myToken = tokenStore?.password || token;
   let options = {
+    retries: 1,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -77,6 +78,12 @@ export async function apiToken(path, method, params = {}, token) {
       return json.data;
     })
     .catch(async error => {
+      if (error?.code === 'ECONNABORTED') {
+        RootNavigation.navigate(navigationType.error.screen);
+        return {
+          data: null,
+        };
+      }
       await setError(JSON.stringify(error?.response?.data));
       if (
         error?.response?.status === statusCode.CODE_500 ||

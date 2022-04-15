@@ -43,6 +43,7 @@ const ApplicationControl = ({route}) => {
   const [minutes, setMinutes] = useState(MINUTE_DEFAULT);
   const [activeItem, setActiveItem] = useState({});
   const [visibleDetailModal, setVisibleDetailModal] = useState(false);
+  const [isTimoutLoading, setIsTimoutLoading] = useState(false);
 
   //application list
   const {data, isLoading, isSuccess, refetch} = useQuery(
@@ -130,6 +131,7 @@ const ApplicationControl = ({route}) => {
 
   const handlebUpdate = timeList => {
     setVisibleDetailModal(false);
+    setIsTimoutLoading(true);
     mutationUpdate
       .mutateAsync({
         data_application_id: activeItem?.id,
@@ -139,21 +141,26 @@ const ApplicationControl = ({route}) => {
       .then(resp => {
         if (resp?.status) {
           refetch();
+          setTimeout(() => {
+            setIsTimoutLoading(false);
+          }, 1000);
           Toast(resp?.msg);
         } else {
+          setIsTimoutLoading(false);
           Toast(resp?.msg);
         }
         resetState();
         mutationUpdate.reset();
       })
       .catch(err => {
+        setIsTimoutLoading(false);
         Toast(err?.msg);
         mutationUpdate.reset();
       });
   };
   return (
     <Background bin>
-      <Loading isLoading={mutationUpdate.isLoading} />
+      <Loading isLoading={mutationUpdate?.isLoading || isTimoutLoading} />
       <ModalUpdateApplicationComponent
         iconApp={activeItem?.icon}
         nameApp={activeItem?.name}
@@ -209,7 +216,7 @@ const ApplicationControl = ({route}) => {
             contentContainerStyle={styles.contentContainerFlatlist}
             ListEmptyComponent={<EmptyData />}
             data={applicationList}
-            keyExtractor={item => item.id.toString() + item.status}
+            keyExtractor={item => item?.id.toString() + item?.status}
             refreshControl={
               <RefreshControl
                 refreshing={false}
@@ -219,6 +226,7 @@ const ApplicationControl = ({route}) => {
             }
             renderItem={({item}) => (
               <ItemComponent
+                refreshList={() => refetch()}
                 onPressDetail={obj => showModalDetail(obj)}
                 item={item}
               />

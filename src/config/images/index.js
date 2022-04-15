@@ -31,6 +31,9 @@ const images = {
     area_filter: require('../../assets/images/icons/area_filter.png'),
     area_safe_search: require('../../assets/images/icons/area_safe_search.png'),
     lock_location: require('../../assets/images/icons/lock_location.png'),
+    game: require('../../assets/images/icons/game.png'),
+    gender: require('../../assets/images/icons/gender.png'),
+    ads: require('../../assets/images/icons/ads.png'),
     question: require('../../assets/images/icons/question.png'),
   },
   avatars: {

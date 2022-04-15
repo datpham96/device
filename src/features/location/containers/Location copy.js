@@ -36,6 +36,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {MapMarker} from '../components';
 import {useNavigation} from '@react-navigation/native';
 
+// simply add your google key
+// Geocoder.fallbackToGoogle(
+//   // Platform.OS === 'ios'
+//   //   ? 'AIzaSyDGFfixmp8tujwil1iyJjN7tEZP3Ho7hVU'
+//   //   : 'AIzaSyB5yQcadhAvM58X9C-3YrzyKtJGo5YyOeo',
+//   env.google_maps.key,
+// );
+
 const Location = () => {
   const navigation = useNavigation();
   const rotateAni = new Animated.Value(0);
@@ -63,11 +71,10 @@ const Location = () => {
   const {data, isSuccess, isLoading, refetch, isRefetching} = useQuery(
     keyTypes.DEVICE_LIST + '_LOCATION',
     () => deviceListApi(),
-  );
-
-  const mutationDeviceLockAndUnlock = useMutation(
-    ({data_device_id, data_is_block}) =>
-      deviceUpdateApi(data_device_id, data_is_block),
+    {
+      // keepPreviousData: true,
+      // enabled: false,
+    },
   );
 
   useEffect(() => {
@@ -281,47 +288,97 @@ const Location = () => {
     outputRange: ['0deg', '360deg'],
   });
 
+  const mutationDeviceLock = useMutation(
+    ({
+      data_device_id,
+      data_is_block,
+      data_full_name,
+      data_birthday,
+      data_gender,
+    }) =>
+      deviceUpdateApi(
+        data_device_id,
+        data_is_block,
+        data_full_name,
+        data_birthday,
+        data_gender,
+      ),
+  );
+
   const handleSetting = () => {
     setVisiblePermissionLocation(false);
     openSettings().catch(() => console.warn('cannot open settings'));
   };
 
-  const handleDeviceLockAndUnlock = () => {
+  const handleDeviceLock = () => {
     if (!selectedDevice) {
       Toast('Vui lòng chọn thiết bị');
       return;
     }
     setVisibleConfirmDeviceBlock(false);
-    setVisibleDeviceUnLock(false);
 
-    mutationDeviceLockAndUnlock
+    mutationDeviceLock
       .mutateAsync({
         data_device_id: selectedDevice?.value,
-        data_is_block: selectedDevice?.is_block ? 0 : 1,
+        data_is_block: 1,
+        data_full_name: '',
+        data_birthday: '',
+        data_gender: '',
       })
       .then(resp => {
         if (resp?.status) {
-          if (selectedDevice?.is_block) {
-            Toast('Mở khoá thiết bị thành công');
-          } else {
-            Toast('Khoá thiết bị thành công');
-          }
-
+          Toast('Khoá thiết bị thành công');
           refetch();
           setSelectedDevice({
             label: selectedDevice?.label,
             value: selectedDevice?.value,
-            is_block: selectedDevice?.is_block ? 0 : 1,
+            is_block: 1,
             position_time: selectedDevice?.position_time,
           });
         } else {
           Toast(resp?.msg);
         }
-        mutationDeviceLockAndUnlock.reset();
+        mutationDeviceLock.reset();
       })
       .catch(err => {
         Toast(err?.msg);
-        mutationDeviceLockAndUnlock.reset();
+        mutationDeviceLock.reset();
+      });
+  };
+
+  const handleDeviceUnLock = () => {
+    if (!selectedDevice) {
+      Toast('Vui lòng chọn thiết bị');
+      return;
+    }
+    setVisibleDeviceUnLock(false);
+
+    mutationDeviceLock
+      .mutateAsync({
+        data_device_id: selectedDevice?.value,
+        data_is_block: 0,
+        data_full_name: '',
+        data_birthday: '',
+        data_gender: '',
+      })
+      .then(resp => {
+        if (resp?.status) {
+          Toast('Mở khoá thiết bị thành công');
+          refetch();
+          setSelectedDevice({
+            label: selectedDevice?.label,
+            value: selectedDevice?.value,
+            is_block: 0,
+            position_time: selectedDevice?.position_time,
+          });
+        } else {
+          Toast(resp?.msg);
+        }
+        mutationDeviceLock.reset();
+      })
+      .catch(err => {
+        Toast(err?.msg);
+        mutationDeviceLock.reset();
       });
   };
 
@@ -331,10 +388,13 @@ const Location = () => {
   };
 
   let isCheckMarker = isSuccess && deviceList?.length > 0;
+  // &&
+  // markers?.latitude > 0 &&
+  // markers?.longitude > 0;
 
   return (
     <Background bottomTab bout>
-      <Loading isLoading={handleDeviceLockAndUnlock?.isLoading} />
+      <Loading isLoading={mutationDeviceLock.isLoading} />
       <PopupConfirm
         labelBtnLeft="Xác nhận"
         labelBtnRight="Huỷ"
@@ -345,7 +405,7 @@ const Location = () => {
         visible={visibleConfirmDeviceBlock}
         onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
         srcImage={images.logos.activated_lock}
-        onPressAgree={handleDeviceLockAndUnlock}
+        onPressAgree={handleDeviceLock}
       />
       <PopupConfirm
         labelBtnLeft="Có"
@@ -355,7 +415,7 @@ const Location = () => {
         onPressCancel={() => {
           setVisibleDeviceUnLock(false);
         }}
-        onPressAgree={handleDeviceLockAndUnlock}
+        onPressAgree={handleDeviceUnLock}
       />
       <PopupConfirm
         labelBtnLeft="Cài đặt"
@@ -422,36 +482,36 @@ const Location = () => {
                 />
               )}
             </View>
-            {selectedDevice && (
-              <TouchableHighlight
-                underlayColor={
-                  selectedDevice?.is_block
-                    ? colors.COLOR_UNDERLAY_BLUE
-                    : colors.COLOR_UNDERLAY_BUTTON_RED
-                }
-                activeOpacity={0.9}
-                style={[
-                  styles.btn,
-                  selectedDevice?.is_block
-                    ? {backgroundColor: colors.COLOR_BLUE}
-                    : {},
-                ]}
-                onPress={() => {
-                  if (selectedDevice) {
-                    if (selectedDevice?.is_block) {
+            {selectedDevice &&
+              (selectedDevice?.is_block ? (
+                <TouchableHighlight
+                  underlayColor={colors.COLOR_UNDERLAY_BLUE}
+                  activeOpacity={0.9}
+                  style={[styles.btn, {backgroundColor: colors.COLOR_BLUE}]}
+                  onPress={() => {
+                    if (selectedDevice) {
                       setVisibleDeviceUnLock(true);
                     } else {
-                      setVisibleConfirmDeviceBlock(true);
+                      Toast('Vui lòng chọn thiết bị');
                     }
-                  } else {
-                    Toast('Vui lòng chọn thiết bị');
-                  }
-                }}>
-                <Text style={styles.btnLabel}>
-                  {selectedDevice?.is_block ? 'Mở khoá' : 'Khoá thiết bị'}
-                </Text>
-              </TouchableHighlight>
-            )}
+                  }}>
+                  <Text style={styles.btnLabel}>Mở khoá</Text>
+                </TouchableHighlight>
+              ) : (
+                <TouchableHighlight
+                  underlayColor={colors.COLOR_UNDERLAY_BUTTON_RED}
+                  activeOpacity={0.9}
+                  style={styles.btn}
+                  onPress={() => {
+                    if (selectedDevice) {
+                      setVisibleConfirmDeviceBlock(true);
+                    } else {
+                      Toast('Vui lòng chọn thiết bị');
+                    }
+                  }}>
+                  <Text style={styles.btnLabel}>Khoá thiết bị</Text>
+                </TouchableHighlight>
+              ))}
           </View>
         )}
         {isLoading ? (

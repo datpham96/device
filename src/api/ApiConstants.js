@@ -35,8 +35,8 @@ const ApiConstants = {
   REMOVE_DEVICE: 'device/deleteDevice', //Xoá thiết bị
 
   DEVICE_UPDATE: 'device/update', //Cập nhật thiết bị
-  DEVICE_SETTING_LIST: 'settingDevice/list', //Danh sách cài đặt thiết bị
-  DEVICE_SETTING_UPDATE: 'settingDevice/update', //Cập nhật cài đặt thiết bị
+  DEVICE_SETTING_LIST: 'settingDevice/listLevel', //Danh sách cài đặt thiết bị
+  DEVICE_SETTING_UPDATE: 'settingDevice/updateStatus', //Cập nhật cài đặt thiết bị
   DEVICE_AVATAR_UPDATE: 'device/changeAvatar', //Cập nhật cài đặt thiết bị
   DEVICE_LICENSE_KEY_UPDATE: 'device/updateLisenceKey', //Cập nhật license key
   DEVICE_TIMER_ACCESS_UPDATE: 'device/updateTimer', //Cập nhật thời gian truy cấp cho thiết bị,
