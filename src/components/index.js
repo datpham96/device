@@ -41,5 +41,8 @@ export {default as Line} from './LineComponent';
 //dropdown
 export {default as DropdownSelected} from './Dropdown/SelectedComponent';
 
-//item ItemTimeUseComponent
+//item
 export {default as ItemTimeUse} from './Items/ItemTimeUseComponent';
+
+//Date time
+export {default as DateTimePicker} from './DateTimePickerComponent';

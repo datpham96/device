@@ -1,13 +1,23 @@
 import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
-import {View, TouchableOpacity, RefreshControl, ScrollView} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  RefreshControl,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import {PieChart, LoadingData} from 'components';
 import {Text, Background, Button} from 'base';
 import images from 'images';
 import styles from './styles';
 import FastImage from 'react-native-fast-image';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors, sizes, fonts, commonStyles} from 'styles';
-import {BlockFilterSearch, BlockTotal} from '../components';
+import {
+  BlockFilterSearch,
+  BlockTotal,
+  Chart,
+  DeviceSelect,
+} from '../components';
 import DatePicker from 'react-native-date-picker-select';
 import moment from 'moment';
 import types from '../types';
@@ -15,15 +25,9 @@ import {useQueryClient, useQuery} from 'react-query';
 import keyTypes from 'keyTypes';
 import {deviceListApi} from 'methods/device';
 import {webReportAccessApi} from 'src/api/methods/web';
-import {checkVar, truncateWords} from 'src/helpers/funcs';
-import lodash from 'lodash';
+import {checkVar} from 'src/helpers/funcs';
 import navigationTypes from 'navigationTypes';
-import {
-  DevicePlaceholder,
-  NumberPlaceholder,
-  PieCharPlaceholder,
-} from '../placeholders';
-import {DropdownSelected} from 'components';
+import {NumberPlaceholder, PieCharPlaceholder} from '../placeholders';
 import metrics from 'metrics';
 
 const Home = ({navigation}) => {
@@ -32,7 +36,6 @@ const Home = ({navigation}) => {
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
   const [selectedDevice, onSelectedDevice] = useState(null);
   const [pieChartActive, setPieChartActive] = useState(0);
-  const [toggleDeviceSelected, setToggleDeviceSelected] = useState(false);
   const [heightSectionTwo, setHeightSectionTwo] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -60,61 +63,23 @@ const Home = ({navigation}) => {
         moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
       ),
     {
-      // keepPreviousData: true,
       enabled: !!selectedDevice?.id,
     },
   );
-
-  //event when change date
-  // useEffect(() => {
-  //   if (date) {
-  //     onDay(moment(date, 'DD/MM/YYYY').format('DD'));
-  //     onMonth(moment(date, 'DD/MM/YYYY').format('MM'));
-  //   }
-  // }, [date]);
 
   //get device list when focus screen
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       refetchDeviceList();
-      // refetchReportAccess();
     });
     return unsubscribe;
-  }, [navigation, refetchDeviceList, refetchReportAccess]);
-
-  useEffect(() => {
-    if (isSuccessDeviceList && dataDeviceList?.data) {
-      if (checkVar.isEmpty(selectedDevice)) {
-        onSelectedDevice(dataDeviceList?.data[0]);
-      } else {
-        let infoSelected = lodash.find(dataDeviceList?.data, {
-          id: selectedDevice.id,
-        });
-        onSelectedDevice(infoSelected);
-      }
-    }
-  }, [dataDeviceList, isSuccessDeviceList, selectedDevice]);
+  }, [navigation, refetchDeviceList]);
 
   useEffect(() => {
     if (!isLoadingReportAccess) {
       setRefreshing(false);
     }
   }, [isLoadingReportAccess]);
-
-  //format device list
-  const deviceList = useMemo(() => {
-    let tmpDataList = [];
-    if (isSuccessDeviceList && dataDeviceList?.data) {
-      dataDeviceList?.data?.map(item => {
-        tmpDataList.push({
-          label: item.full_name,
-          value: item.id,
-        });
-      });
-    }
-
-    return tmpDataList;
-  }, [isSuccessDeviceList, dataDeviceList]);
 
   //format report list
   const dataPieChartList = useMemo(() => {
@@ -150,9 +115,6 @@ const Home = ({navigation}) => {
         exact: true,
       },
     );
-    // await queryClient.removeQueries(keyTypes.DEVICE_LIST + '_HOME', {
-    //   exact: true,
-    // });
     await refetchReportAccess();
     await refetchDeviceList();
   };
@@ -170,16 +132,12 @@ const Home = ({navigation}) => {
     };
   }, [heightSectionTwo]);
 
+  const handleSelectedDevice = useCallback(data => {
+    onSelectedDevice(data);
+  }, []);
+
   const handleShowDatePicker = () => {
     dateTimeRef.current.onPressDate();
-  };
-
-  const handleSelectedDevice = val => {
-    onSelectedDevice(val);
-  };
-
-  const handleShowDeviceSelect = () => {
-    setToggleDeviceSelected(!toggleDeviceSelected);
   };
 
   const handleActivePieChart = useCallback(key => {
@@ -188,14 +146,6 @@ const Home = ({navigation}) => {
 
   const handleRedirectControlTab = () => {
     navigation.jumpTo(navigationTypes.childrenManager.screen);
-  };
-
-  const handleActiveItemDevice = item => {
-    if (dataDeviceList && dataDeviceList?.data) {
-      let info = lodash.find(dataDeviceList?.data, {id: item.value});
-      handleSelectedDevice(info);
-      setToggleDeviceSelected(false);
-    }
   };
 
   const formatNumberThousand = num => {
@@ -210,8 +160,6 @@ const Home = ({navigation}) => {
 
     return total;
   };
-
-  console.log(11111);
 
   const onLayoutSectionOne = event => {
     const {height} = event.nativeEvent.layout;
@@ -238,8 +186,6 @@ const Home = ({navigation}) => {
 
   const onRefreshing = useCallback(() => {
     setRefreshing(true);
-
-    // wait(1000).then(() => setRefreshing(false));
   }, []);
 
   let checkDeviceData =
@@ -253,11 +199,6 @@ const Home = ({navigation}) => {
         <LoadingData />
       ) : checkDeviceData ? (
         <View style={styles.container}>
-          {/* <Loading isLoading={isLoadingReportAccess} /> */}
-          {/* <TouchableWithoutFeedback
-            onPress={() => {
-              setToggleDeviceSelected(false);
-            }}> */}
           <View onLayout={onLayoutSectionOne} style={styles.sectionOne}>
             <View style={styles.wrapHeader}>
               <FastImage
@@ -265,57 +206,15 @@ const Home = ({navigation}) => {
                 style={styles.logoLock}
                 source={images.logos.lock}
               />
-              {isLoadingDeviceList ? (
-                <DevicePlaceholder />
-              ) : (
-                <View style={styles.selectedContainer}>
-                  <TouchableOpacity
-                    style={styles.wrapSelected}
-                    activeOpacity={0.9}
-                    onPress={handleShowDeviceSelect}>
-                    <MaterialCommunityIcons
-                      name="chevron-left"
-                      size={sizes.SIZE_20}
-                      color={colors.COLOR_WHITE}
-                      style={styles.iconChevronLeft}
-                    />
-                    <View style={styles.wrapAvatarDevice}>
-                      <FastImage
-                        source={
-                          selectedDevice?.is_block === 0
-                            ? selectedDevice?.avatar
-                              ? {uri: selectedDevice?.avatar}
-                              : images.avatars.default
-                            : images.avatars.shield
-                        }
-                        style={styles.avatarShield}
-                        resizeMode={FastImage.resizeMode.cover}
-                      />
-                      {selectedDevice && selectedDevice?.is_online === 1 && (
-                        <View style={styles.dotOnline} />
-                      )}
-                      {selectedDevice && selectedDevice?.is_online !== 1 && (
-                        <View style={styles.dotOffline} />
-                      )}
-                    </View>
-                    <Text style={styles.titleShield}>
-                      {truncateWords(
-                        selectedDevice?.full_name,
-                        sizes.SIZE_2,
-                        '...',
-                      )}
-                    </Text>
-                  </TouchableOpacity>
-                  {toggleDeviceSelected && (
-                    <DropdownSelected
-                      onPressItem={item => handleActiveItemDevice(item)}
-                      containerStyle={styles.scrollItemDeviceSelect}
-                      data={deviceList}
-                      selected={selectedDevice?.id}
-                    />
-                  )}
-                </View>
-              )}
+              <DeviceSelect
+                onSelectedDevice={data => {
+                  handleSelectedDevice(data);
+                }}
+                selectedDevice={selectedDevice}
+                dataDeviceList={dataDeviceList}
+                isLoadingDeviceList={isLoadingDeviceList}
+                isSuccessDeviceList={isSuccessDeviceList}
+              />
             </View>
             <View style={styles.wrapContainerTitle}>
               <View style={styles.wrapTitle}>
@@ -340,10 +239,17 @@ const Home = ({navigation}) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.chartContainer}>
+            {/* chart */}
+            <Chart
+              dataReportAccess={dataReportAccess}
+              isSuccessReportAccess={isSuccessReportAccess}
+              isLoadingReportAccess={isLoadingReportAccess}
+              dataDeviceList={dataDeviceList}
+            />
+            {/* <View style={styles.chartContainer}>
               {isLoadingReportAccess ? (
                 <PieCharPlaceholder />
-              ) : deviceList && deviceList?.length > 0 ? (
+              ) : dataDeviceList && dataDeviceList?.data?.length > 0 ? (
                 <PieChart
                   selectedKey={pieChartActive}
                   onSelected={handleActivePieChart}
@@ -420,46 +326,26 @@ const Home = ({navigation}) => {
                       )}
                     </View>
                   </TouchableOpacity>
-                  {/* {dataPieChartList.map((item, key) => {
-                      return (
-                        <TouchableOpacity
-                          key={key}
-                          activeOpacity={0.9}
-                          onPress={() => handlePieChartActive(key)}
-                          style={styles.wrapParamInfoValue}>
-                          <View
-                            style={[
-                              styles.paramInfoValueDot,
-                              {backgroundColor: item.color},
-                            ]}
-                          />
-                          <Text
-                            style={[
-                              styles.paramInfoValue,
-                              pieChartActive === key
-                                ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                                : {},
-                            ]}>
-                            {item.label}: {formatNumberThousand(item.total)}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })} */}
                 </View>
               </View>
-            </View>
+            </View> */}
           </View>
           {/* </TouchableWithoutFeedback> */}
           <ScrollView
             onScrollEndDrag={event => {
-              if (event.nativeEvent.contentOffset.y < -80) {
-                onRefresh();
+              if (Platform.OS === 'ios') {
+                if (event.nativeEvent.contentOffset.y < -70) {
+                  onRefresh();
+                }
               }
             }}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={() => {
+                  if (Platform.OS === 'android') {
+                    onRefresh();
+                  }
                   onRefreshing();
                 }}
                 tintColor={colors.COLOR_WHITE}

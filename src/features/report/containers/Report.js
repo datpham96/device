@@ -7,17 +7,15 @@ import {colors, commonStyles, fonts, sizes} from 'styles';
 import images from 'images';
 import {ItemComponent} from '../components';
 import FastImage from 'react-native-fast-image';
-import {EmptyData} from 'components';
+import {DateTimePicker, EmptyData} from 'components';
 import {useInfiniteQuery, useQueryClient} from 'react-query';
 import keyTypes from 'keyTypes';
 import {checkVar} from 'src/helpers/funcs';
 import {deviceHistoryApi} from 'src/api/methods/device';
 import moment from 'moment';
 import {TouchableHighlight} from 'react-native-gesture-handler';
-import DatePicker from 'react-native-date-picker-select';
 import lodash from 'lodash';
 import {ItemListPlaceholder} from '../placeholders';
-import metrics from 'metrics';
 
 let perPage = 15;
 let stopLoadMore = true;
@@ -98,7 +96,6 @@ const Report = ({route}) => {
 
   return (
     <Background bin>
-      {/* <Loading isLoading={isRefetching} /> */}
       <ButtonBack />
       <View style={styles.container}>
         <View style={styles.headerContainer}>
@@ -132,20 +129,6 @@ const Report = ({route}) => {
                 ]}>
                 Website
               </Text>
-              {/* <View style={styles.spaceTab} />
-              <Text
-                onPress={() => setActiveTab(1)}
-                style={[
-                  styles.headerTableTitleOne,
-                  {
-                    fontFamily:
-                      activeTab === 1
-                        ? fonts.lexendDeca.FONT_BOLD
-                        : fonts.lexendDeca.FONT_REGULAR,
-                  },
-                ]}>
-                Ứng dụng
-              </Text> */}
             </View>
           </View>
           <Text style={styles.headerTableTitleThree}>Thời gian truy cập</Text>
@@ -190,31 +173,10 @@ const Report = ({route}) => {
           />
         )}
       </View>
-      <DatePicker
+      <DateTimePicker
         ref={dateTimeRef}
-        locale="vi"
-        mode="date"
         date={date}
-        confirmBtnText="Xác nhận"
-        cancelBtnText="Hủy"
-        showIcon={false}
-        placeholder={''}
-        androidMode="spinner"
-        style={styles.datePicker}
-        customStyles={{
-          btnTextConfirm: {
-            color: colors.COLOR_BLUE,
-          },
-          datePicker: {
-            backgroundColor: metrics.colorScheme === 'dark' ? '#222' : 'white',
-          },
-          datePickerCon: {
-            backgroundColor: metrics.colorScheme === 'dark' ? '#333' : 'white',
-          },
-        }}
-        format="DD/MM/YYYY"
-        maxDate={moment().format('DD/MM/YYYY').toString()}
-        onDateChange={val => onDate(val)}
+        onDate={val => onDate(val)}
       />
     </Background>
   );

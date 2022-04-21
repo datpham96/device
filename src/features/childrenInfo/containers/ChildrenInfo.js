@@ -253,8 +253,6 @@ const ChildrenInfo = ({route}) => {
     return obj;
   };
 
-  console.log(111111);
-
   return (
     <Background bin>
       <ModalLimitTimeUseDevice

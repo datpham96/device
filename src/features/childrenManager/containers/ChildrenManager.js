@@ -11,6 +11,7 @@ import {
   EmptyData,
   PopupConfirm,
   ModalWaiting,
+  PopupAlert,
 } from 'components';
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
@@ -27,6 +28,7 @@ import {
 } from 'react-native-permissions';
 import moment from 'moment';
 import {genders} from 'types';
+import lodash from 'lodash';
 
 const ChildrenManager = ({navigation}) => {
   const queryClient = useQueryClient();
@@ -35,6 +37,8 @@ const ChildrenManager = ({navigation}) => {
   const [visiblePermissionCamera, setVisiblePermissionCamera] = useState(false);
   const [visibleWaitingModal, setVisibleWaitingModal] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState({});
+  const [visiblePopupUpdateDevice, setVisiblePopupUpdateDevice] =
+    useState(false);
 
   const mutationActivatedDevice = useMutation(
     ({
@@ -161,16 +165,17 @@ const ChildrenManager = ({navigation}) => {
   };
 
   const handleDetail = item => {
-    RootNavigation.navigate(navigationTypes.childrenInfo.screen, {
-      device_id: item?.id,
-    });
-    // if (item.is_block) {
-    //   setVisibleActivated(true);
-    // } else {
-    //   RootNavigation.navigate(navigationTypes.childrenInfo.screen, {
-    //     device_id: item.id,
-    //   });
-    // }
+    refetch();
+    if (data?.data && data?.data?.length > 0) {
+      let tmpDeviceInfo = lodash.find(data?.data, {id: item?.id});
+      if (tmpDeviceInfo?.is_update) {
+        setVisiblePopupUpdateDevice(true);
+      } else {
+        RootNavigation.navigate(navigationTypes.childrenInfo.screen, {
+          device_id: item?.id,
+        });
+      }
+    }
   };
 
   const handleSetting = () => {
@@ -193,6 +198,11 @@ const ChildrenManager = ({navigation}) => {
 
   return (
     <Background bout>
+      <PopupAlert
+        visible={visiblePopupUpdateDevice}
+        onPressCancel={() => setVisiblePopupUpdateDevice(false)}
+        content="Vui lòng cập nhật thiết bị lên phiên bản mới nhất để tiếp sử dụng"
+      />
       <ModalWaiting
         onPressCancel={handleRedirectDeviceUpdate}
         visible={visibleWaitingModal}

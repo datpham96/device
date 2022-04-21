@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {Text, Background, Button, Input} from 'base';
 import {
-  ScrollView,
   View,
   TouchableOpacity,
   ActivityIndicator,

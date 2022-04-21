@@ -254,6 +254,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: sizeImage / sizes.SIZE_2,
+    borderWidth: sizes.SIZE_2,
+    borderColor: colors.COLOR_WHITE,
   },
   iconAvatar: {
     width: iconImage,

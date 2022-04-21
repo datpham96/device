@@ -6,23 +6,25 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import {PieChart, LoadingData} from 'components';
+import {DateTimePicker, LoadingData} from 'components';
 import {Text, Background, Button} from 'base';
 import images from 'images';
 import styles from './styles';
 import FastImage from 'react-native-fast-image';
-import {colors, sizes, fonts, commonStyles} from 'styles';
-import {BlockFilterSearch, BlockTotal, DeviceSelect} from '../components';
+import {colors, sizes, commonStyles} from 'styles';
+import {
+  BlockFilterSearch,
+  BlockTotal,
+  Chart,
+  DeviceSelect,
+} from '../components';
 import DatePicker from 'react-native-date-picker-select';
 import moment from 'moment';
-import types from '../types';
 import {useQueryClient, useQuery} from 'react-query';
 import keyTypes from 'keyTypes';
 import {deviceListApi} from 'methods/device';
 import {webReportAccessApi} from 'src/api/methods/web';
-import {checkVar} from 'src/helpers/funcs';
 import navigationTypes from 'navigationTypes';
-import {NumberPlaceholder, PieCharPlaceholder} from '../placeholders';
 import metrics from 'metrics';
 
 const Home = ({navigation}) => {
@@ -30,7 +32,6 @@ const Home = ({navigation}) => {
   const dateTimeRef = useRef(null);
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
   const [selectedDevice, onSelectedDevice] = useState(null);
-  const [pieChartActive, setPieChartActive] = useState(0);
   const [heightSectionTwo, setHeightSectionTwo] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -66,43 +67,15 @@ const Home = ({navigation}) => {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       refetchDeviceList();
-      // refetchReportAccess();
     });
     return unsubscribe;
-  }, [navigation, refetchDeviceList, refetchReportAccess]);
+  }, [navigation, refetchDeviceList]);
 
   useEffect(() => {
     if (!isLoadingReportAccess) {
       setRefreshing(false);
     }
   }, [isLoadingReportAccess]);
-
-  //format report list
-  const dataPieChartList = useMemo(() => {
-    let tmpDataList = [];
-    if (isSuccessReportAccess && !checkVar.isEmpty(dataReportAccess)) {
-      let totalRequest = dataReportAccess?.total_request?.total_request;
-      let totalBlocked = dataReportAccess?.blocked?.total_blocked;
-      let totalAccess = totalRequest - totalBlocked;
-      let percentBlock = (totalAccess / totalRequest) * 100;
-      tmpDataList.push({
-        value: parseFloat(percentBlock.toFixed(1)),
-        color: colors.COLOR_CHART_BLUE,
-        label: types.status.allow.name,
-        code: types.status.allow.code,
-        total: totalAccess,
-      });
-      tmpDataList.push({
-        value: parseFloat((100 - percentBlock).toFixed(1)),
-        color: colors.COLOR_CHART_RED,
-        label: types.status.block.name,
-        code: types.status.block.code,
-        total: totalBlocked,
-      });
-    }
-
-    return tmpDataList;
-  }, [dataReportAccess, isSuccessReportAccess]);
 
   const onRefresh = async () => {
     await queryClient.removeQueries(
@@ -135,10 +108,6 @@ const Home = ({navigation}) => {
   const handleShowDatePicker = () => {
     dateTimeRef.current.onPressDate();
   };
-
-  const handleActivePieChart = useCallback(key => {
-    setPieChartActive(key);
-  }, []);
 
   const handleRedirectControlTab = () => {
     navigation.jumpTo(navigationTypes.childrenManager.screen);
@@ -183,8 +152,6 @@ const Home = ({navigation}) => {
   const onRefreshing = useCallback(() => {
     setRefreshing(true);
   }, []);
-
-  console.log(111111000000);
 
   let checkDeviceData =
     isSuccessDeviceList &&
@@ -237,95 +204,18 @@ const Home = ({navigation}) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.chartContainer}>
-              {isLoadingReportAccess ? (
-                <PieCharPlaceholder />
-              ) : dataDeviceList && dataDeviceList?.data?.length > 0 ? (
-                <PieChart
-                  selectedKey={pieChartActive}
-                  onSelected={handleActivePieChart}
-                  dataList={dataPieChartList}
-                />
-              ) : (
-                <></>
-              )}
-              <View style={styles.wrapParams}>
-                <View
-                  activeOpacity={0.9}
-                  onPress={() => console.log('website')}
-                  style={styles.paramInfo}>
-                  <Text style={styles.paramInfoLabel}>Thống kê</Text>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => handleActivePieChart(0)}
-                    style={styles.wrapParamInfoValue}>
-                    <View
-                      style={[
-                        styles.paramInfoValueDot,
-                        {backgroundColor: colors.COLOR_CHART_BLUE},
-                      ]}
-                    />
-                    <View style={styles.wrapReportLabel}>
-                      <Text
-                        style={[
-                          styles.paramInfoValue,
-                          pieChartActive === 0
-                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                            : {},
-                        ]}>
-                        {types.status.allow.name}:{' '}
-                      </Text>
-                      {!checkVar.isEmpty(dataPieChartList) ? (
-                        <Text>
-                          {formatNumberThousand(dataPieChartList?.[0]?.total)}
-                        </Text>
-                      ) : (
-                        <View>
-                          <NumberPlaceholder />
-                        </View>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.9}
-                    onPress={() => handleActivePieChart(1)}
-                    style={styles.wrapParamInfoValue}>
-                    <View
-                      style={[
-                        styles.paramInfoValueDot,
-                        {backgroundColor: colors.COLOR_CHART_RED},
-                      ]}
-                    />
-                    <View style={styles.wrapReportLabel}>
-                      <Text
-                        style={[
-                          styles.paramInfoValue,
-                          pieChartActive === 1
-                            ? {fontFamily: fonts.lexendDeca.FONT_BOLD}
-                            : {},
-                        ]}>
-                        {types.status.block.name}:{' '}
-                      </Text>
-                      {!checkVar.isEmpty(dataPieChartList) ? (
-                        <Text>
-                          {formatNumberThousand(dataPieChartList?.[1]?.total)}
-                        </Text>
-                      ) : (
-                        <View>
-                          <NumberPlaceholder />
-                        </View>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+            {/* chart */}
+            <Chart
+              dataReportAccess={dataReportAccess}
+              isSuccessReportAccess={isSuccessReportAccess}
+              isLoadingReportAccess={isLoadingReportAccess}
+              dataDeviceList={dataDeviceList}
+            />
           </View>
-          {/* </TouchableWithoutFeedback> */}
           <ScrollView
             onScrollEndDrag={event => {
               if (Platform.OS === 'ios') {
-                if (event.nativeEvent.contentOffset.y < -70) {
+                if (event.nativeEvent.contentOffset.y < -94) {
                   onRefresh();
                 }
               }
@@ -398,33 +288,10 @@ const Home = ({navigation}) => {
         </View>
       )}
 
-      <DatePicker
+      <DateTimePicker
         ref={dateTimeRef}
-        locale="vi"
-        mode="date"
         date={date}
-        confirmBtnText="Xác nhận"
-        cancelBtnText="Hủy"
-        showIcon={false}
-        placeholder={''}
-        androidMode="spinner"
-        style={styles.datePicker}
-        customStyles={{
-          btnTextConfirm: {
-            color: colors.COLOR_BLUE,
-          },
-          datePicker: {
-            backgroundColor: metrics.colorScheme === 'dark' ? '#222' : 'white',
-          },
-          datePickerCon: {
-            backgroundColor: metrics.colorScheme === 'dark' ? '#333' : 'white',
-          },
-        }}
-        format="DD/MM/YYYY"
-        maxDate={moment().format('DD/MM/YYYY').toString()}
-        onDateChange={val => {
-          onDate(val);
-        }}
+        onDate={val => onDate(val)}
       />
     </Background>
   );
