@@ -1,10 +1,23 @@
 import React from 'react';
 import {View, StyleSheet, Alert, TouchableOpacity, Linking} from 'react-native';
+//node_modules
+//api
+//base
 import {Avatar, Text} from 'base';
+//components
+//config
 import {commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {checkVar} from 'src/helpers/funcs';
-
+//helpers
+import {checkVar} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   item?: any;
 };

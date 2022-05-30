@@ -1,18 +1,40 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Modal, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from 'react-native';
+//node_modules
 import LottieView from 'lottie-react-native';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import FastImage from 'react-native-fast-image';
+//api
+//base
+import {Text} from 'base';
+//components
+//config
 import {colors, commonStyles, sizes} from 'styles';
 import metrics from 'metrics';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
-import {Text} from 'base';
-import {Toast} from 'customs';
-import FastImage from 'react-native-fast-image';
 import images from 'images';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const CONTENT_WAITING = 'Đang xử lý';
 const CONTENT_CONNECTION = 'Đang kết nối';
 
 const ModalWaitingComponent = ({onPressCancel, visible = false}) => {
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
   const timeIntervalRef = useRef(null);
   const [timer, setTimer] = useState(10);
   const [waitingThreeDot, setWaitingThreeDot] = useState('');
@@ -25,7 +47,7 @@ const ModalWaitingComponent = ({onPressCancel, visible = false}) => {
           onPressCancel();
           clearInterval(timeIntervalRef.current);
           setWaitingThreeDot('');
-          Toast('Quá trình kết nối hoàn tất');
+          flashMessage.success('Quá trình kết nối hoàn tất');
         }
         setWaitingThreeDot(prev => prev + '.');
       }, 1000);
@@ -48,9 +70,10 @@ const ModalWaitingComponent = ({onPressCancel, visible = false}) => {
       onRequestClose={onPressCancel}
       animationType="none"
       transparent={true}
-      visible={visible}>
+      visible={visibleModal}>
       <View style={styles.backgroundModal} />
-      <View style={styles.container}>
+      <Animated.View
+        style={[styles.container, {transform: [{scale: scaleAni}]}]}>
         <View style={styles.contentContainer}>
           {timer <= 1 && (
             <TouchableOpacity
@@ -78,7 +101,7 @@ const ModalWaitingComponent = ({onPressCancel, visible = false}) => {
             </Text>
           </View>
         </View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };

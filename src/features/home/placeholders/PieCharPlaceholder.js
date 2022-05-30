@@ -1,10 +1,23 @@
 import React from 'react';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {View, StyleSheet} from 'react-native';
+//node_modules
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+//api
+//base
+import {Text} from 'base';
+//components
+//config
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {Text} from 'base';
-
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 const widthChart = metrics.screenWidth / 2.2;
 
 const PieCharPlaceholder = () => {

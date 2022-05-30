@@ -1,5 +1,4 @@
-import React, {useState, useMemo, useEffect, useRef} from 'react';
-import {Text, Background} from 'base';
+import React, {useState, useMemo, useEffect, useRef, Suspense} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -8,35 +7,50 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import styles from './styles';
-import {commonStyles, colors, sizes} from 'styles';
-import images from 'images';
-import {
-  DropdownSelected,
-  LoadingData,
-  Loading,
-  PopupConfirm,
-  EmptyData,
-} from 'components';
-import keyTypes from 'keyTypes';
-import {deviceListApi, deviceUpdateApi} from 'methods/device';
+//node_modules
 import {useQuery, useMutation} from 'react-query';
-import {Toast} from 'customs';
 import lodash from 'lodash';
-import {checkVar} from 'src/helpers/funcs';
 import {
   requestMultiple,
   PERMISSIONS,
   openSettings,
   RESULTS,
 } from 'react-native-permissions';
-import navigationTypes from 'navigationTypes';
 import Geocoder from 'react-native-geocoder';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {MapMarker} from '../components';
 import {useNavigation} from '@react-navigation/native';
-
+import {useQueryClient} from 'react-query';
+//api
+import {deviceListApi, deviceUpdateApi} from 'methods/device';
+//base
+import {Text, Background} from 'base';
+//components
+import {LoadingData, Loading, EmptyData} from 'components';
+//config
+import {commonStyles, colors, sizes} from 'styles';
+import images from 'images';
+//helpers
+import {checkVar, flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+import keyTypes from 'keyTypes';
+import navigationTypes from 'navigationTypes';
+//storages
+//redux-stores
+//feature
+import {MapMarker} from '../components';
+import styles from './styles';
+//code-splitting
+const PopupConfirm = React.lazy(() =>
+  import('src/components/Popups/PopupConfirmComponent'),
+);
+const DropdownSelected = React.lazy(() =>
+  import('src/components/Dropdown/SelectedComponent'),
+);
+//screen
 const Location = () => {
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
   const rotateAni = new Animated.Value(0);
   const clickBtnTimoutRef = useRef(null);
@@ -61,7 +75,7 @@ const Location = () => {
   const [visibleDeviceUnLock, setVisibleDeviceUnLock] = useState(false);
 
   const {data, isSuccess, isLoading, refetch, isRefetching} = useQuery(
-    keyTypes.DEVICE_LIST + '_LOCATION',
+    keyTypes.DEVICE_LIST_LOCATION,
     () => deviceListApi(),
   );
 
@@ -69,6 +83,14 @@ const Location = () => {
     ({data_device_id, data_is_block}) =>
       deviceUpdateApi(data_device_id, data_is_block),
   );
+
+  //xử lý khi out khỏi màn hình hiện tại
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      queryClient.cancelQueries(keyTypes.DEVICE_LIST_LOCATION);
+    });
+    return unsubscribe;
+  }, [navigation, queryClient]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -250,13 +272,13 @@ const Location = () => {
     }
     return tmpSelectList;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, isSuccess]);
+  }, [data, isSuccess, isRefetching]);
 
   const handleRotate = () => {
     if (clickBtnTimoutRef.current) {
       clearTimeout(clickBtnTimoutRef.current);
     }
-    clickBtnTimoutRef.current = setTimeout(async () => {
+    clickBtnTimoutRef.current = setTimeout(() => {
       rotateAni.setValue(0);
       Animated.timing(rotateAni, {
         toValue: 1,
@@ -265,12 +287,12 @@ const Location = () => {
         useNativeDriver: true,
       }).start(result => {
         if (result?.finished) {
+          refetch();
           let refreshDeviceInfo = lodash.find(deviceList, {
             value: selectedDevice?.value,
           });
-          refetch();
-          setSelectedDevice(refreshDeviceInfo);
           setRefresh(prev => prev + 1);
+          setSelectedDevice(refreshDeviceInfo);
         }
       });
     }, 200);
@@ -288,7 +310,7 @@ const Location = () => {
 
   const handleDeviceLockAndUnlock = () => {
     if (!selectedDevice) {
-      Toast('Vui lòng chọn thiết bị');
+      flashMessage.error('Vui lòng chọn thiết bị');
       return;
     }
     setVisibleConfirmDeviceBlock(false);
@@ -302,9 +324,9 @@ const Location = () => {
       .then(resp => {
         if (resp?.status) {
           if (selectedDevice?.is_block) {
-            Toast('Mở khoá thiết bị thành công');
+            flashMessage.success('Mở khoá thiết bị thành công');
           } else {
-            Toast('Khoá thiết bị thành công');
+            flashMessage.success('Khoá thiết bị thành công');
           }
 
           refetch();
@@ -315,12 +337,12 @@ const Location = () => {
             position_time: selectedDevice?.position_time,
           });
         } else {
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         mutationDeviceLockAndUnlock.reset();
       })
       .catch(err => {
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
         mutationDeviceLockAndUnlock.reset();
       });
   };
@@ -335,39 +357,47 @@ const Location = () => {
   return (
     <Background bottomTab bout>
       <Loading isLoading={handleDeviceLockAndUnlock?.isLoading} />
-      <PopupConfirm
-        labelBtnLeft="Xác nhận"
-        labelBtnRight="Huỷ"
-        notiLabel="Khoá thiết bị"
-        content={
-          'Thiết bị của trẻ sẽ bị khóa toàn bộ. \n Bạn có muốn thực hiện điều này!'
-        }
-        visible={visibleConfirmDeviceBlock}
-        onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
-        srcImage={images.logos.activated_lock}
-        onPressAgree={handleDeviceLockAndUnlock}
-      />
-      <PopupConfirm
-        labelBtnLeft="Có"
-        labelBtnRight="Không"
-        visible={visibleDeviceUnLock}
-        content="Bạn có chắc chắn muốn mở khoá thiết bị này không"
-        onPressCancel={() => {
-          setVisibleDeviceUnLock(false);
-        }}
-        onPressAgree={handleDeviceLockAndUnlock}
-      />
-      <PopupConfirm
-        labelBtnLeft="Cài đặt"
-        labelBtnRight="Huỷ"
-        visible={visiblePermissionLocation}
-        content="SafeZone muốn truy cập vị trí của bạn, Vui lòng bật định vị ứng dụng để tiếp tục sử dụng"
-        onPressCancel={() => {
-          setVisiblePermissionLocation(false);
-          navigation.jumpTo(navigationTypes.home.screen);
-        }}
-        onPressAgree={handleSetting}
-      />
+      <Suspense fallback={<></>}>
+        {visibleConfirmDeviceBlock && (
+          <PopupConfirm
+            labelBtnLeft="Xác nhận"
+            labelBtnRight="Huỷ"
+            notiLabel="Khoá thiết bị"
+            content={
+              'Thiết bị của trẻ sẽ bị khóa toàn bộ. \n Bạn có muốn thực hiện điều này!'
+            }
+            visible={visibleConfirmDeviceBlock}
+            onPressCancel={() => setVisibleConfirmDeviceBlock(false)}
+            srcImage={images.logos.activated_lock}
+            onPressAgree={handleDeviceLockAndUnlock}
+          />
+        )}
+        {visibleDeviceUnLock && (
+          <PopupConfirm
+            labelBtnLeft="Có"
+            labelBtnRight="Không"
+            visible={visibleDeviceUnLock}
+            content="Bạn có chắc chắn muốn mở khoá thiết bị này không"
+            onPressCancel={() => {
+              setVisibleDeviceUnLock(false);
+            }}
+            onPressAgree={handleDeviceLockAndUnlock}
+          />
+        )}
+        {visiblePermissionLocation && (
+          <PopupConfirm
+            labelBtnLeft="Cài đặt"
+            labelBtnRight="Huỷ"
+            visible={visiblePermissionLocation}
+            content="SafeZone muốn truy cập vị trí của bạn, Vui lòng bật định vị ứng dụng để tiếp tục sử dụng"
+            onPressCancel={() => {
+              setVisiblePermissionLocation(false);
+              navigation.jumpTo(navigationTypes.home.screen);
+            }}
+            onPressAgree={handleSetting}
+          />
+        )}
+      </Suspense>
       <View style={styles.container}>
         <View style={styles.wrapMainTitle}>
           <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
@@ -413,14 +443,16 @@ const Location = () => {
                   size={sizes.SIZE_25}
                 />
               </TouchableOpacity>
-              {toggleDropDownSelected && selectedDevice && (
-                <DropdownSelected
-                  selected={selectedDevice?.value}
-                  containerStyle={styles.containerDropdownSelected}
-                  data={deviceList}
-                  onPressItem={item => handleSelectedDevice(item)}
-                />
-              )}
+              <Suspense fallback={<></>}>
+                {toggleDropDownSelected && selectedDevice && (
+                  <DropdownSelected
+                    selected={selectedDevice?.value}
+                    containerStyle={styles.containerDropdownSelected}
+                    data={deviceList}
+                    onPressItem={item => handleSelectedDevice(item)}
+                  />
+                )}
+              </Suspense>
             </View>
             {selectedDevice && (
               <TouchableHighlight
@@ -444,7 +476,7 @@ const Location = () => {
                       setVisibleConfirmDeviceBlock(true);
                     }
                   } else {
-                    Toast('Vui lòng chọn thiết bị');
+                    flashMessage.error('Vui lòng chọn thiết bị');
                   }
                 }}>
                 <Text style={styles.btnLabel}>

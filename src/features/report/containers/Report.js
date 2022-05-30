@@ -1,21 +1,34 @@
 /* eslint-disable indent */
 import React, {useState, useRef, useEffect} from 'react';
+import {View, FlatList, RefreshControl, TouchableHighlight} from 'react-native';
+//node_modules
+import moment from 'moment';
+import lodash from 'lodash';
+import FastImage from 'react-native-fast-image';
+import {useInfiniteQuery, useQueryClient} from 'react-query';
+//api
+import {deviceHistoryApi} from 'methods/device';
+//base
 import {Text, Background, ButtonBack, Loading as BaseLoading} from 'base';
-import {View, FlatList, RefreshControl} from 'react-native';
-import styles from './styles';
+//components
+import {DateTimePicker, EmptyData} from 'components';
+//config
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import images from 'images';
-import {ItemComponent} from '../components';
-import FastImage from 'react-native-fast-image';
-import {DateTimePicker, EmptyData} from 'components';
-import {useInfiniteQuery, useQueryClient} from 'react-query';
+//helpers
+import {checkVar} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import keyTypes from 'keyTypes';
-import {checkVar} from 'src/helpers/funcs';
-import {deviceHistoryApi} from 'src/api/methods/device';
-import moment from 'moment';
-import {TouchableHighlight} from 'react-native-gesture-handler';
-import lodash from 'lodash';
+//storages
+//redux-stores
+//feature
+import {ItemComponent} from '../components';
 import {ItemListPlaceholder} from '../placeholders';
+import styles from './styles';
+//code-splitting
+//screen
 
 let perPage = 15;
 let stopLoadMore = true;

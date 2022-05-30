@@ -1,11 +1,25 @@
 import React from 'react';
-import {Button, Text} from 'base';
-import {View, StyleSheet, Modal} from 'react-native';
-import images from 'images';
+import {View, StyleSheet, Modal, Animated} from 'react-native';
+//node_modules
 import FastImage from 'react-native-fast-image';
+//api
+//base
+import {Button, Text} from 'base';
+//components
+//config
+import images from 'images';
 import {colors, commonStyles, sizes} from 'styles';
 import metrics from 'metrics';
-
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   visible?: any;
   onPressCancel?: any;
@@ -19,14 +33,16 @@ const PopupAlertComponent: React.FC<Props> = ({
   content,
   srcImage = images.logos.success,
 }) => {
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
   return (
     <Modal
       onRequestClose={onPressCancel}
       animationType="none"
       transparent={true}
-      visible={visible}>
+      visible={visibleModal}>
       <View style={styles.backgroundModal} />
-      <View style={styles.container}>
+      <Animated.View
+        style={[styles.container, {transform: [{scale: scaleAni}]}]}>
         <View style={styles.contentContainer}>
           <FastImage
             resizeMode={FastImage.resizeMode.contain}
@@ -45,7 +61,7 @@ const PopupAlertComponent: React.FC<Props> = ({
             />
           </View>
         </View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };

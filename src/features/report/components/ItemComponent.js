@@ -1,11 +1,26 @@
 import React from 'react';
 import {View, StyleSheet, Alert, Linking} from 'react-native';
-import {Text, Avatar} from 'base';
-import {commonStyles, sizes} from 'styles';
+//node_modules
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {checkVar} from 'src/helpers/funcs';
+//api
+//base
+import {Text, Avatar} from 'base';
+//components
+//config
+import {commonStyles, sizes} from 'styles';
+//helpers
+import {checkVar} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
+
 momentDurationFormatSetup(moment);
 
 const ItemComponent = ({item}) => {

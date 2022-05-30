@@ -1,13 +1,26 @@
 import React from 'react';
 import {View} from 'react-native';
-import styles from './styles';
-import {Background, Button, Text} from 'base';
+//node_modules
 import {useDispatch} from 'react-redux';
-import {logoutRequest} from 'actions/loginActions';
 import LottieView from 'lottie-react-native';
-import {commonStyles} from 'styles';
 import {useQueryClient} from 'react-query';
-
+//api
+//base
+import {Background, Button, Text} from 'base';
+//components
+//config
+import {commonStyles} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+import {logoutRequest} from 'actions/loginActions';
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 const Error401 = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();

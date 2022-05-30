@@ -1,35 +1,49 @@
-/* eslint-disable radix */
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Switch, Text} from 'base';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Modal,
-  TouchableHighlight,
   ScrollView,
   Platform,
+  Animated,
 } from 'react-native';
-import images from 'images';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import {colors, commonStyles, fonts, sizes} from 'styles';
-import metrics from 'metrics';
 import {
   getBottomSpace,
   getStatusBarHeight,
   isIphoneX,
 } from 'react-native-iphone-x-helper';
+import lodash from 'lodash';
+import {useMutation, useQuery} from 'react-query';
+//api
+import {deviceTimerAccessUpdateApi, deviceInfoApi} from 'methods/device';
+//base
+import {Text} from 'base';
+//components
 import {
   ModalSetTimeBlockAccess,
   PopupAlert,
   ItemTimeUse,
   Loading,
+  LoadingData,
 } from 'components';
-import lodash from 'lodash';
-import {deviceTimerAccessUpdateApi} from 'src/api/methods/device';
-import {useMutation} from 'react-query';
-
+//config
+import images from 'images';
+import metrics from 'metrics';
+import {colors, commonStyles, fonts, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal, useActiveTimeList} from 'hooks';
+//navigation
+import keyTypes from 'keyTypes';
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 const HOURS_DEFAULT = '00';
 const MINUTE_DEFAULT = '00';
 const HOURS_24 = 24;
@@ -38,47 +52,6 @@ const MINUTE_59 = 59;
 const MINUTE_60 = 60;
 const ZERO = 0;
 const TIME_DEFAULT = '00/00';
-
-// const ItemTime = ({
-//   day,
-//   startTime = TIME_DEFAULT,
-//   endTime = TIME_DEFAULT,
-//   onChangeSwitch,
-//   status,
-//   containerStyle,
-//   onPress,
-// }) => {
-//   const [toggleSwitch, setToggleSwitch] = useState(status ? true : false);
-//   return (
-//     <TouchableHighlight
-//       underlayColor="rgba(90, 142, 209, 0.5)"
-//       onPress={onPress}
-//       style={[styles.wrapItem, containerStyle]}>
-//       <>
-//         <View style={styles.wrapItemTime}>
-//           <Text style={styles.itemStartTime}>
-//             {startTime ? startTime : TIME_DEFAULT}
-//           </Text>
-//           <Text style={styles.itemEndTime}>
-//             {endTime ? endTime : TIME_DEFAULT}
-//           </Text>
-//         </View>
-//         <Text style={styles.itemDay}>{day}</Text>
-//         <View style={styles.wrapSectionRight}>
-//           <Switch
-//             onValueChange={() => {
-//               onChangeSwitch(!toggleSwitch);
-//               setToggleSwitch(!toggleSwitch);
-//             }}
-//             value={toggleSwitch}
-//             containerStyle={styles.switch}
-//           />
-//         </View>
-//         <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
-//       </>
-//     </TouchableHighlight>
-//   );
-// };
 
 const DATA_TIME_LIST = [
   {
@@ -134,9 +107,8 @@ const DATA_TIME_LIST = [
 const ModalLimitTimeUseDeviceComponent = ({
   visible = false,
   onPressClose,
-  itemList,
   deviceId,
-  onSuccessTimer,
+  // onSuccessTimer,
   onRequestCloseModal,
 }) => {
   const [visibleSetupTimeModal, setVisibleSetupTimeModal] = useState(false);
@@ -146,57 +118,68 @@ const ModalLimitTimeUseDeviceComponent = ({
   const [minutesEnd, setMinutesEnd] = useState(MINUTE_DEFAULT);
   const [activeItem, setActiveItem] = useState({});
   const [timeError, setTimeError] = useState('');
-  const [timeList, setTimeList] = useState(DATA_TIME_LIST);
   const [visibleAlert, setVisibleAlert] = useState(false);
   const [isUpdateTimerSuccess, setIsUpdateTimerSuccess] = useState(false);
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
+
+  const {data, refetch, isLoading, isRefetching} = useQuery(
+    [keyTypes.DEVICE_INFO, deviceId],
+    () => deviceInfoApi(deviceId),
+  );
+
+  const [timeList, setTimeList] = useActiveTimeList(
+    data?.data,
+    visible,
+    isRefetching,
+  );
 
   const mutationTimerUpdate = useMutation(({data_device_id, data_timer_list}) =>
     deviceTimerAccessUpdateApi(data_device_id, data_timer_list),
   );
 
-  //set time list by active item list
-  useEffect(() => {
-    if (itemList && itemList?.timer?.length > 0) {
-      let tmpTimeList = itemList?.timer?.map((item, key) => {
-        let tmpStartTime = item?.start_time;
-        let tmpEndTime = item?.end_time;
-        if (tmpStartTime || tmpEndTime) {
-          let tmpHoursStartTime = tmpStartTime
-            ? tmpStartTime?.split(':')[0]
-            : HOURS_DEFAULT;
-          let tmpHoursEndTime = tmpEndTime
-            ? tmpEndTime?.split(':')[0]
-            : HOURS_DEFAULT;
-          let tmpMinuteStartTime = tmpStartTime
-            ? tmpStartTime?.split(':')[1]
-            : MINUTE_DEFAULT;
-          let tmpMinuteEndTime = tmpEndTime
-            ? tmpEndTime?.split(':')[1]
-            : MINUTE_DEFAULT;
-          return {
-            ...item,
-            day: key + 2,
-            dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
-            startTime: tmpStartTime
-              ? tmpHoursStartTime + ':' + tmpMinuteStartTime
-              : TIME_DEFAULT,
-            endTime: tmpEndTime
-              ? tmpHoursEndTime + ':' + tmpMinuteEndTime
-              : TIME_DEFAULT,
-          };
-        } else {
-          return {
-            ...item,
-            day: key + 2,
-            dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
-            startTime: '',
-            endTime: '',
-          };
-        }
-      });
-      setTimeList(tmpTimeList);
-    }
-  }, [itemList, visible]);
+  // //set time list by active item list
+  // useEffect(() => {
+  //   if (itemList && itemList?.timer?.length > 0) {
+  //     let tmpTimeList = itemList?.timer?.map((item, key) => {
+  //       let tmpStartTime = item?.start_time;
+  //       let tmpEndTime = item?.end_time;
+  //       if (tmpStartTime || tmpEndTime) {
+  //         let tmpHoursStartTime = tmpStartTime
+  //           ? tmpStartTime?.split(':')[0]
+  //           : HOURS_DEFAULT;
+  //         let tmpHoursEndTime = tmpEndTime
+  //           ? tmpEndTime?.split(':')[0]
+  //           : HOURS_DEFAULT;
+  //         let tmpMinuteStartTime = tmpStartTime
+  //           ? tmpStartTime?.split(':')[1]
+  //           : MINUTE_DEFAULT;
+  //         let tmpMinuteEndTime = tmpEndTime
+  //           ? tmpEndTime?.split(':')[1]
+  //           : MINUTE_DEFAULT;
+  //         return {
+  //           ...item,
+  //           day: key + 2,
+  //           dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
+  //           startTime: tmpStartTime
+  //             ? tmpHoursStartTime + ':' + tmpMinuteStartTime
+  //             : TIME_DEFAULT,
+  //           endTime: tmpEndTime
+  //             ? tmpHoursEndTime + ':' + tmpMinuteEndTime
+  //             : TIME_DEFAULT,
+  //         };
+  //       } else {
+  //         return {
+  //           ...item,
+  //           day: key + 2,
+  //           dayName: key + 2 === 8 ? 'CN' : 'Thứ ' + (key + 2),
+  //           startTime: '',
+  //           endTime: '',
+  //         };
+  //       }
+  //     });
+  //     setTimeList(tmpTimeList);
+  //   }
+  // }, [itemList, visible]);
 
   //set hours start
   useEffect(() => {
@@ -293,16 +276,6 @@ const ModalLimitTimeUseDeviceComponent = ({
     if (!activeItem) {
       return;
     }
-    // // eslint-disable-next-line radix
-    // if (parseInt(hoursStart) === 0 && parseInt(minutesStart) === 0) {
-    //   setTimeError('Thời gian bắt đầu không được bỏ trống');
-    //   return;
-    // }
-    // // eslint-disable-next-line radix
-    // if (parseInt(hoursEnd) === 0 && parseInt(minutesEnd) === 0) {
-    //   setTimeError('Thời gian kết thúc không được bỏ trống');
-    //   return;
-    // }
     if (
       // eslint-disable-next-line radix
       parseInt(hoursEnd) * 60 + parseInt(minutesEnd) > 0 &&
@@ -364,9 +337,12 @@ const ModalLimitTimeUseDeviceComponent = ({
       })
       .then(resp => {
         if (resp?.status) {
+          // onSuccessTimer();
           setIsUpdateTimerSuccess(true);
-          setVisibleAlert(true);
-          onSuccessTimer();
+          refetch();
+          setTimeout(() => {
+            setVisibleAlert(true);
+          }, 150);
         } else {
           setIsUpdateTimerSuccess(false);
         }
@@ -414,8 +390,10 @@ const ModalLimitTimeUseDeviceComponent = ({
       .then(resp => {
         if (resp?.status) {
           setIsUpdateTimerSuccess(true);
-          setVisibleAlert(true);
-          onSuccessTimer();
+          refetch();
+          setTimeout(() => {
+            setVisibleAlert(true);
+          }, 150);
         } else {
           setIsUpdateTimerSuccess(false);
         }
@@ -431,8 +409,8 @@ const ModalLimitTimeUseDeviceComponent = ({
       onRequestClose={onRequestCloseModal}
       animationType="none"
       transparent={true}
-      visible={visible}>
-      <Loading isLoading={mutationTimerUpdate?.isLoading} />
+      visible={visibleModal}>
+      <Loading isLoading={mutationTimerUpdate?.isLoading || isRefetching} />
       <PopupAlert
         content={
           isUpdateTimerSuccess
@@ -442,7 +420,7 @@ const ModalLimitTimeUseDeviceComponent = ({
         srcImage={
           !isUpdateTimerSuccess ? images.logos.error : images.logos.success
         }
-        visible={visibleAlert}
+        visible={visibleAlert && !isRefetching}
         onPressCancel={() => setVisibleAlert(false)}
       />
       <ModalSetTimeBlockAccess
@@ -493,59 +471,65 @@ const ModalLimitTimeUseDeviceComponent = ({
       />
       <View style={styles.backgroundModal} />
       {/* <KeyboardAwareScrollView style={commonStyles.flex1}> */}
-      <View style={styles.container}>
-        <ScrollView
-          contentContainerStyle={styles.contentContainer}
-          style={styles.scrollContainer}>
-          <TouchableOpacity
-            style={styles.wrapIconClose}
-            activeOpacity={0.8}
-            onPress={() => {
-              onPressClose();
-              setTimeList([...DATA_TIME_LIST]);
-            }}>
-            <FastImage style={styles.iconClose} source={images.icons.close} />
-          </TouchableOpacity>
-          <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
-            {'Giới hạn thời \ngian sử dụng'}
-          </Text>
-          <View style={styles.wrapTimeList}>
-            {timeList?.map((item, key) => {
-              return (
-                <View key={`${item.id} + ${item.status}`}>
-                  <ItemTimeUse
-                    onPress={() => handleShowPopupSetupTime(item)}
-                    containerStyle={
-                      key % 2 === 0
-                        ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
-                        : {}
-                    }
-                    status={item.status}
-                    onChangeSwitch={status => handleSwitch(status, key)}
-                    day={item.dayName}
-                    startTime={item.startTime}
-                    endTime={item.endTime}
-                  />
-                </View>
-              );
-            })}
-          </View>
-          <View style={styles.wrapNote}>
-            <View style={styles.wrapIconLabelNote}>
-              <FastImage
-                style={styles.iconNote}
-                source={images.icons.question}
-              />
-              <Text style={styles.labelNote}>Ghi chú</Text>
-            </View>
-            <Text style={styles.note}>
-              {
-                'Đây là khung thời gian máy tính có thể sử dụng được. \nNgoài khung thời gian trên, máy tính sẽ bị khóa.\nĐặt giới hạn từ 00:00 đến 00:00 nếu phụ huynh muốn máy sử dụng được 24h/ngày.'
-              }
+      {isLoading ? (
+        <LoadingData />
+      ) : (
+        <Animated.View
+          style={[styles.container, {transform: [{scale: scaleAni}]}]}>
+          <ScrollView
+            contentContainerStyle={styles.contentContainer}
+            style={styles.scrollContainer}>
+            <TouchableOpacity
+              style={styles.wrapIconClose}
+              activeOpacity={0.8}
+              onPress={() => {
+                onPressClose();
+                setTimeList([...DATA_TIME_LIST]);
+              }}>
+              <FastImage style={styles.iconClose} source={images.icons.close} />
+            </TouchableOpacity>
+            <Text style={[commonStyles.mainTitle, styles.mainTitle]}>
+              {'Giới hạn thời \ngian sử dụng'}
             </Text>
-          </View>
-        </ScrollView>
-      </View>
+            <View style={styles.wrapTimeList}>
+              {timeList?.map((item, key) => {
+                return (
+                  <View key={`${item.id} + ${item.status}`}>
+                    <ItemTimeUse
+                      onPress={() => handleShowPopupSetupTime(item)}
+                      containerStyle={
+                        key % 2 === 0
+                          ? {backgroundColor: 'rgba(90, 142, 209, 0.1)'}
+                          : {}
+                      }
+                      status={item.status}
+                      onChangeSwitch={status => handleSwitch(status, key)}
+                      day={item.dayName}
+                      startTime={item.startTime}
+                      endTime={item.endTime}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+            <View style={styles.wrapNote}>
+              <View style={styles.wrapIconLabelNote}>
+                <FastImage
+                  style={styles.iconNote}
+                  source={images.icons.question}
+                />
+                <Text style={styles.labelNote}>Ghi chú</Text>
+              </View>
+              <Text style={styles.note}>
+                {
+                  'Đây là khung thời gian máy tính có thể sử dụng được. \nNgoài khung thời gian trên, máy tính sẽ bị khóa.\nĐặt giới hạn từ 00:00 đến 00:00 nếu phụ huynh muốn máy sử dụng được 24h/ngày.'
+                }
+              </Text>
+            </View>
+          </ScrollView>
+        </Animated.View>
+      )}
+
       {/* </KeyboardAwareScrollView> */}
     </Modal>
   );
@@ -578,7 +562,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     backgroundColor: colors.COLOR_DARK_BLUE,
     width: metrics.screenWidth,
-    borderRadius: sizes.SIZE_15,
+    // borderRadius: sizes.SIZE_15,
     padding: sizes.SIZE_15,
     paddingBottom: getBottomSpace(),
     paddingTop:
@@ -661,4 +645,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalLimitTimeUseDeviceComponent;
+export default React.memo(ModalLimitTimeUseDeviceComponent);

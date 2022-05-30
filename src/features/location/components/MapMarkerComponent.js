@@ -1,14 +1,29 @@
 /* eslint-disable indent */
 import React, {useRef, useEffect, useState, useMemo} from 'react';
 import {View, StyleSheet, Image, Platform} from 'react-native';
-import {colors, sizes, commonStyles, fonts} from 'styles';
-import images from 'images';
-import {Text} from 'base';
+//node_modules
 import FastImage from 'react-native-fast-image';
 import MapboxGL from '@react-native-mapbox-gl/maps';
-import env from '../../../environment';
 import moment from 'moment';
+//api
+//base
+import {Text} from 'base';
+
+//components
 import {Loading} from 'components';
+//config
+import {colors, sizes, commonStyles, fonts} from 'styles';
+import images from 'images';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
+import env from '../../../environment';
 
 const DEFAULT_ZOOM = sizes.SIZE_14;
 const MAX_ZOOM = sizes.SIZE_18;
@@ -30,11 +45,10 @@ const MapMarker = ({
   const [anchor, setAnchor] = useState({x: 0.5, y: 0.5});
 
   useEffect(() => {
-    if (cameraRef?.current && refresh_location > 0) {
+    if (cameraRef?.current && refetching) {
       // setTimeout(() => {
       //   cameraRef.current.zoomTo(DEFAULT_ZOOM);
       // }, 300);
-
       cameraRef.current.moveTo([markers?.longitude, markers?.latitude], 500);
     }
   }, [refresh_location, markers, refetching]);
@@ -266,7 +280,7 @@ const MapMarker = ({
               id="marker_2"
               anchor={{
                 x: 0.5,
-                y: vectorY + 0.3,
+                y: vectorY + 0.35,
               }}
               // anchor={{...anchor, y: anchor.y + 0.7}}
               coordinate={[markers?.longitude, markers?.latitude]}>
@@ -377,8 +391,6 @@ function areEqual(prevProps, nextProps) {
     prevProps?.markers?.longitudeDelta === nextProps?.markers?.longitudeDelta &&
     prevProps?.refresh_location === nextProps?.refresh_location &&
     prevProps?.refetching === nextProps?.refetching
-    // &&
-    // prevProps?.timeUpdateLast === nextProps?.timeUpdateLast
   );
 }
 

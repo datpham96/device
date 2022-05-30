@@ -1,7 +1,21 @@
 import React from 'react';
 import {StyleSheet, TouchableHighlight} from 'react-native';
+//node_modules
+//api
+//base
 import Text from './Text';
-import {colors, commonStyles, sizes} from '../config/styles';
+//components
+//config
+import {colors, commonStyles, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   onPress?: any;

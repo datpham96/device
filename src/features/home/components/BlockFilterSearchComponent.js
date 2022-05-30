@@ -1,13 +1,28 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Text} from 'base';
+//node_modules
 import {AreaChart} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
-import {colors, commonStyles, fonts, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
-import metrics from 'metrics';
-import {landmarkUnitOfNumber} from 'src/helpers/funcs';
 import lodash from 'lodash';
+//api
+//base
+import {Text} from 'base';
+//components
+import {NumberPlaceholder} from '../placeholders';
+//config
+import {colors, commonStyles, fonts, sizes} from 'styles';
+import metrics from 'metrics';
+//helpers
+import {landmarkUnitOfNumber} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const BlockFilterSearchComponent = ({
   data = [],
@@ -19,6 +34,7 @@ const BlockFilterSearchComponent = ({
   areaChartStyle,
   heightBlock,
   heightAreaBlock,
+  isLoading,
 }) => {
   let maxNumber = 0,
     unitNumber = 0;
@@ -62,7 +78,17 @@ const BlockFilterSearchComponent = ({
       <View style={styles.contentContainer}>
         <View style={styles.wrapInfo}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.total}>{total}</Text>
+          {isLoading ? (
+            <View style={styles.wrapNumberPlaceholder}>
+              <NumberPlaceholder
+                customStyle={{
+                  height: sizes.SIZE_16,
+                }}
+              />
+            </View>
+          ) : (
+            <Text style={styles.total}>{total}</Text>
+          )}
         </View>
         <FastImage
           style={styles.iconTotal}
@@ -116,6 +142,9 @@ const styles = StyleSheet.create({
     height: metrics.screenWidth / sizes.SIZE_16,
     alignSelf: 'flex-start',
   },
+  wrapNumberPlaceholder: {
+    marginTop: sizes.SIZE_10,
+  },
 });
 
 function areEqual(prevProps, nextProps) {
@@ -123,7 +152,8 @@ function areEqual(prevProps, nextProps) {
     prevProps?.total === nextProps?.total &&
     prevProps?.heightBlock === nextProps?.heightBlock &&
     prevProps?.heightAreaBlock === nextProps?.heightAreaBlock &&
-    prevProps?.total === nextProps?.total
+    prevProps?.total === nextProps?.total &&
+    prevProps?.isLoading === nextProps?.isLoading
   );
 }
 

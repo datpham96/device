@@ -1,11 +1,26 @@
 import React, {useState, useMemo, useCallback} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
+//node_modules
+//api
+//base
 import {Text} from 'base';
-import {NumberPlaceholder, PieCharPlaceholder} from '../placeholders';
-import {colors, commonStyles, fonts, sizes} from 'styles';
-import types from '../types';
-import {checkVar} from 'src/helpers/funcs';
+//components
 import {PieChart} from 'components';
+
+//config
+import {colors, commonStyles, fonts, sizes} from 'styles';
+//helpers
+import {checkVar, formatNumberThousand} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+import {NumberPlaceholder, PieCharPlaceholder} from '../placeholders';
+import types from '../types';
+//code-splitting
+//screen
 
 const ChartComponent = ({
   dataReportAccess,
@@ -46,19 +61,6 @@ const ChartComponent = ({
     return tmpDataList;
   }, [dataReportAccess, isSuccessReportAccess]);
 
-  const formatNumberThousand = num => {
-    let total = num;
-    if (num / 1000000000 > 1) {
-      total = (num / 1000000000).toFixed(1) + 'B';
-    } else if (num / 1000000 > 1) {
-      total = (num / 1000000).toFixed(1) + 'M';
-    } else if (num / 1000 > 1) {
-      total = (num / 1000).toFixed(1) + 'K';
-    }
-
-    return total;
-  };
-
   return (
     <View style={styles.chartContainer}>
       {isLoadingReportAccess ? (
@@ -98,7 +100,7 @@ const ChartComponent = ({
                 ]}>
                 {types.status.allow.name}:{' '}
               </Text>
-              {!checkVar.isEmpty(dataPieChartList) ? (
+              {!isLoadingReportAccess ? (
                 <Text>
                   {formatNumberThousand(dataPieChartList?.[0]?.total)}
                 </Text>
@@ -129,7 +131,7 @@ const ChartComponent = ({
                 ]}>
                 {types.status.block.name}:{' '}
               </Text>
-              {!checkVar.isEmpty(dataPieChartList) ? (
+              {!isLoadingReportAccess ? (
                 <Text>
                   {formatNumberThousand(dataPieChartList?.[1]?.total)}
                 </Text>

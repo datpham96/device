@@ -1,9 +1,22 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {Text, Avatar} from 'base';
-import {colors, commonStyles, sizes} from 'styles';
+//node_modules
 import moment from 'moment';
-
+//api
+//base
+import {Text, Avatar} from 'base';
+//components
+//config
+import {colors, commonStyles, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   item?: any;
   onPress?: any;

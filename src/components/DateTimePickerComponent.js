@@ -1,9 +1,23 @@
-import metrics from 'metrics';
-import moment from 'moment';
 import React from 'react';
 import {StyleSheet} from 'react-native';
+//node_modules
+import moment from 'moment';
 import DatePicker from 'react-native-date-picker-select';
+//api
+//base
+//components
+//config
+import metrics from 'metrics';
 import {colors, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const DateTimePickerComponent = React.forwardRef(({date, onDate}, ref) => {
   return (

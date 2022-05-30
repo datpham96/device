@@ -5,7 +5,7 @@ import {
   updateUserInfoApi,
   changePasswordApi,
 } from 'src/api/methods/user';
-import {getToken, setToken, setKeyChain, getKeyChain} from 'storages';
+import {setKeyChain, getKeyChain} from 'storages';
 import {
   userInfoSuccess,
   userInfoFailure,

@@ -1,25 +1,8 @@
-import React, {useState} from 'react';
-import {Background, Text} from 'base';
+import React, {Suspense, useState} from 'react';
 import {View, FlatList, TouchableOpacity, RefreshControl} from 'react-native';
-import {colors, commonStyles} from 'styles';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import images from 'images';
-import {ItemChildrenComponent} from '../components';
-import styles from './styles';
-import {
-  ModalScanQRcode,
-  EmptyData,
-  PopupConfirm,
-  ModalWaiting,
-  PopupAlert,
-} from 'components';
-import * as RootNavigation from 'RootNavigation';
-import navigationTypes from 'navigationTypes';
-import {Toast} from 'customs';
 import {useQuery, useQueryClient, useMutation} from 'react-query';
-import keyTypes from 'keyTypes';
-import {deviceListApi, deviceActivationApi} from 'methods/device';
-import {ItemChildrenPlaceholder} from '../placeholders';
 import {
   PERMISSIONS,
   openSettings,
@@ -27,8 +10,45 @@ import {
   requestMultiple,
 } from 'react-native-permissions';
 import moment from 'moment';
-import {genders} from 'types';
 import lodash from 'lodash';
+//api
+import {deviceListApi, deviceActivationApi} from 'methods/device';
+//base
+import {Background, Text} from 'base';
+//components
+import {EmptyData} from 'components';
+//config
+import images from 'images';
+import {colors, commonStyles} from 'styles';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+import navigationTypes from 'navigationTypes';
+import keyTypes from 'keyTypes';
+//storages
+//redux-stores
+//feature
+import {ItemChildrenComponent} from '../components';
+import styles from './styles';
+import {ItemChildrenPlaceholder} from '../placeholders';
+import {genders} from 'types';
+//code-splitting
+const ModalScanQRcode = React.lazy(() =>
+  import('src/components/Modals/ModalScanQRcodeComponent'),
+);
+const PopupConfirm = React.lazy(() =>
+  import('src/components/Popups/PopupConfirmComponent'),
+);
+const ModalWaiting = React.lazy(() =>
+  import('src/components/Modals/ModalWaitingComponent'),
+);
+const PopupAlert = React.lazy(() =>
+  import('src/components/Popups/PopupAlertComponent'),
+);
+//screen
 
 const ChildrenManager = ({navigation}) => {
   const queryClient = useQueryClient();
@@ -60,7 +80,7 @@ const ChildrenManager = ({navigation}) => {
   );
 
   const {data, isLoading, refetch} = useQuery(
-    keyTypes.DEVICE_LIST + '_MANAGER',
+    keyTypes.DEVICE_LIST_MANAGER,
     () => deviceListApi(),
     {
       keepPreviousData: true,
@@ -72,6 +92,14 @@ const ChildrenManager = ({navigation}) => {
     },
   );
 
+  //xử lý khi out khỏi màn hình hiện tại
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      queryClient.cancelQueries(keyTypes.DEVICE_LIST_MANAGER);
+    });
+    return unsubscribe;
+  }, [navigation, queryClient]);
+
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       refetch();
@@ -81,7 +109,7 @@ const ChildrenManager = ({navigation}) => {
   }, [navigation]);
 
   const onRefresh = async () => {
-    await queryClient.removeQueries(keyTypes.DEVICE_LIST + '_MANAGER', {
+    await queryClient.removeQueries(keyTypes.DEVICE_LIST_MANAGER, {
       exact: true,
     });
     await refetch();
@@ -135,13 +163,11 @@ const ChildrenManager = ({navigation}) => {
               deviceId: resp?.device_id,
               deviceInfo: tmpDeviceInfo,
             });
-            // refetch();
-            // Toast(resp?.msg);
-            // RootNavigation.navigate(navigationTypes.childrenManager.screen);
             setVisibleWaitingModal(true);
             setVisibleQrCode(false);
           } else {
             if (!resp?.imei_invalid) {
+              setVisibleQrCode(false);
               RootNavigation.navigate(navigationTypes.imei.screen, {
                 imei: tmpDeviceInfo?.SerialNumber,
                 name: 'Máy ' + (data?.data?.length + 1),
@@ -156,11 +182,11 @@ const ChildrenManager = ({navigation}) => {
           mutationActivatedDevice.reset();
         })
         .catch(err => {
-          Toast(err?.msg);
+          flashMessage.error(err?.msg);
           mutationActivatedDevice.reset();
         });
     } else {
-      Toast('Mã QR thiết bị không hợp lệ');
+      flashMessage.error('Mã QR thiết bị không hợp lệ');
     }
   };
 
@@ -170,6 +196,7 @@ const ChildrenManager = ({navigation}) => {
       let tmpDeviceInfo = lodash.find(data?.data, {id: item?.id});
       if (tmpDeviceInfo?.is_update) {
         setVisiblePopupUpdateDevice(true);
+        setDeviceInfo(tmpDeviceInfo);
       } else {
         RootNavigation.navigate(navigationTypes.childrenInfo.screen, {
           device_id: item?.id,
@@ -198,45 +225,59 @@ const ChildrenManager = ({navigation}) => {
 
   return (
     <Background bout>
-      <PopupAlert
-        visible={visiblePopupUpdateDevice}
-        onPressCancel={() => setVisiblePopupUpdateDevice(false)}
-        content="Vui lòng cập nhật thiết bị lên phiên bản mới nhất để tiếp sử dụng"
-      />
-      <ModalWaiting
-        onPressCancel={handleRedirectDeviceUpdate}
-        visible={visibleWaitingModal}
-      />
-      <PopupConfirm
-        labelBtnLeft="Cài đặt"
-        labelBtnRight="Huỷ"
-        visible={visiblePermissionCamera}
-        content={
-          'SafeZone muốn truy cập máy ảnh của bạn để quét mã QRCode, vui lòng cho phép truy cập máy ảnh của bạn \n Settings > SafeZone > Camera'
-        }
-        onPressCancel={() => {
-          setVisiblePermissionCamera(false);
-        }}
-        onPressAgree={handleSetting}
-      />
-      <PopupConfirm
-        labelBtnLeft="Xác nhận"
-        labelBtnRight="Huỷ"
-        notiLabel="Bản quyền sử dụng"
-        content={'Thời gian sử dụng của bạn đã hết vui lòng \n nhập bản quyền'}
-        visible={visibleActivated}
-        onPressCancel={() => setVisibleActivated(false)}
-        srcImage={images.logos.activated_lock}
-        onPressAgree={() => {
-          setVisibleActivated(false);
-          RootNavigation.navigate(navigationTypes.activated.screen);
-        }}
-      />
-      <ModalScanQRcode
-        visible={visibleQrCode}
-        onPressClose={() => setVisibleQrCode(false)}
-        onSuccessQRCode={val => handleSucessQRCode(val)}
-      />
+      <Suspense fallback={<></>}>
+        {visiblePopupUpdateDevice && (
+          <PopupAlert
+            visible={visiblePopupUpdateDevice}
+            onPressCancel={() => setVisiblePopupUpdateDevice(false)}
+            content={`Vui lòng cập nhật phần mềm SafeZone trên thiết bị con (${deviceInfo?.full_name}) lên phiên bản mới nhất để tiếp sử dụng`}
+          />
+        )}
+        {visibleWaitingModal && (
+          <ModalWaiting
+            onPressCancel={handleRedirectDeviceUpdate}
+            visible={visibleWaitingModal}
+          />
+        )}
+        {visiblePermissionCamera && (
+          <PopupConfirm
+            labelBtnLeft="Cài đặt"
+            labelBtnRight="Huỷ"
+            visible={visiblePermissionCamera}
+            content={
+              'SafeZone muốn truy cập máy ảnh của bạn để quét mã QRCode, vui lòng cho phép truy cập máy ảnh của bạn \n Settings > SafeZone > Camera'
+            }
+            onPressCancel={() => {
+              setVisiblePermissionCamera(false);
+            }}
+            onPressAgree={handleSetting}
+          />
+        )}
+        {visibleActivated && (
+          <PopupConfirm
+            labelBtnLeft="Xác nhận"
+            labelBtnRight="Huỷ"
+            notiLabel="Bản quyền sử dụng"
+            content={
+              'Thời gian sử dụng của bạn đã hết vui lòng \n nhập bản quyền'
+            }
+            visible={visibleActivated}
+            onPressCancel={() => setVisibleActivated(false)}
+            srcImage={images.logos.activated_lock}
+            onPressAgree={() => {
+              setVisibleActivated(false);
+              RootNavigation.navigate(navigationTypes.activated.screen);
+            }}
+          />
+        )}
+        {visibleQrCode && (
+          <ModalScanQRcode
+            visible={visibleQrCode}
+            onPressClose={() => setVisibleQrCode(false)}
+            onSuccessQRCode={val => handleSucessQRCode(val)}
+          />
+        )}
+      </Suspense>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Text style={commonStyles.mainTitle}>Gia đình</Text>

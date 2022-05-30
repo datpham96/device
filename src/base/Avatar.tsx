@@ -1,10 +1,24 @@
 /* eslint-disable indent */
 import React, {useState} from 'react';
 import {View, StyleSheet, ActivityIndicator} from 'react-native';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import metrics from '../config/metrics';
+//api
+//base
+//components
+//config
+import metrics from 'metrics';
 import {colors, commonStyles, sizes} from 'styles';
 import images from 'images';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   uriImage?: any;

@@ -1,7 +1,21 @@
 import React from 'react';
-import {Text} from 'base';
 import {StyleSheet} from 'react-native';
+//node_modules
+//api
+//base
+import {Text} from 'base';
+//components
+//config
 import {colors, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   message?: any;

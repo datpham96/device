@@ -1,9 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import {StyleSheet, View, Text, TouchableOpacity, AppState} from 'react-native';
+//node_modules
 import {sprintf} from 'sprintf-js';
+//api
+//base
+//components
+//config
 import {colors, commonStyles, fonts} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const DEFAULT_DIGIT_STYLE = {backgroundColor: colors.COLOR_WHITE};
 const DEFAULT_DIGIT_TXT_STYLE = {color: colors.COLOR_WHITE};

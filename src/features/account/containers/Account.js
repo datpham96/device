@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {Text, Background, Button, Input} from 'base';
+import React, {useState, useEffect, useRef, useCallback, Suspense} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -8,8 +7,38 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import styles from './styles';
+//node_modules
 import {useDispatch, useSelector} from 'react-redux';
+import FastImage from 'react-native-fast-image';
+import VersionInfo from 'react-native-version-info';
+import {useQueryClient} from 'react-query';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Validator from 'validatorjs';
+import {
+  requestMultiple,
+  PERMISSIONS,
+  openSettings,
+  RESULTS,
+} from 'react-native-permissions';
+//api
+//base
+import {Text, Background, Button, Input} from 'base';
+//components
+import {Loading, TextError} from 'components';
+//config
+import {colors, commonStyles} from 'styles';
+import images from 'images';
+//helpers
+import {buildAvatar, flashMessage} from 'src/helpers/funcs';
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+import navigationTypes from 'navigationTypes';
+//storages
+import {getError} from 'storages';
+//redux-stores
 import {logoutRequest} from 'actions/loginActions';
 import {
   updateUserAvatarRequest,
@@ -18,36 +47,16 @@ import {
   updateUserInfoReset,
   userInfoRequest,
 } from 'actions/userActions';
-import {colors, commonStyles} from 'styles';
-import FastImage from 'react-native-fast-image';
-import images from 'images';
-import {PopupConfirm, Loading, TextError, ModalBottomSheet} from 'components';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import * as RootNavigation from 'RootNavigation';
-import navigationTypes from 'navigationTypes';
-import Validator from 'validatorjs';
-import {Toast} from 'customs';
-import {buildAvatar} from 'src/helpers/funcs';
-import VersionInfo from 'react-native-version-info';
-import {useQueryClient} from 'react-query';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import ImageResizer from 'react-native-image-resizer';
-import RNFS from 'react-native-fs';
-import Clipboard from '@react-native-clipboard/clipboard';
-
-import {
-  requestMultiple,
-  PERMISSIONS,
-  openSettings,
-  RESULTS,
-} from 'react-native-permissions';
-import {getError} from 'storages';
-
-const options = {
-  mediaType: 'photo',
-  quality: 1,
-  includeBase64: true,
-};
+//feature
+import styles from './styles';
+//code-splitting
+const PopupConfirm = React.lazy(() =>
+  import('src/components/Popups/PopupConfirmComponent'),
+);
+const ModalCameraBottomSheet = React.lazy(() =>
+  import('src/components/Modals/ModalCameraBottomSheetComponent'),
+);
+//screen
 
 const Account = () => {
   const touchTimoutRef = useRef(null);
@@ -83,8 +92,14 @@ const Account = () => {
   const [touchTimes, setTouchTimes] = useState(0);
 
   useEffect(() => {
+    if (userInfo) {
+      setAvatarUri(userInfo?.image ? {uri: buildAvatar(userInfo?.image)} : '');
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
-      Toast(dataErrors?.msg);
+      flashMessage.error(dataErrors?.msg);
       dispatch(updateUserAvatarReset());
       dispatch(updateUserInfoReset());
     }
@@ -92,17 +107,17 @@ const Account = () => {
 
   useEffect(() => {
     if (statusUpdateUserAvatar || statusUpdateUserInfo) {
-      Toast('Cập nhật thông tin thành công');
+      flashMessage.success('Cập nhật thông tin thành công');
       dispatch(updateUserAvatarReset());
       dispatch(updateUserInfoReset());
     }
   }, [statusUpdateUserAvatar, statusUpdateUserInfo, dispatch]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     queryClient.clear();
     setVisibleConfirm(false);
     dispatch(logoutRequest());
-  };
+  }, [dispatch, queryClient]);
 
   const handleRedirectChangePassword = () => {
     RootNavigation.navigate(navigationTypes.newPassword.screen);
@@ -141,65 +156,6 @@ const Account = () => {
     }
   };
 
-  const handleOpenCamera = () => {
-    options.mediaType = 'photo';
-    launchCamera(options, response => {
-      if (response && response?.assets) {
-        let item = response?.assets?.[0];
-        let dataFirstBase64 = 'data:' + item?.type + ';base64,';
-        let formatData = dataFirstBase64 + item?.base64;
-        ImageResizer.createResizedImage(
-          formatData,
-          300,
-          300,
-          'JPEG',
-          100,
-          Platform.OS === 'android' ? 90 : 0,
-          undefined,
-          false,
-          {},
-        )
-          .then(resp => {
-            return RNFS.readFile(resp?.path, 'base64');
-          })
-          .then(result => {
-            setDataRequestAvatar(dataFirstBase64 + result);
-          });
-        setAvatarUri({uri: item?.uri});
-      }
-    });
-  };
-
-  const handleOpenLibrary = () => {
-    setVisibleImagePicker(false);
-    options.mediaType = 'photo';
-    launchImageLibrary(options, response => {
-      if (response && response?.assets) {
-        let item = response?.assets?.[0];
-        let dataFirstBase64 = 'data:' + item?.type + ';base64,';
-        let formatData = dataFirstBase64 + item?.base64;
-        ImageResizer.createResizedImage(
-          formatData,
-          300,
-          300,
-          'JPEG',
-          100,
-          Platform.OS === 'android' ? 90 : 0,
-          undefined,
-          false,
-          {},
-        )
-          .then(resp => {
-            return RNFS.readFile(resp?.path, 'base64');
-          })
-          .then(result => {
-            setDataRequestAvatar(dataFirstBase64 + result);
-          });
-        setAvatarUri({uri: item?.uri});
-      }
-    });
-  };
-
   const handleOpenBottomSheetImagePicker = () => {
     //check permission camera
     requestMultiple([PERMISSIONS.IOS.CAMERA, PERMISSIONS.ANDROID.CAMERA]).then(
@@ -223,10 +179,10 @@ const Account = () => {
     );
   };
 
-  const handleSetting = () => {
+  const handleSetting = useCallback(() => {
     setVisiblePermissionCamera(false);
     openSettings().catch(() => console.warn('cannot open settings'));
-  };
+  }, []);
 
   const handleTabLogErr = () => {
     setTouchTimes(prev => prev + 1);
@@ -262,53 +218,51 @@ const Account = () => {
     }
   };
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     dispatch(userInfoRequest());
-  };
+  }, [dispatch]);
 
   return (
     <Background bottomTab bout>
-      <PopupConfirm
-        labelBtnLeft="Cài đặt"
-        labelBtnRight="Huỷ"
-        visible={visiblePermissionCamera}
-        content={
-          'SafeZone muốn truy cập máy ảnh của bạn để chụp ảnh đại diện, vui lòng cho phép truy cập máy ảnh của bạn \n Settings > SafeZone > Camera'
-        }
-        onPressCancel={() => {
-          setVisiblePermissionCamera(false);
-        }}
-        onPressAgree={handleSetting}
-      />
-      <ModalBottomSheet
-        onPressOne={() => {
-          setVisibleImagePicker(false);
-          setTimeout(() => {
-            handleOpenCamera();
-          }, 200);
-        }}
-        onPressTwo={() => {
-          setVisibleImagePicker(false);
-          setTimeout(() => {
-            handleOpenLibrary();
-          }, 200);
-        }}
-        onPressCancel={() => setVisibleImagePicker(false)}
-        visible={visibleImagePicker}
-        onPressClose={() => setVisibleImagePicker(false)}
-      />
+      <Suspense fallback={<></>}>
+        {visiblePermissionCamera && (
+          <PopupConfirm
+            labelBtnLeft="Cài đặt"
+            labelBtnRight="Huỷ"
+            visible={visiblePermissionCamera}
+            content={
+              'SafeZone muốn truy cập máy ảnh của bạn để chụp ảnh đại diện, vui lòng cho phép truy cập máy ảnh của bạn \n Settings > SafeZone > Camera'
+            }
+            onPressCancel={() => {
+              setVisiblePermissionCamera(false);
+            }}
+            onPressAgree={handleSetting}
+          />
+        )}
+        {visibleConfirm && (
+          <PopupConfirm
+            content="Bạn có chắc chắn muốn thoát không?"
+            visible={visibleConfirm}
+            onPressCancel={() => setVisibleConfirm(!visibleConfirm)}
+            onPressAgree={handleLogout}
+          />
+        )}
+        {visibleImagePicker && (
+          <ModalCameraBottomSheet
+            setDataRequestAvatar={data => setDataRequestAvatar(data)}
+            setAvatarUri={data => setAvatarUri(data)}
+            onPressCancel={() => setVisibleImagePicker(false)}
+            visible={visibleImagePicker}
+            onPressClose={() => setVisibleImagePicker(false)}
+          />
+        )}
+      </Suspense>
       <Loading
         isLoading={
           isLoadingLogout ||
           isLoadingUpdateUserAvatar ||
           isLoadingUpdateUserInfo
         }
-      />
-      <PopupConfirm
-        content="Bạn có chắc chắn muốn thoát không?"
-        visible={visibleConfirm}
-        onPressCancel={() => setVisibleConfirm(!visibleConfirm)}
-        onPressAgree={handleLogout}
       />
       <KeyboardAwareScrollView
         refreshControl={

@@ -13,21 +13,6 @@ function Navigation() {
     async function authCheckUserInfo() {
       let respKeyChain = await getKeyChain();
       let token = respKeyChain?.password;
-      // let token = await getToken();
-      // let expired_token = await getExpiredToken();
-      // if (
-      //   token &&
-      //   moment().diff(
-      //     moment(expired_token, 'DD-MM-YYYY HH:mm:ss'),
-      //     'days',
-      //     true,
-      //   ) <= 2
-      // ) {
-      //   dispatch(userInfoRequest());
-      // } else {
-      //   await removeAll();
-      //   SplashScreen.hide();
-      // }
       if (token) {
         dispatch(userInfoRequest());
       } else {
@@ -35,11 +20,6 @@ function Navigation() {
       }
     }
     authCheckUserInfo();
-
-    // Unsubscribe
-    // return () => {
-    //   RootNavigation.isReadyRef.current = false;
-    // };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

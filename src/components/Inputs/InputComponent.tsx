@@ -1,8 +1,22 @@
 import React from 'react';
 import {View, StyleSheet, TextInput, Image} from 'react-native';
-import {colors, sizes} from '../../config/styles';
+//node_modules
+//api
+//base
 import {Text} from 'base';
+//components
+//config
+import {colors, sizes} from 'styles';
 import metrics from 'metrics';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   customerInput?: any;

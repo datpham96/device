@@ -1,11 +1,25 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Text} from 'base';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import images from 'images';
-import Switch from './SwitchComponent';
-import {commonStyles, sizes} from 'styles';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+//api
+//base
+import {Text} from 'base';
+//components
+import Switch from './SwitchComponent';
+//config
+import images from 'images';
+import {commonStyles, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const ItemChildrenSafeComponent = ({
   srcImage = images.icons.safe_web,

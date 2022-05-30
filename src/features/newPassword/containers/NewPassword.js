@@ -1,16 +1,29 @@
 import React, {useState, useEffect} from 'react';
-import {Text, Button, Background, ButtonBack, Input} from 'base';
 import {View} from 'react-native';
-import images from 'images';
-import styles from './styles';
-import {commonStyles} from 'styles';
+//node_modules
 import {useDispatch, useSelector} from 'react-redux';
 import Validator from 'validatorjs';
-import {changePasswordRequest, changePasswordReset} from 'actions/userActions';
-import {Toast} from 'customs';
+//api
+//base
+import {Text, Button, Background, ButtonBack, Input} from 'base';
+//components
 import {Loading, TextError} from 'components';
+//config
+import images from 'images';
+import {commonStyles} from 'styles';
+//helpers
+import {checkVar, flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import * as RootNavigation from 'RootNavigation';
-import {checkVar} from 'src/helpers/funcs';
+//storages
+//redux-stores
+import {changePasswordRequest, changePasswordReset} from 'actions/userActions';
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 
 const NewPassword = () => {
   const dispatch = useDispatch();
@@ -37,14 +50,14 @@ const NewPassword = () => {
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
-      Toast(dataErrors?.msg);
+      flashMessage.error(dataErrors?.msg);
       dispatch(changePasswordReset());
     }
   }, [dataErrors, dispatch]);
 
   useEffect(() => {
     if (statusChangePassword) {
-      Toast('Cập nhật mật khẩu thành công');
+      flashMessage.success('Cập nhật mật khẩu thành công');
       dispatch(changePasswordReset());
       RootNavigation.goBack();
     }

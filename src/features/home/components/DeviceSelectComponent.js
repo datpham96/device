@@ -1,15 +1,31 @@
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useMemo, useEffect, Suspense} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {DevicePlaceholder} from '../placeholders';
-import {DropdownSelected} from 'components';
-import lodash from 'lodash';
+//node_modules
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {sizes, colors, commonStyles, fonts} from 'styles';
 import FastImage from 'react-native-fast-image';
-import images from 'images';
-import {checkVar, truncateWords} from 'src/helpers/funcs';
+import lodash from 'lodash';
+//api
+//base
 import {Text} from 'base';
+//components
+//config
 import metrics from 'metrics';
+import {sizes, colors, commonStyles, fonts} from 'styles';
+import images from 'images';
+//helpers
+import {checkVar, truncateWords} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+import {DevicePlaceholder} from '../placeholders';
+//code-splitting
+const DropdownSelected = React.lazy(() =>
+  import('src/components/Dropdown/SelectedComponent'),
+);
+//screen
 
 const DeviceSelectComponent = ({
   onSelectedDevice,
@@ -103,14 +119,16 @@ const DeviceSelectComponent = ({
               {truncateWords(selectedDevice?.full_name, sizes.SIZE_2, '...')}
             </Text>
           </TouchableOpacity>
-          {toggleDeviceSelected && (
-            <DropdownSelected
-              onPressItem={item => handleActiveItemDevice(item)}
-              containerStyle={styles.scrollItemDeviceSelect}
-              data={deviceList}
-              selected={selectedDevice?.id}
-            />
-          )}
+          <Suspense fallback={<></>}>
+            {toggleDeviceSelected && (
+              <DropdownSelected
+                onPressItem={item => handleActiveItemDevice(item)}
+                containerStyle={styles.scrollItemDeviceSelect}
+                data={deviceList}
+                selected={selectedDevice?.id}
+              />
+            )}
+          </Suspense>
         </View>
       )}
     </View>

@@ -5,16 +5,29 @@ import {
   StatusBar,
   View,
   Platform,
-  Image,
 } from 'react-native';
-import {colors, commonStyles, sizes} from '../config/styles';
+//node_modules
 import {
   getBottomSpace,
   getStatusBarHeight,
   isIphoneX,
 } from 'react-native-iphone-x-helper';
-import images from '../config/images';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+//api
+//base
+//components
+//config
+import {colors, commonStyles, sizes} from 'styles';
+import images from 'images';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   bin?: boolean;

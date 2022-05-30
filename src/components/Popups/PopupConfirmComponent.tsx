@@ -1,10 +1,26 @@
 import React from 'react';
-import {Text, Button} from 'base';
-import {View, StyleSheet, Modal} from 'react-native';
-import images from 'images';
+import {View, StyleSheet, Modal, Animated} from 'react-native';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import {colors, commonStyles, sizes} from 'styles';
+//api
+//base
+import {Text, Button} from 'base';
+//components
+//config
+import images from 'images';
 import metrics from 'metrics';
+import {colors, commonStyles, sizes} from 'styles';
+
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   visible?: any;
@@ -27,14 +43,16 @@ const PopupConfirmComponent: React.FC<Props> = ({
   srcImage = images.logos.success,
   notiLabel = 'Thông báo',
 }) => {
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
   return (
     <Modal
       onRequestClose={onPressCancel}
       animationType="none"
       transparent={true}
-      visible={visible}>
+      visible={visibleModal}>
       <View style={styles.backgroundModal} />
-      <View style={styles.container}>
+      <Animated.View
+        style={[styles.container, {transform: [{scale: scaleAni}]}]}>
         <View style={styles.contentContainer}>
           <FastImage
             resizeMode={FastImage.resizeMode.contain}
@@ -58,7 +76,7 @@ const PopupConfirmComponent: React.FC<Props> = ({
             />
           </View>
         </View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };

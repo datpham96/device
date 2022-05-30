@@ -1,8 +1,22 @@
 import React from 'react';
-import {Text} from 'base';
-import {colors, commonStyles, fonts, sizes} from 'styles';
 import {TouchableHighlight, StyleSheet, View} from 'react-native';
+//node_modules
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+//api
+//base
+import {Text} from 'base';
+//components
+//config
+import {colors, commonStyles, fonts, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   onPress?: any;

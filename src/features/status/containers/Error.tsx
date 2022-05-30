@@ -1,11 +1,24 @@
 import React from 'react';
-import {Text, Button, Background} from 'base';
 import {View} from 'react-native';
-import images from 'images';
-import styles from './styles';
-import {commonStyles} from 'styles';
+//node_modules
 import FastImage from 'react-native-fast-image';
-
+//api
+//base
+import {Text, Button, Background} from 'base';
+//components
+//config
+import images from 'images';
+import {commonStyles} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 export type Props = {
   content?: any;
   labelBtn?: any;

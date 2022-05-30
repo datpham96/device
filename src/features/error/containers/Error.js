@@ -1,12 +1,25 @@
 import React from 'react';
 import {View} from 'react-native';
-import styles from './styles';
-import {Background, Button, Text} from 'base';
-import * as RootNavigation from '../../../navigation/RootNavigation';
+//node_modules
 import LottieView from 'lottie-react-native';
-import {commonStyles} from 'styles';
 import {useQueryClient} from 'react-query';
-
+//api
+//base
+import {Background, Button, Text} from 'base';
+//components
+//config
+import {commonStyles} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+//storages
+//redux-stores
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 const Error = () => {
   const queryClient = useQueryClient();
   const handleRetry = async () => {

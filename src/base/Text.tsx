@@ -1,7 +1,20 @@
 import React from 'react';
 import {Text as RNText, StyleSheet} from 'react-native';
-import {colors, fonts, sizes} from '../config/styles';
-
+//node_modules
+//api
+//base
+//components
+//config
+import {colors, fonts, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   children?: any;
   style?: any;

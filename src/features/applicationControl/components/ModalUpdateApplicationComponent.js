@@ -1,6 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Radio, Text} from 'base';
 import {
   View,
   StyleSheet,
@@ -9,14 +7,31 @@ import {
   TouchableHighlight,
   ScrollView,
   Platform,
+  Animated,
 } from 'react-native';
-import images from 'images';
+//node_modules
 import FastImage from 'react-native-fast-image';
+import {getBottomSpace, getStatusBarHeight} from 'react-native-iphone-x-helper';
+import lodash from 'lodash';
+//api
+//base
+import {Radio, Text} from 'base';
+//components
+import {ItemTimeUse, ModalSetTimeBlockAccess} from 'components';
+//config
+import images from 'images';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {getBottomSpace, getStatusBarHeight} from 'react-native-iphone-x-helper';
-import {ItemTimeUse, ModalSetTimeBlockAccess} from 'components';
-import lodash from 'lodash';
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const HOURS_DEFAULT = '00';
 const MINUTE_DEFAULT = '00';
@@ -132,6 +147,8 @@ const ModalCreateUpdateWebComponent = ({
   const [activeItem, setActiveItem] = useState({});
   const [timeError, setTimeError] = useState('');
   const [timeList, setTimeList] = useState(DATA_TIME_LIST);
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
+
   //set time list by active item list
   useEffect(() => {
     if (activeItemList && activeItemList?.timer?.length > 0) {
@@ -326,7 +343,7 @@ const ModalCreateUpdateWebComponent = ({
       onRequestClose={onPressClose}
       animationType="none"
       transparent={true}
-      visible={visible}>
+      visible={visibleModal}>
       <ModalSetTimeBlockAccess
         onRequestCloseModal={() => {
           setVisibleSetupTimeModal(false);
@@ -374,7 +391,8 @@ const ModalCreateUpdateWebComponent = ({
       />
       <View style={styles.backgroundModal} />
       {/* <KeyboardAwareScrollView style={commonStyles.flex1}> */}
-      <View style={styles.container}>
+      <Animated.View
+        style={[styles.container, {transform: [{scale: scaleAni}]}]}>
         <ScrollView
           contentContainerStyle={styles.contentContainer}
           style={styles.scrollContainer}>
@@ -453,7 +471,7 @@ const ModalCreateUpdateWebComponent = ({
               );
             })}
         </ScrollView>
-      </View>
+      </Animated.View>
       {/* </KeyboardAwareScrollView> */}
     </Modal>
   );

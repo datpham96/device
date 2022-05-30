@@ -1,25 +1,39 @@
-import React, {useState, useMemo, useRef, useEffect} from 'react';
-import {Text, Background, Input} from 'base';
+import React, {useState, useMemo, useRef, useEffect, Suspense} from 'react';
 import {View, FlatList, TouchableOpacity, RefreshControl} from 'react-native';
-import styles from './styles';
-import {colors, commonStyles} from 'styles';
-import images from 'images';
-import {ItemComponent} from '../components';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import {EmptyData, Loading} from 'components';
-import * as RootNavigation from 'RootNavigation';
-import {useQuery, useQueryClient} from 'react-query';
-import keyTypes from 'keyTypes';
-import {webListApi, webUpdateApi} from 'src/api/methods/web';
-import {webCreateApi} from 'src/api/methods/web';
-import {useMutation} from 'react-query';
-import {Toast} from 'customs';
+import {useQuery, useQueryClient, useMutation} from 'react-query';
 import Validator from 'validatorjs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
-import types from '../types';
-import {ModalCreateUpdateWebComponent} from '../components';
+//api
+import {webListApi, webUpdateApi, webCreateApi} from 'methods/web';
+//base
+import {Text, Background, Input} from 'base';
+//components
+import {EmptyData, Loading} from 'components';
+//config
+import {colors, commonStyles} from 'styles';
+import images from 'images';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+import keyTypes from 'keyTypes';
+//storages
+//redux-stores
+//feature
+import {ItemComponent} from '../components';
 import {ItemListPlaceholder} from '../placeholders';
+import styles from './styles';
+import types from '../types';
+//code-splitting
+const ModalCreateUpdateWebComponent = React.lazy(() =>
+  import('../components/ModalCreateUpdateWebComponent'),
+);
+//screen
 
 momentDurationFormatSetup(moment);
 
@@ -124,7 +138,6 @@ const WebsiteControl = ({route}) => {
   };
 
   const handleWebCreate = timeList => {
-    setVisibleModal(false);
     let validation = new Validator(
       {
         url: url,
@@ -142,6 +155,7 @@ const WebsiteControl = ({route}) => {
     }
 
     if (validation.passes()) {
+      setVisibleModal(false);
       setErrors({...errors, url: validation.errors.first('url')});
     }
     mutationCreate
@@ -153,16 +167,16 @@ const WebsiteControl = ({route}) => {
       })
       .then(resp => {
         if (resp?.status) {
-          Toast(resp?.msg);
+          flashMessage.success(resp?.msg);
         } else {
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         resetState();
         mutationCreate.reset();
         refetch();
       })
       .catch(err => {
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
         mutationCreate.reset();
       });
   };
@@ -200,20 +214,20 @@ const WebsiteControl = ({route}) => {
       .then(resp => {
         if (resp?.status) {
           refetch();
-          Toast(resp?.msg);
+          flashMessage.success(resp?.msg);
           setTimeout(() => {
             setIsTimoutLoading(false);
           }, 100);
         } else {
           setIsTimoutLoading(false);
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         resetState();
         mutationCreate.reset();
       })
       .catch(err => {
         setIsTimoutLoading(false);
-        Toast(err?.msg);
+        flashMessage.success(err?.msg);
         mutationCreate.reset();
       });
   };
@@ -236,28 +250,32 @@ const WebsiteControl = ({route}) => {
   };
   return (
     <Background bin>
-      <ModalCreateUpdateWebComponent
-        onPressClose={() => {
-          setVisibleModal(false);
-          resetState();
-        }}
-        visible={visibleModal}
-        isActive={activeRadio}
-        onPressActive={() => {
-          setActiveRadio(!activeRadio);
-        }}
-        value={url}
-        onChangeValue={text => setUrl(text)}
-        activeItemList={activeItem}
-        onPressSubmit={list => {
-          if (type === types.create.code) {
-            handleWebCreate(list);
-          } else {
-            handleWebUpdate(list);
-          }
-        }}
-        errors={errors}
-      />
+      <Suspense fallback={<></>}>
+        {visibleModal && (
+          <ModalCreateUpdateWebComponent
+            onPressClose={() => {
+              setVisibleModal(false);
+              resetState();
+            }}
+            visible={visibleModal}
+            isActive={activeRadio}
+            onPressActive={() => {
+              setActiveRadio(!activeRadio);
+            }}
+            value={url}
+            onChangeValue={text => setUrl(text)}
+            activeItemList={activeItem}
+            onPressSubmit={list => {
+              if (type === types.create.code) {
+                handleWebCreate(list);
+              } else {
+                handleWebUpdate(list);
+              }
+            }}
+            errors={errors}
+          />
+        )}
+      </Suspense>
       <Loading
         isLoading={
           mutationCreate?.isLoading ||

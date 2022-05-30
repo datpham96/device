@@ -8,13 +8,7 @@ import {
   verifyOtpApi,
 } from 'src/api/methods/login';
 import {userInfoApi} from 'src/api/methods/user';
-import {
-  setToken,
-  setExpiredToken,
-  removeAll,
-  setKeyChain,
-  removeKeyChain,
-} from 'storages';
+import {removeAll, setKeyChain, removeKeyChain} from 'storages';
 import {
   loginSuccess,
   loginFailure,

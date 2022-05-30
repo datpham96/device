@@ -1,37 +1,39 @@
 import React, {useState} from 'react';
-import {Text, Input, Button} from 'base';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Platform,
+  Animated,
 } from 'react-native';
-import images from 'images';
+//node_modules
 import FastImage from 'react-native-fast-image';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+//api
+//base
+import {Text, Input, Button} from 'base';
+//components
+import {
+  TextError,
+  InputDateComponent,
+  InputSelectComponent,
+  ModalCameraBottomSheet,
+} from 'components';
+//config
+import images from 'images';
 import {colors, commonStyles, sizes} from 'styles';
 import metrics from 'metrics';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {TextError, InputDateComponent, InputSelectComponent} from 'components';
-import {ModalBottomSheet} from 'components';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
 import {genders} from 'types';
-import ImageResizer from 'react-native-image-resizer';
-import RNFS from 'react-native-fs';
-
-const options = {
-  mediaType: 'photo',
-  title: 'Chọn ảnh đại diện..',
-  cancelButtonTitle: 'Hủy bỏ',
-  takePhotoButtonTitle: 'Chụp ảnh',
-  quality: 0.1,
-  chooseFromLibraryButtonTitle: 'Chọn từ thư viện',
-  includeBase64: true,
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
+//code-splitting
+//screen
 
 const ModalUpdateInfoComponent = ({
   visible = false,
@@ -51,88 +53,31 @@ const ModalUpdateInfoComponent = ({
   onRequestCloseModal,
 }) => {
   const [visibleImagePicker, setVisibleImagePicker] = useState(false);
-  const handleOpenCamera = () => {
-    setVisibleImagePicker(false);
-    setTimeout(() => {
-      options.mediaType = 'photo';
-      launchCamera(options, response => {
-        if (response && response?.assets) {
-          let item = response?.assets?.[0];
-          let dataFirstBase64 = 'data:' + item?.type + ';base64,';
-          let formatData = dataFirstBase64 + item?.base64;
-          ImageResizer.createResizedImage(
-            formatData,
-            300,
-            300,
-            'JPEG',
-            100,
-            Platform.OS === 'android' ? 90 : 0,
-            undefined,
-            false,
-            {},
-          )
-            .then(resp => {
-              return RNFS.readFile(resp?.path, 'base64');
-            })
-            .then(result => {
-              setDataRequestAvatar(dataFirstBase64 + result);
-            });
-          setAvatarUri({uri: item?.uri});
-        }
-      });
-    }, 100);
-  };
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
 
-  const handleOpenLibrary = () => {
-    setVisibleImagePicker(false);
-    setTimeout(() => {
-      options.mediaType = 'photo';
-      launchImageLibrary(options, response => {
-        if (response && response?.assets) {
-          let item = response?.assets?.[0];
-          let dataFirstBase64 = 'data:' + item?.type + ';base64,';
-          let formatData = dataFirstBase64 + item?.base64;
-          ImageResizer.createResizedImage(
-            formatData,
-            300,
-            300,
-            'JPEG',
-            100,
-            Platform.OS === 'android' ? 90 : 0,
-            undefined,
-            false,
-            {},
-          )
-            .then(resp => {
-              return RNFS.readFile(resp.path, 'base64');
-            })
-            .then(result => {
-              setDataRequestAvatar(dataFirstBase64 + result);
-            });
-          setAvatarUri({uri: item.uri});
-        }
-      });
-    }, 100);
-  };
   const handleOpenBottomSheetImagePicker = () => {
     setVisibleImagePicker(true);
   };
+
   return (
     <Modal
       onRequestClose={onRequestCloseModal}
       animationType="none"
       transparent={true}
-      visible={visible}>
-      <ModalBottomSheet
-        onPressOne={handleOpenCamera}
-        onPressTwo={handleOpenLibrary}
-        onPressCancel={() => setVisibleImagePicker(false)}
-        visible={visibleImagePicker}
-        onPressClose={() => setVisibleImagePicker(false)}
-      />
+      visible={visibleModal}>
+      {visibleImagePicker && (
+        <ModalCameraBottomSheet
+          setDataRequestAvatar={data => setDataRequestAvatar(data)}
+          setAvatarUri={data => setAvatarUri(data)}
+          onPressCancel={() => setVisibleImagePicker(false)}
+          visible={visibleImagePicker}
+          onPressClose={() => setVisibleImagePicker(false)}
+        />
+      )}
       <View style={styles.backgroundModal} />
       <KeyboardAwareScrollView style={commonStyles.flex1}>
-        <View style={styles.container}>
+        <Animated.View
+          style={[styles.container, {transform: [{scale: scaleAni}]}]}>
           <View style={styles.contentContainer}>
             <TouchableOpacity
               style={styles.wrapIconClose}
@@ -199,7 +144,7 @@ const ModalUpdateInfoComponent = ({
               />
             </View>
           </View>
-        </View>
+        </Animated.View>
       </KeyboardAwareScrollView>
     </Modal>
   );

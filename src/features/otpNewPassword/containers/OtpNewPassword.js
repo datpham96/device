@@ -1,18 +1,30 @@
 import React, {useState, useEffect} from 'react';
-import {Loading, TextError, CountDown} from 'components';
-import {Text, Button, Background, ButtonBack, Input} from 'base';
 import {View} from 'react-native';
+//node_modules
+import {useDispatch, useSelector} from 'react-redux';
+import Validator from 'validatorjs';
+//api
+//base
+import {Text, Button, Background, ButtonBack, Input} from 'base';
+//components
+import {Loading, TextError, CountDown} from 'components';
+//config
 import images from 'images';
-import styles from './styles';
 import {commonStyles, fonts, sizes} from 'styles';
+//helpers
+import {checkVar, flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
-import {useDispatch, useSelector} from 'react-redux';
-import {Toast} from 'customs';
+//storages
+//redux-stores
 import {resetPasswordRequest, resetPasswordReset} from 'actions/loginActions';
-import Validator from 'validatorjs';
-import {checkVar} from 'src/helpers/funcs';
-
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 const OtpNewPassword = () => {
   const dispatch = useDispatch();
   const isLoadingResetPassword = useSelector(
@@ -36,14 +48,13 @@ const OtpNewPassword = () => {
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
-      Toast(dataErrors?.msg);
+      flashMessage.error(dataErrors?.msg);
       dispatch(resetPasswordReset());
     }
   }, [dataErrors, dispatch]);
 
   useEffect(() => {
     if (statusResetPassword) {
-      // Toast('Lấy lại mật khẩu thành công');
       dispatch(resetPasswordReset());
       RootNavigation.navigate(navigationTypes.statusSuccess.screen, {
         labelBtn: 'Quay lại đăng nhập',

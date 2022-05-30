@@ -1,10 +1,24 @@
 import React, {useState, useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+//node_modules
 import {PieChart} from 'react-native-svg-charts';
+//api
+//base
+//components
+//config
 import metrics from 'metrics';
 import {colors, fonts, sizes} from 'styles';
-import {checkVar} from 'src/helpers/funcs';
+//helpers
+import {checkVar} from 'helpers/funcs';
 
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 const widthChart = metrics.screenWidth / 2.2;
 
 const PieChartComponent = ({dataList, onSelected, selectedKey = 0}) => {

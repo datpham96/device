@@ -1,10 +1,23 @@
 import React, {useState} from 'react';
 import {Platform} from 'react-native';
+//node_modules
 import RNPickerSelect from 'react-native-picker-select';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+//api
+//base
+//components
+//config
 import {colors, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   listData?: any;
   placeholder?: any;

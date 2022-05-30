@@ -1,20 +1,35 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Text} from 'base';
+//node_modules
 import {AreaChart} from 'react-native-svg-charts';
 import * as shape from 'd3-shape';
-import {colors, commonStyles, fonts, sizes} from 'styles';
 import FastImage from 'react-native-fast-image';
+import lodash from 'lodash';
+//api
+//base
+import {Text} from 'base';
+//components
+import {NumberPlaceholder} from '../placeholders';
+//config
+import {colors, commonStyles, fonts, sizes} from 'styles';
 import images from 'images';
 import metrics from 'metrics';
-import lodash from 'lodash';
-import {landmarkUnitOfNumber} from 'src/helpers/funcs';
-
+//helpers
+import {landmarkUnitOfNumber} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 const heightOutSideBottomTab =
   metrics.screenHeight - metrics.heightBottomTab - metrics.statusBarHeight;
 const HEIGHT_BLOCK =
   (heightOutSideBottomTab / sizes.SIZE_2 - sizes.SIZE_50) / sizes.SIZE_2;
-
+let maxNumber = 0;
+let unitNumber = 0;
 const BlockTotalComponent = ({
   data = [],
   total,
@@ -23,9 +38,8 @@ const BlockTotalComponent = ({
   sizeIcon,
   heightBlock,
   heightAreaBlock,
+  isLoading,
 }) => {
-  let maxNumber = 0;
-  let unitNumber = 0;
   try {
     maxNumber = lodash.max(data);
     unitNumber = landmarkUnitOfNumber(maxNumber)
@@ -68,7 +82,17 @@ const BlockTotalComponent = ({
       <View style={styles.contentContainer}>
         <View style={styles.wrapInfo}>
           <Text style={styles.title}>Tổng truy vấn</Text>
-          <Text style={styles.total}>{total}</Text>
+          {isLoading ? (
+            <View style={styles.wrapNumberPlaceholder}>
+              <NumberPlaceholder
+                customStyle={{
+                  height: sizes.SIZE_20,
+                }}
+              />
+            </View>
+          ) : (
+            <Text style={styles.total}>{total}</Text>
+          )}
         </View>
         <FastImage
           style={[styles.iconTotal, sizeIcon]}
@@ -114,6 +138,9 @@ const styles = StyleSheet.create({
     height: HEIGHT_BLOCK / sizes.SIZE_3,
     alignSelf: 'flex-start',
   },
+  wrapNumberPlaceholder: {
+    marginTop: sizes.SIZE_10,
+  },
 });
 
 function areEqual(prevProps, nextProps) {
@@ -121,7 +148,8 @@ function areEqual(prevProps, nextProps) {
     prevProps?.total === nextProps?.total &&
     prevProps?.heightBlock === nextProps?.heightBlock &&
     prevProps?.heightAreaBlock === nextProps?.heightAreaBlock &&
-    prevProps?.total === nextProps?.total
+    prevProps?.total === nextProps?.total &&
+    prevProps?.isLoading === nextProps?.isLoading
   );
 }
 

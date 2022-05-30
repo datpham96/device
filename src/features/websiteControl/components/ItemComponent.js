@@ -1,13 +1,27 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {Text, Avatar, Switch} from 'base';
-import {colors, commonStyles, sizes} from 'styles';
+//node_modules
 import {useMutation} from 'react-query';
-import {webUpdateApi} from 'src/api/methods/web';
-import {Loading, PopupConfirm} from 'components';
-import {Toast} from 'customs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+//api
+import {webUpdateApi} from 'methods/web';
+//base
+import {Text, Avatar, Switch} from 'base';
+//components
+import {Loading, PopupConfirm} from 'components';
+//config
+import {colors, commonStyles, sizes} from 'styles';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 momentDurationFormatSetup(moment);
 
@@ -34,15 +48,15 @@ const ItemComponent = ({item, onPressDetail, refreshList}) => {
       })
       .then(resp => {
         if (resp?.status) {
-          Toast(resp?.msg);
+          flashMessage.success(resp?.msg);
           refreshList();
         } else {
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         mutation.reset();
       })
       .catch(err => {
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
         setVisibleModal(false);
         mutation.reset();
       });

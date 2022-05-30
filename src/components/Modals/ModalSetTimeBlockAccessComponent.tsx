@@ -1,6 +1,4 @@
-/* eslint-disable radix */
 import React from 'react';
-import {Text} from 'base';
 import {
   View,
   StyleSheet,
@@ -8,15 +6,31 @@ import {
   Modal,
   TouchableHighlight,
   Platform,
+  Animated,
 } from 'react-native';
-import images from 'images';
 import FastImage from 'react-native-fast-image';
+import {TextInput} from 'react-native-gesture-handler';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+//node_modules
+//api
+//base
+import {Text} from 'base';
+//components
+import TextError from '../TextErrorComponent';
+//config
+import images from 'images';
 import {colors, commonStyles, fonts, sizes} from 'styles';
 import metrics from 'metrics';
-import {TextInput} from 'react-native-gesture-handler';
-import TextError from '../TextErrorComponent';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   visible?: any;
   onPressClose?: any;
@@ -57,18 +71,19 @@ const ModalSetTimeBlockAccessComponent: React.FC<Props> = ({
   timeError,
   onRequestCloseModal,
 }) => {
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
   return (
     <Modal
       onRequestClose={onRequestCloseModal}
       animationType="none"
       transparent={true}
-      visible={visible}>
+      visible={visibleModal}>
       <View style={styles.backgroundModal} />
       <KeyboardAwareScrollView
         enableAutomaticScroll={Platform.OS === 'ios'}
         contentContainerStyle={styles.container}>
-        <View>
-          <View style={styles.contentContainer}>
+        <Animated.View style={{transform: [{scale: scaleAni}]}}>
+          <View style={[styles.contentContainer]}>
             <TouchableOpacity
               style={styles.wrapIconClose}
               activeOpacity={0.8}
@@ -141,7 +156,7 @@ const ModalSetTimeBlockAccessComponent: React.FC<Props> = ({
               <Text style={styles.btnLabel}>Lưu lại</Text>
             </TouchableHighlight>
           </View>
-        </View>
+        </Animated.View>
       </KeyboardAwareScrollView>
     </Modal>
   );

@@ -1,8 +1,22 @@
 import React from 'react';
 import {ImageBackground, StyleSheet, StatusBar, View} from 'react-native';
-import {colors} from '../config/styles';
+//node_modules
 import {isIphoneX} from 'react-native-iphone-x-helper';
-import images from '../config/images';
+//api
+//base
+//components
+//config
+import {colors} from 'styles';
+import images from 'images';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   bin?: boolean;

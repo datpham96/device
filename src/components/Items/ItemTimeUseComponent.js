@@ -1,10 +1,23 @@
 import React, {useState} from 'react';
 import {View, TouchableHighlight, StyleSheet} from 'react-native';
-import {Text, Switch} from 'base';
+//node_modules
 import FastImage from 'react-native-fast-image';
+//api
+//base
+import {Text, Switch} from 'base';
+//components
+//config
 import images from 'images';
 import {commonStyles, sizes, fonts} from 'styles';
-
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 const TIME_DEFAULT = '00/00';
 
 const ItemTimeUseComponent = ({

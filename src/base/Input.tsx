@@ -1,9 +1,22 @@
 import React from 'react';
 import {View, StyleSheet, TextInput, Image} from 'react-native';
+//node_modules
+import {TouchableOpacity} from 'react-native-gesture-handler';
+//api
+//base
+//components
+//config
 import {colors, sizes} from 'styles';
 import metrics from 'metrics';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   customerInput?: any;
   value?: any;

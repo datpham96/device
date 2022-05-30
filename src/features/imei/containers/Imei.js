@@ -1,21 +1,34 @@
 import React, {useState} from 'react';
-import {Text, Input, Background, Button, ButtonBack} from 'base';
 import {View} from 'react-native';
-import styles from './styles';
-import {commonStyles} from 'styles';
-import {deviceActivationApi} from 'src/api/methods/device';
+//node_modules
 import {useMutation} from 'react-query';
-import {TextError, Loading, ModalBarcode} from 'components';
-import {Toast} from 'customs';
 import Validator from 'validatorjs';
+//api
+import {deviceActivationApi} from 'methods/device';
+//base
+import {Text, Input, Background, Button, ButtonBack} from 'base';
+//components
+import {TextError, Loading} from 'components';
+//config
+import {commonStyles} from 'styles';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
+//storages
+//redux-stores
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 
 const Imei = ({route}) => {
   const dataParams = route?.params;
   const [licenseKey, setLicenseKey] = useState('');
   const [errors, setErrors] = useState({});
-  // const [visibleBarCode, setVisibleBarCode] = useState(false);
 
   const mutationActivatedDevice = useMutation(
     ({
@@ -79,15 +92,15 @@ const Imei = ({route}) => {
       })
       .then(resp => {
         if (resp.status) {
-          Toast(resp?.msg);
+          flashMessage.success(resp?.msg);
           RootNavigation.navigate(navigationTypes.childrenManager.screen);
         } else {
-          Toast(resp?.msg);
+          flashMessage.success(resp?.msg);
         }
         mutationActivatedDevice.reset();
       })
       .catch(err => {
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
         mutationActivatedDevice.reset();
       });
   };

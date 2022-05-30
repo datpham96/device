@@ -78,12 +78,12 @@ export async function apiToken(path, method, params = {}, token) {
       return json.data;
     })
     .catch(async error => {
-      if (error?.code === 'ECONNABORTED') {
-        RootNavigation.navigate(navigationType.error.screen);
-        return {
-          data: null,
-        };
-      }
+      // if (error?.code === 'ECONNABORTED') {
+      //   RootNavigation.navigate(navigationType.error.screen);
+      //   return {
+      //     data: null,
+      //   };
+      // }
       await setError(JSON.stringify(error?.response?.data));
       if (
         error?.response?.status === statusCode.CODE_500 ||

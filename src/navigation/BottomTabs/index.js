@@ -1,21 +1,35 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Animated, Easing} from 'react-native';
-import {Text} from 'base';
+//node_modules
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-const Tab = createBottomTabNavigator();
 import LinearGradient from 'react-native-linear-gradient';
+//api
+//base
+import {Text} from 'base';
+//components
+//config
+import {colors, commonStyles, fonts, sizes} from 'styles';
+import images from 'images';
+import metrics from 'metrics';
+//helpers
+//HOC
+//hooks
+//navigation
+import navigationTypes from 'navigationTypes';
+//storages
+//redux-stores
+//feature
 import {
   AccountScreen,
   ChildrenManagerScreen,
   HomeScreen,
   LocationScreen,
 } from 'features';
-import navigationTypes from 'navigationTypes';
-import {colors, commonStyles, fonts, sizes} from 'styles';
-import images from 'images';
-import metrics from 'metrics';
+//code-splitting
+//screen
 
+const Tab = createBottomTabNavigator();
 const MAPABLE = [0, 1, 2, 3];
 const COLOR_GRADIENT = ['#298DC6', '#475DDF', '#471BC1'];
 

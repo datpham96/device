@@ -1,17 +1,30 @@
 import React, {useState, useEffect} from 'react';
-import {InputComponent} from 'components';
-import {Text, Button, Background, ButtonBack} from 'base';
 import {View} from 'react-native';
-import images from 'images';
-import styles from './styles';
-import {commonStyles} from 'styles';
+//node_modules
 import Validator from 'validatorjs';
-import {TextError, Loading} from 'components';
 import {useDispatch, useSelector} from 'react-redux';
-import {Toast} from 'customs';
-import {verifyOtpRequest, verifyOtpReset} from 'actions/loginActions';
+//api
+//base
+import {Text, Button, Background, ButtonBack} from 'base';
+//components
+import {InputComponent, TextError, Loading} from 'components';
+//config
+import images from 'images';
+import {commonStyles} from 'styles';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
+//storages
+//redux-stores
+import {verifyOtpRequest, verifyOtpReset} from 'actions/loginActions';
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 
 const Otp = () => {
   const dispatch = useDispatch();
@@ -25,14 +38,14 @@ const Otp = () => {
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
-      Toast(dataErrors?.msg);
+      flashMessage.error(dataErrors?.msg);
       dispatch(verifyOtpReset());
     }
   }, [dataErrors, dispatch]);
 
   useEffect(() => {
     if (statusVerifyOtp) {
-      Toast('Xác thực OTP thành công');
+      flashMessage.success('Xác thực OTP thành công');
       dispatch(verifyOtpReset());
       RootNavigation.navigate(navigationTypes.otpNewPassword.screen);
     }

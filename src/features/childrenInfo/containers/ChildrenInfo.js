@@ -1,5 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import {Text, Background, ButtonBack, Avatar} from 'base';
+import React, {useState, useEffect, useMemo, Suspense} from 'react';
 import {
   View,
   TouchableHighlight,
@@ -9,26 +8,48 @@ import {
   UIManager,
   TouchableOpacity,
 } from 'react-native';
-import styles from './styles';
-import {commonStyles, colors, sizes} from 'styles';
-import {ButtonRedirect, PopupConfirm, Loading} from 'components';
-import * as RootNavigation from 'RootNavigation';
-import navigationTypes from 'navigationTypes';
+//node_modules
 import {useQueryClient, useQuery, useMutation} from 'react-query';
-import keyTypes from 'keyTypes';
+import Validator from 'validatorjs';
+import moment from 'moment';
+//api
 import {
   deviceInfoApi,
   removeDeviceApi,
   deviceAvatarUpdateApi,
   deviceUpdateApi,
 } from 'methods/device';
-import {Toast} from 'customs';
-import {ModalLimitTimeUseDevice, ModalUpdateInfo, Safe} from '../components';
-import {checkVar} from 'src/helpers/funcs';
-import Validator from 'validatorjs';
+//base
+import {Text, Background, ButtonBack, Avatar} from 'base';
+//components
+import {ButtonRedirect, Loading} from 'components';
+//config
+import {commonStyles, colors, sizes} from 'styles';
+//helpers
+import {checkVar, flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+import navigationTypes from 'navigationTypes';
+import keyTypes from 'keyTypes';
+//storages
+//redux-stores
+//feature
+import {Safe} from '../components';
+import styles from './styles';
 import {ChildrenPlaceholder} from '../placeholders';
-import moment from 'moment';
-
+//code-splitting
+const ModalLimitTimeUseDevice = React.lazy(() =>
+  import('../components/ModalLimitTimeUseDeviceComponent'),
+);
+const ModalUpdateInfo = React.lazy(() =>
+  import('../components/ModalUpdateInfoComponent'),
+);
+const PopupConfirm = React.lazy(() =>
+  import('src/components/Popups/PopupConfirmComponent'),
+);
+//screen
 const ChildrenInfo = ({route}) => {
   if (Platform.OS === 'android') {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -143,14 +164,14 @@ const ChildrenInfo = ({route}) => {
       .then(resp => {
         if (resp?.status) {
           RootNavigation.goBack();
-          Toast('Ngắt kết nối thành công!');
+          flashMessage.success('Ngắt kết nối thành công!');
         } else {
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         mutationRemoveDevice.reset();
       })
       .catch(err => {
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
         mutationRemoveDevice.reset();
       });
   };
@@ -213,10 +234,10 @@ const ChildrenInfo = ({route}) => {
       })
       .then(resp => {
         if (resp?.status) {
-          Toast('Cập nhật thông tin thành công');
+          flashMessage.success('Cập nhật thông tin thành công');
           onRefresh();
         } else {
-          Toast('Cập nhật thông tin thất bại');
+          flashMessage.error('Cập nhật thông tin thất bại');
         }
         mutationDeviceAvatarUpdate.reset();
         mutationDeviceUpdate.reset();
@@ -224,7 +245,7 @@ const ChildrenInfo = ({route}) => {
       .catch(err => {
         mutationDeviceAvatarUpdate.reset();
         mutationDeviceUpdate.reset();
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
       });
   };
 
@@ -255,45 +276,53 @@ const ChildrenInfo = ({route}) => {
 
   return (
     <Background bin>
-      <ModalLimitTimeUseDevice
-        onRequestCloseModal={() => {
-          setVisibleLimitTimeUseModal(false);
-        }}
-        onSuccessTimer={() => refetch()}
-        deviceId={device_id}
-        onPressClose={() => {
-          setVisibleLimitTimeUseModal(false);
-        }}
-        visible={visibleLimitTimeUseModal}
-        itemList={data?.data}
-      />
-      <ModalUpdateInfo
-        onRequestCloseModal={handleCloseUpdateInfo}
-        avatarUri={avatarUri}
-        setAvatarUri={val => setAvatarUri(val)}
-        errors={errors}
-        setDataRequestAvatar={val => setDataRequestAvatar(val)}
-        visible={visibleUpdateInfoModal}
-        onPressClose={handleCloseUpdateInfo}
-        onPressSubmit={handleUpdateInfo}
-        nameValue={fullName}
-        onChangeName={val => setFullname(val)}
-        deviceNameValue={deviceName}
-        genderValue={gender}
-        onChangeGender={val => setGender(val)}
-        onChangeBirthday={val => setBirthday(val)}
-        birthdayValue={birthday}
-      />
+      <Suspense fallback={<></>}>
+        {visibleLimitTimeUseModal && (
+          <ModalLimitTimeUseDevice
+            onRequestCloseModal={() => {
+              setVisibleLimitTimeUseModal(false);
+            }}
+            onSuccessTimer={() => refetch()}
+            deviceId={device_id}
+            onPressClose={() => {
+              setVisibleLimitTimeUseModal(false);
+            }}
+            visible={visibleLimitTimeUseModal}
+            itemList={data?.data}
+          />
+        )}
+        {visibleUpdateInfoModal && (
+          <ModalUpdateInfo
+            onRequestCloseModal={handleCloseUpdateInfo}
+            avatarUri={avatarUri}
+            setAvatarUri={val => setAvatarUri(val)}
+            errors={errors}
+            setDataRequestAvatar={val => setDataRequestAvatar(val)}
+            visible={visibleUpdateInfoModal}
+            onPressClose={handleCloseUpdateInfo}
+            onPressSubmit={handleUpdateInfo}
+            nameValue={fullName}
+            onChangeName={val => setFullname(val)}
+            deviceNameValue={deviceName}
+            genderValue={gender}
+            onChangeGender={val => setGender(val)}
+            onChangeBirthday={val => setBirthday(val)}
+            birthdayValue={birthday}
+          />
+        )}
+        {visibleRemoveDevice && (
+          <PopupConfirm
+            content="Bạn có chắc chắn muốn ngắt kết nối không?"
+            visible={visibleRemoveDevice}
+            onPressAgree={handleRemoveDevice}
+            onPressCancel={() => setVisibleRemoveDevice(false)}
+          />
+        )}
+      </Suspense>
       <Loading
         isLoading={
           mutationRemoveDevice?.isLoading || mutationDeviceUpdate?.isLoading
         }
-      />
-      <PopupConfirm
-        content="Bạn có chắc chắn muốn ngắt kết nối không?"
-        visible={visibleRemoveDevice}
-        onPressAgree={handleRemoveDevice}
-        onPressCancel={() => setVisibleRemoveDevice(false)}
       />
       <ButtonBack />
       <View style={styles.container}>

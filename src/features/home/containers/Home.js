@@ -1,4 +1,11 @@
-import React, {useState, useRef, useEffect, useCallback, useMemo} from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  Suspense,
+} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,28 +13,39 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import {DateTimePicker, LoadingData} from 'components';
-import {Text, Background, Button} from 'base';
-import images from 'images';
-import styles from './styles';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import {colors, sizes, commonStyles} from 'styles';
-import {
-  BlockFilterSearch,
-  BlockTotal,
-  Chart,
-  DeviceSelect,
-} from '../components';
-import DatePicker from 'react-native-date-picker-select';
 import moment from 'moment';
 import {useQueryClient, useQuery} from 'react-query';
-import keyTypes from 'keyTypes';
+//api
 import {deviceListApi} from 'methods/device';
-import {webReportAccessApi} from 'src/api/methods/web';
-import navigationTypes from 'navigationTypes';
+import {webReportAccessApi} from 'methods/web';
+//base
+import {Text, Background, Button} from 'base';
+//components
+import {LoadingData} from 'components';
+//config
+import images from 'images';
+import {colors, sizes, commonStyles} from 'styles';
 import metrics from 'metrics';
-
+//helpers
+import {formatNumberThousand} from 'src/helpers/funcs';
+//navigation
+import keyTypes from 'keyTypes';
+import navigationTypes from 'navigationTypes';
+//feature
+import {BlockFilterSearch, BlockTotal, Chart} from '../components';
+import styles from './styles';
+//code-splitting
+const DateTimePicker = React.lazy(() =>
+  import('src/components/DateTimePickerComponent'),
+);
+const DeviceSelect = React.lazy(() =>
+  import('../components/DeviceSelectComponent'),
+);
+//screen
 const Home = ({navigation}) => {
+  //constructor
   const queryClient = useQueryClient();
   const dateTimeRef = useRef(null);
   const [date, onDate] = useState(moment().format('DD/MM/YYYY'));
@@ -64,20 +82,31 @@ const Home = ({navigation}) => {
   );
 
   //get device list when focus screen
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       refetchDeviceList();
     });
     return unsubscribe;
   }, [navigation, refetchDeviceList]);
 
+  //handle when blur screen
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      queryClient.cancelQueries(keyTypes.WEB_REPORT_ACCESS);
+      queryClient.cancelQueries(keyTypes.DEVICE_LIST);
+    });
+    return unsubscribe;
+  }, [navigation, queryClient]);
+
+  //handle event when change isLoadingReportAccess
   useEffect(() => {
     if (!isLoadingReportAccess) {
       setRefreshing(false);
     }
   }, [isLoadingReportAccess]);
 
-  const onRefresh = async () => {
+  //function handle refresh data
+  const onRefresh = useCallback(async () => {
     await queryClient.removeQueries(
       [keyTypes.WEB_REPORT_ACCESS, {id: selectedDevice?.id, date}],
       {
@@ -86,8 +115,15 @@ const Home = ({navigation}) => {
     );
     await refetchReportAccess();
     await refetchDeviceList();
-  };
+  }, [
+    date,
+    queryClient,
+    refetchDeviceList,
+    refetchReportAccess,
+    selectedDevice?.id,
+  ]);
 
+  //handle format height block
   const formatHeightBlock = useMemo(() => {
     let heightBlock = sizes.ZERO;
     let heightAreaChart = sizes.ZERO;
@@ -101,6 +137,7 @@ const Home = ({navigation}) => {
     };
   }, [heightSectionTwo]);
 
+  //handle selected device
   const handleSelectedDevice = useCallback(data => {
     onSelectedDevice(data);
   }, []);
@@ -113,19 +150,6 @@ const Home = ({navigation}) => {
     navigation.jumpTo(navigationTypes.childrenManager.screen);
   };
 
-  const formatNumberThousand = num => {
-    let total = num;
-    if (num / 1000000000 > 1) {
-      total = (num / 1000000000).toFixed(1) + 'B';
-    } else if (num / 1000000 > 1) {
-      total = (num / 1000000).toFixed(1) + 'M';
-    } else if (num / 1000 > 1) {
-      total = (num / 1000).toFixed(1) + 'K';
-    }
-
-    return total;
-  };
-
   const onLayoutSectionOne = event => {
     const {height} = event.nativeEvent.layout;
     const heightOutSideBottomTab =
@@ -133,7 +157,7 @@ const Home = ({navigation}) => {
     setHeightSectionTwo(heightOutSideBottomTab - height);
   };
 
-  const formatAreaChart24h = arr => {
+  const formatAreaChart24h = useCallback(arr => {
     let arrChart = [];
     for (var i = 0; i < 24; i++) {
       arrChart[i] = 0;
@@ -147,7 +171,7 @@ const Home = ({navigation}) => {
     });
 
     return arrChart;
-  };
+  }, []);
 
   const onRefreshing = useCallback(() => {
     setRefreshing(true);
@@ -171,15 +195,17 @@ const Home = ({navigation}) => {
                 style={styles.logoLock}
                 source={images.logos.lock}
               />
-              <DeviceSelect
-                onSelectedDevice={data => {
-                  handleSelectedDevice(data);
-                }}
-                selectedDevice={selectedDevice}
-                dataDeviceList={dataDeviceList}
-                isLoadingDeviceList={isLoadingDeviceList}
-                isSuccessDeviceList={isSuccessDeviceList}
-              />
+              <Suspense fallback={<></>}>
+                <DeviceSelect
+                  onSelectedDevice={data => {
+                    handleSelectedDevice(data);
+                  }}
+                  selectedDevice={selectedDevice}
+                  dataDeviceList={dataDeviceList}
+                  isLoadingDeviceList={isLoadingDeviceList}
+                  isSuccessDeviceList={isSuccessDeviceList}
+                />
+              </Suspense>
             </View>
             <View style={styles.wrapContainerTitle}>
               <View style={styles.wrapTitle}>
@@ -244,6 +270,7 @@ const Home = ({navigation}) => {
             {/* Thống kê truy cập */}
             <View style={styles.reportContainer}>
               <BlockTotal
+                isLoading={isLoadingReportAccess}
                 heightBlock={formatHeightBlock.heightBlock}
                 heightAreaBlock={formatHeightBlock.heightAreaChart}
                 total={formatNumberThousand(
@@ -253,6 +280,7 @@ const Home = ({navigation}) => {
               />
               <View style={styles.wrapBlockChildren}>
                 <BlockFilterSearch
+                  isLoading={isLoadingReportAccess}
                   heightBlock={formatHeightBlock.heightBlock}
                   heightAreaBlock={formatHeightBlock.heightAreaChart}
                   iconImage={images.icons.area_filter}
@@ -264,6 +292,7 @@ const Home = ({navigation}) => {
                   svgFillColor={colors.COLOR_AREA_CHART_RED}
                 />
                 <BlockFilterSearch
+                  isLoading={isLoadingReportAccess}
                   heightBlock={formatHeightBlock.heightBlock}
                   heightAreaBlock={formatHeightBlock.heightAreaChart}
                   iconImage={images.icons.area_safe_search}
@@ -288,11 +317,13 @@ const Home = ({navigation}) => {
         </View>
       )}
 
-      <DateTimePicker
-        ref={dateTimeRef}
-        date={date}
-        onDate={val => onDate(val)}
-      />
+      <Suspense fallback={<></>}>
+        <DateTimePicker
+          ref={dateTimeRef}
+          date={date}
+          onDate={val => onDate(val)}
+        />
+      </Suspense>
     </Background>
   );
 };

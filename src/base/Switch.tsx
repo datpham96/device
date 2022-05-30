@@ -1,7 +1,21 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+//node_modules
 import {Switch} from 'react-native-switch';
+//api
+//base
+//components
+//config
 import {colors, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   value?: any;

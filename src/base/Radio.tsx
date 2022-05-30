@@ -1,9 +1,22 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+//node_modules
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {colors, commonStyles, sizes} from 'styles';
+//api
+//base
 import Text from './Text';
-
+//components
+//config
+import {colors, commonStyles, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 export type Props = {
   active?: any;
   label?: any;

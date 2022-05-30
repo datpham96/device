@@ -1,25 +1,38 @@
-import React, {useState, useMemo, useRef, useEffect} from 'react';
-import {Text, Background, Input} from 'base';
+import React, {useState, useMemo, useRef, useEffect, Suspense} from 'react';
 import {View, FlatList, TouchableOpacity, RefreshControl} from 'react-native';
-import styles from './styles';
-import {colors, commonStyles, sizes} from 'styles';
-import images from 'images';
-import {ItemComponent, ModalUpdateApplicationComponent} from '../components';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import {EmptyData, Loading} from 'components';
-import * as RootNavigation from 'RootNavigation';
 import {useQuery, useQueryClient} from 'react-query';
-import keyTypes from 'keyTypes';
-import {
-  applicationListApi,
-  applicationUpdateApi,
-} from 'src/api/methods/application';
 import {useMutation} from 'react-query';
-import {Toast} from 'customs';
 import moment from 'moment';
 import momentDurationFormatSetup from 'moment-duration-format';
+//api
+import {applicationListApi, applicationUpdateApi} from 'methods/application';
+//base
+import {Text, Background, Input} from 'base';
+//components
+import {EmptyData, Loading} from 'components';
+//config
+import {colors, commonStyles, sizes} from 'styles';
+import images from 'images';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+import keyTypes from 'keyTypes';
+//storages
+//redux-stores
+//feature
+import {ItemComponent} from '../components';
+import styles from './styles';
 import {ItemListPlaceholder} from '../placeholders';
-
+//code-splitting
+const ModalUpdateApplicationComponent = React.lazy(() =>
+  import('../components/ModalUpdateApplicationComponent'),
+);
+//screen
 momentDurationFormatSetup(moment);
 
 const HOURS_DEFAULT = '00';
@@ -144,38 +157,42 @@ const ApplicationControl = ({route}) => {
           setTimeout(() => {
             setIsTimoutLoading(false);
           }, 1000);
-          Toast(resp?.msg);
+          flashMessage.success(resp?.msg);
         } else {
           setIsTimoutLoading(false);
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         resetState();
         mutationUpdate.reset();
       })
       .catch(err => {
         setIsTimoutLoading(false);
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
         mutationUpdate.reset();
       });
   };
   return (
     <Background bin>
       <Loading isLoading={mutationUpdate?.isLoading || isTimoutLoading} />
-      <ModalUpdateApplicationComponent
-        iconApp={activeItem?.icon}
-        nameApp={activeItem?.name}
-        onPressClose={() => {
-          setVisibleDetailModal(false);
-          resetState();
-        }}
-        visible={visibleDetailModal}
-        isActive={activeRadio}
-        onPressActive={() => {
-          setActiveRadio(!activeRadio);
-        }}
-        onPressSubmit={list => handlebUpdate(list)}
-        activeItemList={activeItem}
-      />
+      <Suspense fallback={<></>}>
+        {visibleDetailModal && (
+          <ModalUpdateApplicationComponent
+            iconApp={activeItem?.icon}
+            nameApp={activeItem?.name}
+            onPressClose={() => {
+              setVisibleDetailModal(false);
+              resetState();
+            }}
+            visible={visibleDetailModal}
+            isActive={activeRadio}
+            onPressActive={() => {
+              setActiveRadio(!activeRadio);
+            }}
+            onPressSubmit={list => handlebUpdate(list)}
+            activeItemList={activeItem}
+          />
+        )}
+      </Suspense>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <TouchableOpacity

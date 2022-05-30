@@ -1,19 +1,32 @@
 import React, {useState, useEffect} from 'react';
-import {TextError, Loading} from 'components';
-import {Text, Button, Background, Input} from 'base';
 import {View} from 'react-native';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import images from 'images';
-import styles from './styles';
-import {commonStyles, sizes} from 'styles';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginRequest, loginReset} from 'actions/loginActions';
 import Validator from 'validatorjs';
-import {Toast} from 'customs';
 import lodash from 'lodash';
+//api
+//base
+import {Text, Button, Background, Input} from 'base';
+//components
+import {TextError, Loading} from 'components';
+//config
+import images from 'images';
+import {commonStyles, sizes} from 'styles';
+//helpers
+import {flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import * as RootNavigation from 'RootNavigation';
 import navigationTypes from 'navigationTypes';
-
+//storages
+//redux-stores
+import {loginRequest, loginReset} from 'actions/loginActions';
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const loginErrors = useSelector(state => state.auth.errors, lodash.isEqual);
@@ -22,7 +35,6 @@ const Login = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setErrors({});
@@ -32,7 +44,7 @@ const Login = ({navigation}) => {
 
   useEffect(() => {
     if (loginErrors && loginErrors?.msg) {
-      Toast(loginErrors?.msg);
+      flashMessage.error(loginErrors?.msg);
       dispatch(loginReset());
     }
   }, [loginErrors, dispatch]);

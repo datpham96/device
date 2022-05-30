@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
@@ -6,19 +5,32 @@ import {
   View,
   LayoutAnimation,
 } from 'react-native';
-import {Text} from 'base';
+//node_modules
 import FastImage from 'react-native-fast-image';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {colors, commonStyles, fonts, sizes} from 'styles';
+import {useMutation, useQuery} from 'react-query';
+//api
+import {deviceSettingListApi, deviceSettingUpdateApi} from 'methods/device';
+//base
+import {Text} from 'base';
+//components
+import {Loading, PopupConfirm} from 'components';
 import Switch from './SwitchComponent';
 import ItemChildrenSafe from './ItemChildrenSafeComponent';
-import types from '../types';
-import {PopupConfirm} from 'components';
-import {useMutation, useQuery} from 'react-query';
-import {deviceSettingListApi, deviceSettingUpdateApi} from 'methods/device';
+//config
+import {colors, commonStyles, fonts, sizes} from 'styles';
+//helpers
+import {checkVar, flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import keyTypes from 'keyTypes';
-import {Toast} from 'customs';
-import {checkVar} from 'src/helpers/funcs';
+//storages
+//redux-stores
+//feature
+import types from '../types';
+//code-splitting
+//screen
 
 const SafeComponent = ({deviceId}) => {
   const [expanded, setExpanded] = useState({});
@@ -111,15 +123,15 @@ const SafeComponent = ({deviceId}) => {
       .mutateAsync(params)
       .then(resp => {
         if (resp?.status) {
-          Toast('Thiết lập thành công');
+          flashMessage.success('Thiết lập thành công');
           refetch();
         } else {
-          Toast('Thiết lập không thành công');
+          flashMessage.error('Thiết lập thất bại');
         }
         mutationDeviceSettingUpdate.reset();
       })
       .catch(() => {
-        Toast('Thiết lập không thành công');
+        flashMessage.error('Thiết lập thất bại');
         mutationDeviceSettingUpdate.reset();
       });
   };
@@ -215,6 +227,7 @@ const SafeComponent = ({deviceId}) => {
 
   return (
     <View style={styles.settingContainer}>
+      <Loading isLoading={mutationDeviceSettingUpdate?.isLoading} />
       <PopupConfirm
         onPressAgree={handleAgreeSettingDevice}
         onPressCancel={handleCancelSettingDevice}

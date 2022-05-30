@@ -1,5 +1,20 @@
 import React from 'react';
+import {Platform} from 'react-native';
+//node_modules
 import {createStackNavigator} from '@react-navigation/stack';
+import {useSelector} from 'react-redux';
+//api
+//base
+//components
+//config
+//helpers
+//HOC
+//hooks
+//navigation
+import navigationTypes from '../types';
+//storages
+//redux-stores
+//feature
 import {
   ErrorScreen,
   LoginScreen,
@@ -20,11 +35,9 @@ import {
   ActivatedScreen,
   ImeiScreen,
 } from '../../features';
-import navigationTypes from '../types';
+//code-splitting
+//screen
 import BottomTabs from '../BottomTabs';
-import {useSelector} from 'react-redux';
-import {Platform} from 'react-native';
-
 const RootNavStack = createStackNavigator();
 
 const screenOptions = {

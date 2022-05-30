@@ -1,6 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {Input, Radio, Text} from 'base';
 import {
   View,
   StyleSheet,
@@ -9,20 +7,35 @@ import {
   TouchableHighlight,
   ScrollView,
   Platform,
+  Animated,
 } from 'react-native';
-import images from 'images';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import {colors, commonStyles, fonts, sizes} from 'styles';
-import metrics from 'metrics';
-import {ItemTimeUse, TextError} from 'components';
 import {
   getBottomSpace,
   getStatusBarHeight,
   isIphoneX,
 } from 'react-native-iphone-x-helper';
-import {ModalSetTimeBlockAccess} from 'components';
 import lodash from 'lodash';
-
+//api
+//base
+import {Input, Radio, Text} from 'base';
+//components
+import {ItemTimeUse, TextError, ModalSetTimeBlockAccess} from 'components';
+//config
+import images from 'images';
+import {colors, commonStyles, fonts, sizes} from 'styles';
+import metrics from 'metrics';
+//helpers
+//HOC
+//hooks
+import {useToggleAnimationModal} from 'hooks';
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 const HOURS_DEFAULT = '00';
 const MINUTE_DEFAULT = '00';
 const HOURS_24 = 24;
@@ -31,34 +44,6 @@ const MINUTE_59 = 59;
 const MINUTE_60 = 60;
 const ZERO = 0;
 const TIME_DEFAULT = '00/00';
-
-// const ItemTime = ({
-//   day,
-//   startTime = TIME_DEFAULT,
-//   endTime = TIME_DEFAULT,
-//   containerStyle,
-//   onPress,
-// }) => {
-//   return (
-//     <TouchableHighlight
-//       underlayColor="rgba(90, 142, 209, 0.5)"
-//       onPress={onPress}
-//       style={[styles.wrapItem, containerStyle]}>
-//       <>
-//         <View style={styles.wrapItemTime}>
-//           <Text style={styles.itemStartTime}>
-//             {startTime ? startTime : TIME_DEFAULT}
-//           </Text>
-//           <Text style={styles.itemEndTime}>
-//             {endTime ? endTime : TIME_DEFAULT}
-//           </Text>
-//         </View>
-//         <Text style={styles.itemDay}>{day}</Text>
-//         <FastImage style={styles.itemIconEdit} source={images.icons.edit} />
-//       </>
-//     </TouchableHighlight>
-//   );
-// };
 
 const DATA_TIME_LIST = [
   {
@@ -137,6 +122,7 @@ const ModalCreateUpdateWebComponent = ({
   const [activeItem, setActiveItem] = useState({});
   const [timeError, setTimeError] = useState('');
   const [timeList, setTimeList] = useState(DATA_TIME_LIST);
+  const [visibleModal, scaleAni] = useToggleAnimationModal(visible);
 
   //set time list by active item list
   useEffect(() => {
@@ -331,7 +317,7 @@ const ModalCreateUpdateWebComponent = ({
       onRequestClose={onPressClose}
       animationType="none"
       transparent={true}
-      visible={visible}>
+      visible={visibleModal}>
       <ModalSetTimeBlockAccess
         onRequestCloseModal={() => {
           setVisibleSetupTimeModal(false);
@@ -379,7 +365,8 @@ const ModalCreateUpdateWebComponent = ({
       />
       <View style={styles.backgroundModal} />
       {/* <KeyboardAwareScrollView style={commonStyles.flex1}> */}
-      <View style={styles.container}>
+      <Animated.View
+        style={[styles.container, {transform: [{scale: scaleAni}]}]}>
         <ScrollView
           contentContainerStyle={styles.contentContainer}
           style={styles.scrollContainer}>
@@ -465,7 +452,7 @@ const ModalCreateUpdateWebComponent = ({
               );
             })}
         </ScrollView>
-      </View>
+      </Animated.View>
       {/* </KeyboardAwareScrollView> */}
     </Modal>
   );

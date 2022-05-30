@@ -1,18 +1,30 @@
 import React, {useEffect, useState} from 'react';
-import {Loading, TextError} from 'components';
-import {Text, Button, Background, ButtonBack, Input} from 'base';
 import {View} from 'react-native';
+//node_modules
 import FastImage from 'react-native-fast-image';
-import images from 'images';
-import styles from './styles';
-import {commonStyles, sizes} from 'styles';
 import Validator from 'validatorjs';
 import {useDispatch, useSelector} from 'react-redux';
-import {registerRequest, registerReset} from 'actions/loginActions';
-import {Toast} from 'customs';
+//api
+//base
+import {Text, Button, Background, ButtonBack, Input} from 'base';
+//components
+import {Loading, TextError} from 'components';
+//config
+import {commonStyles, sizes} from 'styles';
+import images from 'images';
+//helpers
+import {checkVar, flashMessage} from 'helpers/funcs';
+//HOC
+//hooks
+//navigation
 import * as RootNavigation from 'RootNavigation';
-import {checkVar} from 'src/helpers/funcs';
-
+//storages
+//redux-stores
+import {registerRequest, registerReset} from 'actions/loginActions';
+//feature
+import styles from './styles';
+//code-splitting
+//screen
 const Register = () => {
   const dispatch = useDispatch();
   const isLoadingRegister = useSelector(
@@ -32,14 +44,14 @@ const Register = () => {
 
   useEffect(() => {
     if (dataErrors && dataErrors?.msg) {
-      Toast(dataErrors?.msg);
+      flashMessage.error(dataErrors?.msg);
       dispatch(registerReset());
     }
   }, [dataErrors, dispatch]);
 
   useEffect(() => {
     if (statusRegister) {
-      Toast('Đăng ký thành công');
+      flashMessage.success('Đăng ký thành công');
       dispatch(registerReset());
       // RootNavigation.navigate(navigationTypes.statusSuccess.screen, {
       //   labelBtn: 'Quay lại đăng nhập',

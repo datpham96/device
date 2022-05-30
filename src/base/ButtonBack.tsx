@@ -1,10 +1,24 @@
 import React, {useState} from 'react';
-import images from 'images';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import {colors, commonStyles, sizes} from 'styles';
-import Text from './Text';
-import * as RootNavigation from 'RootNavigation';
+//node_modules
 import FastImage from 'react-native-fast-image';
+//api
+//base
+import Text from './Text';
+//components
+//config
+import images from 'images';
+import {colors, commonStyles, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   label?: any;

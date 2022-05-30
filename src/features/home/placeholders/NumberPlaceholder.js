@@ -1,13 +1,26 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+//node_modules
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {View} from 'react-native';
+//api
+//base
+//components
+//config
 import {sizes, colors} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
-const NumberPlaceholder = () => {
+const NumberPlaceholder = ({customStyle}) => {
   return (
     <SkeletonPlaceholder backgroundColor={colors.COLOR_LOADING_PLACEHOLDER}>
-      <View style={styles.name} />
+      <View style={[styles.name, customStyle]} />
     </SkeletonPlaceholder>
   );
 };

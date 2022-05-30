@@ -1,11 +1,25 @@
-import metrics from 'metrics';
 import React from 'react';
 import {StyleSheet} from 'react-native';
+//node_modules
 // @ts-ignore
 import DatePicker from 'react-native-date-picker-select';
-import {colors, sizes} from 'styles';
 import moment from 'moment';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+//api
+//base
+//components
+//config
+import metrics from 'metrics';
+import {colors, sizes} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 export type Props = {
   placeholder?: any;
@@ -33,7 +47,7 @@ const InputDateComponent: React.FC<Props> = ({
       style={[styles.container, containerStyle]}
       format="DD/MM/YYYY"
       maxDate={moment().format('DD-MM-YYYY').toString()}
-      onDateChange={date => onDateChange(date)}
+      onDateChange={(date: any) => onDateChange(date)}
       iconComponent={
         <FontAwesome
           color={colors.COLOR_BLACK}

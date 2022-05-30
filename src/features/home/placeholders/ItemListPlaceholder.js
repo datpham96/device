@@ -1,9 +1,22 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+//node_modules
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {View} from 'react-native';
+//api
+//base
+//components
+//config
 import metrics from 'metrics';
 import {commonStyles, sizes, colors} from 'styles';
+//helpers
+//HOC
+//hooks
+//navigation
+//storages
+//redux-stores
+//feature
+//code-splitting
+//screen
 
 const ItemListPlaceholder = () => {
   return (

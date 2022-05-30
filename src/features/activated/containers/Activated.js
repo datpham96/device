@@ -1,15 +1,32 @@
-import React, {useMemo, useState} from 'react';
-import {Text, Background, Button, Input, ButtonBack} from 'base';
+import React, {Suspense, useCallback, useMemo, useState} from 'react';
 import {ScrollView, View} from 'react-native';
-import styles from './styles';
-import {commonStyles} from 'styles';
-import {PopupAlert, TextError, Loading} from 'components';
+//node_modules
 import Validator from 'validatorjs';
 import moment from 'moment';
-import * as RootNavigation from 'RootNavigation';
 import {useMutation} from 'react-query';
-import {deviceLicenseKeyUpdateApi} from 'src/api/methods/device';
-import {Toast} from 'customs';
+//api
+import {deviceLicenseKeyUpdateApi} from 'methods/device';
+//base
+import {Text, Background, Button, Input, ButtonBack} from 'base';
+//components
+import {TextError, Loading} from 'components';
+//config
+import {commonStyles} from 'styles';
+//helpers
+import {flashMessage} from 'src/helpers/funcs';
+//HOC
+//hooks
+//navigation
+import * as RootNavigation from 'RootNavigation';
+//storages
+//redux-stores
+//feature
+import styles from './styles';
+//code-splitting
+const PopupAlert = React.lazy(() =>
+  import('src/components/Popups/PopupAlertComponent'),
+);
+//screen
 
 const Activated = ({route}) => {
   const dataParams = route?.params;
@@ -74,12 +91,12 @@ const Activated = ({route}) => {
         if (resp?.status) {
           setVisibleAlertSuccess(true);
         } else {
-          Toast(resp?.msg);
+          flashMessage.error(resp?.msg);
         }
         mutateDeviceLicenkeyUpdate.reset();
       })
       .catch(err => {
-        Toast(err?.msg);
+        flashMessage.error(err?.msg);
       });
   };
 
@@ -92,11 +109,15 @@ const Activated = ({route}) => {
     <Background isKeyboard bout>
       <ButtonBack />
       <Loading isLoading={mutateDeviceLicenkeyUpdate?.isLoading} />
-      <PopupAlert
-        content="Bản quyền của bạn đã kích hoạt thành công"
-        onPressCancel={handleRedirectChilrenInfo}
-        visible={visibleAlertSuccess}
-      />
+      <Suspense fallback={<></>}>
+        {visibleAlertSuccess && (
+          <PopupAlert
+            content="Bản quyền của bạn đã kích hoạt thành công"
+            onPressCancel={handleRedirectChilrenInfo}
+            visible={visibleAlertSuccess}
+          />
+        )}
+      </Suspense>
       <ScrollView style={styles.container}>
         <Text style={[commonStyles.mainTitle, styles.mainTitleStyle]}>
           Bản quyền sử dụng

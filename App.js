@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
-// import {PersistGate} from 'redux-persist/es/integration/react';
 import {
   BackHandler,
   Alert,
@@ -8,8 +7,8 @@ import {
   Text,
   TextInput,
   LogBox,
+  AppState,
 } from 'react-native';
-// import SplashScreen from 'react-native-splash-screen';
 import {QueryClient, QueryClientProvider} from 'react-query';
 
 const queryClient = new QueryClient();
@@ -20,6 +19,8 @@ import {checkVar} from 'src/helpers/funcs';
 import VersionCheck from 'react-native-version-check';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as Validator from 'src/helpers/customs/Validator';
+import FlashMessage from 'react-native-flash-message';
+import keyTypes from 'keyTypes';
 
 const {store} = configureStore;
 
@@ -39,6 +40,19 @@ const App = () => {
       'No info about this app.',
     ]);
     checkVersion();
+    //dừng all request nếu thiết bị ở chế độ background hoặc inactive
+    const listener = AppState.addEventListener('change', status => {
+      if (status === 'background' || status === 'inactive') {
+        queryClient.cancelQueries(keyTypes.DEVICE_LIST);
+        queryClient.cancelQueries(keyTypes.DEVICE_HISTORY_LIST);
+        queryClient.cancelQueries(keyTypes.DEVICE_SETTING_LIST);
+        queryClient.cancelQueries(keyTypes.WEB_REPORT_ACCESS);
+        queryClient.cancelQueries(keyTypes.WEB_LIST);
+        queryClient.cancelQueries(keyTypes.APPLICATION_LIST);
+      }
+    });
+
+    return listener.remove;
   }, []);
   //check version update app
   async function checkVersion() {
@@ -68,11 +82,10 @@ const App = () => {
   }
   return (
     <Provider store={store}>
-      {/* <PersistGate loading={<ActivityIndicator />} persistor={persistor}> */}
       <QueryClientProvider client={queryClient}>
+        <FlashMessage position="top" />
         <Navigation />
       </QueryClientProvider>
-      {/* </PersistGate> */}
     </Provider>
   );
 };
